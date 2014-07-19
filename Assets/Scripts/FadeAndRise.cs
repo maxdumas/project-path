@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class FadeAndRise : MonoBehaviour
 {
@@ -7,29 +6,29 @@ public class FadeAndRise : MonoBehaviour
     public float Delay = 0f;
     public float EndYOffset;
 
-    private float time = 0f;
-    private float StartY, EndY;
-    private TextMesh text;
+    private float _time = 0f;
+    private float _startY, _endY;
+    private TextMesh _text;
 
 	// Use this for initialization
 	void Start ()
 	{
-	    StartY = transform.position.y;
-	    EndY = transform.position.y + EndYOffset;
-	    text = GetComponent<TextMesh>();
+	    _startY = transform.position.y;
+	    _endY = transform.position.y + EndYOffset;
+	    _text = GetComponent<TextMesh>();
 	}
 	
 	// Update is called once per frame
 	void Update ()
 	{
-	    time += Time.deltaTime;
+	    _time += Time.deltaTime;
 
-	    if (time > Delay)
+	    if (_time > Delay)
 	    {
-	        float a = (time - Delay)/Lifetime;
-	        transform.position.Set(transform.position.x, Mathf.Lerp(StartY, EndY, a), transform.position.z);
-            text.color = new Color(text.color.r, text.color.g, text.color.b, Mathf.Lerp(text.color.a, 0f, a));
-            if(time - Delay > Lifetime)
+	        float t = (_time - Delay)/Lifetime;
+	        transform.position = new Vector3(transform.position.x, Mathf.Lerp(_startY, _endY, t), transform.position.z);
+            _text.color = new Color(_text.color.r, _text.color.g, _text.color.b, Mathf.Lerp(_text.color.a, 0f, t));
+            if(_time - Delay > Lifetime)
                 Destroy(gameObject);
 	    }
 	}

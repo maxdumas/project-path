@@ -15,9 +15,10 @@ public class PathFollower : MonoBehaviour
 
     private const float PositionTolerance = 0.001f;
     private const float RotationTolerance = 0.1f;
-    private readonly Queue<Vector3> path = new Queue<Vector3>();
-    private FollowingState state = FollowingState.Idle;
-    private GameObject lastSelection = null;
+
+    private readonly Queue<Vector3> _path = new Queue<Vector3>();
+    private FollowingState _state = FollowingState.Idle;
+    private GameObject _lastSelection = null;
 
     // Use this for initialization
 	void Start () {
@@ -27,8 +28,8 @@ public class PathFollower : MonoBehaviour
     void Update()
     {
 #if UNITY_EDITOR // We only want to compile this code when we are in the editor as it's just displaying debug stuff
-        if(path.Count != 0)
-            using (var e = path.GetEnumerator())
+        if(_path.Count != 0)
+            using (var e = _path.GetEnumerator())
             {
                 e.MoveNext();
                 while (true)
@@ -47,36 +48,36 @@ public class PathFollower : MonoBehaviour
             // Only continue if mouse is inside the collider of the follower
             if (collider2D.OverlapPoint(mouseWorldCoords))
             {
-                state = FollowingState.CreatingPath;
-                path.Clear();
+                _state = FollowingState.CreatingPath;
+                _path.Clear();
             }
         }
-        else if (Input.GetMouseButtonUp(0)) state = FollowingState.Idle;
+        else if (Input.GetMouseButtonUp(0)) _state = FollowingState.Idle;
 
-        if(Input.GetKeyUp(KeyCode.Space)) state = FollowingState.FollowingPath;
+        if(Input.GetKeyUp(KeyCode.Space)) _state = FollowingState.FollowingPath;
 
-        switch (state)
+        switch (_state)
         {
             case FollowingState.CreatingPath:
                 var selection = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, 0f);
                 if (selection.transform.gameObject.tag == "Piece" && // Only pick pieces
-                    selection.transform.gameObject != lastSelection) // And don't reselect the last piece we selected
+                    selection.transform.gameObject != _lastSelection) // And don't reselect the last piece we selected
                 {
-                    path.Enqueue(selection.transform.position);
-                    lastSelection = selection.transform.gameObject;
-                    Debug.Log("Added new selection to path. There are now " + path.Count + " nodes in the path.");
+                    _path.Enqueue(selection.transform.position);
+                    _lastSelection = selection.transform.gameObject;
+                    Debug.Log("Added new selection to path. There are now " + _path.Count + " nodes in the path.");
                 }
                 break;
             case FollowingState.FollowingPath:
-                if (path.Count == 0) state = FollowingState.Idle;
-                else if (path.Count > MaxMoves)
+                if (_path.Count == 0) _state = FollowingState.Idle;
+                else if (_path.Count > MaxMoves)
                 {
-                    Debug.LogWarning("This path is longer than the maximum allowed. Path is " + path.Count + " units long while maximum is " + MaxMoves + ".");
-                    state = FollowingState.Idle;
+                    Debug.LogWarning("This path is longer than the maximum allowed. Path is " + _path.Count + " units long while maximum is " + MaxMoves + ".");
+                    _state = FollowingState.Idle;
                 }
                 else
                 {
-                    Vector3 target = path.Peek();
+                    Vector3 target = _path.Peek();
                     Vector3 difference = target - transform.position;
                     if (difference.sqrMagnitude > PositionTolerance)
                     {
@@ -93,7 +94,7 @@ public class PathFollower : MonoBehaviour
                             transform.position = Vector3.MoveTowards(transform.position, target,
                                 MoveSpeed*Time.deltaTime);
                     }
-                    else path.Dequeue();
+                    else _path.Dequeue();
                 }
                 break;
         }

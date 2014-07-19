@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using System.Collections;
 
 /// <summary>
 /// This script will hold all data for the player, i.e. their health, their items, etc.

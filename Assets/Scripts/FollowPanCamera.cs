@@ -13,7 +13,7 @@ public class FollowPanCamera : MonoBehaviour
     /// </summary>
     public float PanSpeed = 100;
 
-    private bool isPanning;
+    private bool _isPanning;
 
     // Use this for initialization
 	void Start () {
@@ -36,12 +36,12 @@ public class FollowPanCamera : MonoBehaviour
 	    if (Input.GetMouseButtonDown(1))
 	    {
 	        FollowTarget = false;
-	        isPanning = true;
+	        _isPanning = true;
 	    }
 
-	    if (isPanning)
+	    if (_isPanning)
 	    {
-	        if (Input.GetMouseButtonUp(1)) isPanning = false;
+	        if (Input.GetMouseButtonUp(1)) _isPanning = false;
             Vector3 delta = new Vector3(-Input.GetAxis("Mouse X"), -Input.GetAxis("Mouse Y"));
 	        transform.Translate(delta / camera.orthographicSize);
 	    }

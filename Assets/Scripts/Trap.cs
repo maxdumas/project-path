@@ -1,9 +1,8 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-public class TrapPiece : MonoBehaviour
+public class Trap : MonoBehaviour
 {
-    public TextMesh EventNofifier;
+    public TextMesh EventNotifier;
     public Player Player;
     public float ChanceToDamage = 0.5f;
     public int Damage;
@@ -23,7 +22,7 @@ public class TrapPiece : MonoBehaviour
         if (other.tag.Equals("Player")) // Check if the other piece is the player
         {
             // Instantiate a new text message.
-            TextMesh message = Instantiate(EventNofifier, transform.position, Quaternion.identity) as TextMesh;
+            TextMesh message = (TextMesh)Instantiate(EventNotifier, transform.position, Quaternion.identity);
             float roll = Random.Range(0f, 1f);
             if (roll > ChanceToDamage)
             {
