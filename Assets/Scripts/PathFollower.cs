@@ -60,7 +60,8 @@ public class PathFollower : MonoBehaviour
         {
             case FollowingState.CreatingPath:
                 var selection = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, 0f);
-                if (selection.transform.gameObject.tag == "Piece" && // Only pick pieces
+                if (selection.transform == null) _state = FollowingState.Idle; 
+                else if(selection.transform.gameObject.tag == "Piece" && // Only pick pieces
                     selection.transform.gameObject != _lastSelection) // And don't reselect the last piece we selected
                 {
                     _path.Enqueue(selection.transform.position);
