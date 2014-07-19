@@ -18,24 +18,20 @@ public class TrapPiece : MonoBehaviour
 	
 	}
 
-    void OnTriggerEnter2D(Collider2D other)
+    void OnTriggerEnter2D(Collider2D other) // Called when another piece intersects this piece
     {
-        Debug.Log("DOOBUMS");
-        if (other.tag.Equals("Player"))
+        if (other.tag.Equals("Player")) // Check if the other piece is the player
         {
-            //TextMesh message = Instantiate(EventNofifier, transform.position, Quaternion.identity) as TextMesh;
+            // Instantiate a new text message.
+            TextMesh message = Instantiate(EventNofifier, transform.position, Quaternion.identity) as TextMesh;
             float roll = Random.Range(0f, 1f);
             if (roll > ChanceToDamage)
             {
                 Player.Health -= Damage;
                 // Display Message regarding trap hit
-                //message.text = "Trap hits successfully for " + Damage + " damage!";
-                Debug.Log("Doobies");
+                message.text = "Trap hits successfully for " + Damage + " damage!";
             }
-            else
-            {
-                //message.text = "Trap misses!";
-            }
+            else message.text = "Trap misses!";
         }
     }
 }
