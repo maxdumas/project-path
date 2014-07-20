@@ -82,10 +82,10 @@ public class PathFollower : MonoBehaviour
                     Vector3 difference = target - transform.position;
                     if (difference.sqrMagnitude > PositionTolerance)
                     {
+                        float angle = Vector3.Angle(transform.up, difference);
                         Quaternion targetRotation = Quaternion.LookRotation(difference, Vector3.back);
                         targetRotation.x = targetRotation.y = 0f;
-                        float angle = Vector3.Angle(transform.up, difference);
-                        if (angle > RotationTolerance)
+                        if (Mathf.Abs(angle) > RotationTolerance)
                         {
                             transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation,
                                 TurnSpeed*Time.deltaTime);
