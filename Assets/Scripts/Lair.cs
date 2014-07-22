@@ -1,3 +1,5 @@
+using System.Runtime.InteropServices;
+using System.Text;
 using UnityEngine;
 using System.Collections;
 
@@ -5,55 +7,69 @@ public class Lair : MonoBehaviour
 {
 	public TextMesh EventNotifier;
 	public Player Player;
-	public Monster Monster;
-	
-	private void OnTriggerEnter2D(Collider2D other) // Called when another piece intersects this piece
-	{
-		if (other.tag.Equals("Player")) // Check if the other piece is the player
-		{
-			// Instantiate a new text message.
-			TextMesh message = (TextMesh) Instantiate(EventNotifier, transform.position, Quaternion.identity);
-			string text = "";
-			int playerAtt = 0;
-			int playerDef = 0;
-			int monsterAtt = 0;
-			int dmg = 0;
+	public Monster MonsterPrefab;
 
-			while (Player.Health > 0 && Monster.Health > 0) {
-				playerAtt = Player.GetAttackValue();
+    private void OnTriggerEnter2D(Collider2D other) // Called when another piece intersects this piece
+    {
+        if (other.tag.Equals("Player") && MonsterPrefab != null) // Check if the other piece is the player
+        {
+            // Instantiate a new text message.
+            TextMesh message = (TextMesh) Instantiate(EventNotifier, transform.position, Quaternion.identity);
+            StringBuilder text = new StringBuilder();
 
-				///Display attack
-				///text = "You attack for " + playerAtt + "!";
-				/// 
-				dmg = playerAtt - Monster.Defense;
-				if (dmg > 0) {
-					///text = "Hit! You deal " + dmg + " damage!";
-					Monster.Health -= dmg;
-					if (Monster.Health <= 0) {
-						///text = "Monster dies!"
-						break;
-					}
-				} else {
-					///text = "Fail! No damage dealt!";
-				}
+            //Spawn the monster
+            Monster enemy = (Monster) Instantiate(MonsterPrefab, transform.position, Quaternion.identity);
+            //while (Player.Health > 0 && Monster.Health > 0)
+            //{
+                int attackValue = Player.GetAttackValue();
+                int defenseValue = enemy.GetDefenseValue();
+                int dmg = attackValue - defenseValue;
 
-				monsterAtt = Monster.GetAttackValue();
-				playerDef = Player.GetDefenseValue();
+                // Display attack
+                Debug.Log("You attack for " + attackValue + "!");
+                Debug.Log("Monster defends for " + defenseValue + "!");
+                if (dmg > 0)
+                {
+                    enemy.Health -= dmg;
+                    Debug.Log("Hit! You deal " + dmg + " damage! Their health now " + enemy.Health);
+                    if (enemy.Health <= 0)
+                    {
+                        Debug.Log("Monster dies!");
+                        //break;
+                    }
+                }
+                else
+                {
+                    Debug.Log("They dodge your attack!");
+                }
 
-				///text = "Monster attacks for " + monsterAtt;
-				///text = "You defend for " + playerDef;
+                // We switch sides now!
+                attackValue = enemy.GetAttackValue();
+                defenseValue = Player.GetDefenseValue();
+                dmg = attackValue - defenseValue;
 
-				dmg = monsterAtt - playerDef;
+                Debug.Log("Monster attacks for " + attackValue);
+                Debug.Log("You defend for " + defenseValue);
+                if (dmg > 0)
+                {
+                    Player.Health -= dmg;
+                    Debug.Log("You are hit for " + dmg + " damage! Your health now " + Player.Health);
+                    if (Player.Health <= 0)
+                    {
+                        Debug.Log("You died! Game Over!");
+                        //break;
+                    }
+                }
+                else
+                {
+                    Debug.Log("You parry the blow!");
+                }
 
-				if (dmg > 0) {
-					///text = "You are hit for " + dmg + " damage!"
-					Player.Health -= dmg;
-					if (Player.Health <= 0) {
-						///text = "You died! Game Over!"
-						break;
-					}				
-				}
-			}
-		}
-	}
+                //Debug.Break();
+            //}
+
+            Debug.Log(text.ToString());
+            message.text = text.ToString();
+        }
+    }
 }

@@ -11,17 +11,35 @@ public class Item : MonoBehaviour
     public string AttackBehaviorName;
     public string DefenseBehaviorName;
 
-    public Func<int> AttackModifier = DefaultBehavior;
-    public Func<int> DefenseModifier = DefaultBehavior;
+    public Func<int> AttackModifier
+    {
+        get
+        {
+            if (_attackModifier != null) return _attackModifier;
+            if (!string.IsNullOrEmpty(AttackBehaviorName) && AttackBehaviors.ContainsKey(AttackBehaviorName))
+                return _attackModifier = AttackBehaviors[AttackBehaviorName];
+            return _attackModifier = DefaultBehavior;
+        }
+    }
 
+    public Func<int> DefenseModifier
+    {
+        get
+        {
+            if (_defenseModifier != null) return _attackModifier;
+            if (!string.IsNullOrEmpty(DefenseBehaviorName) && DefenseBehaviors.ContainsKey(DefenseBehaviorName))
+                return _defenseModifier = DefenseBehaviors[DefenseBehaviorName];
+            return _attackModifier = DefaultBehavior;
+        }
+    } 
+
+    private Func<int> _attackModifier;
+    private Func<int> _defenseModifier;
 
 	// Use this for initialization
 	void Start ()
 	{
-        if(!string.IsNullOrEmpty(AttackBehaviorName) && AttackBehaviors.ContainsKey(AttackBehaviorName))
-	        AttackModifier = AttackBehaviors[AttackBehaviorName];
-	    if (!string.IsNullOrEmpty(DefenseBehaviorName) && DefenseBehaviors.ContainsKey(DefenseBehaviorName))
-	        DefenseModifier = DefenseBehaviors[DefenseBehaviorName];
+        
 	}
 	
 	// Update is called once per frame
