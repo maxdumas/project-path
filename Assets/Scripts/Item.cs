@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Item : MonoBehaviour
 {
-    private static readonly Func<int> DefaultBehavior = () => 0;
+    public static readonly Func<int> DefaultBehavior = () => 0;
 
     public string DisplayName;
     public ItemType Type;
@@ -17,7 +17,11 @@ public class Item : MonoBehaviour
         {
             if (_attackModifier != null) return _attackModifier;
             if (!string.IsNullOrEmpty(AttackBehaviorName) && AttackBehaviors.ContainsKey(AttackBehaviorName))
+            {
+                Debug.Log("Assigned weapon " + AttackBehaviorName + " behavior");
                 return _attackModifier = AttackBehaviors[AttackBehaviorName];
+            }
+            Debug.Log("Assigned weapon default behavior. AttackBehaviorName is " + AttackBehaviorName);
             return _attackModifier = DefaultBehavior;
         }
     }
@@ -29,7 +33,7 @@ public class Item : MonoBehaviour
             if (_defenseModifier != null) return _attackModifier;
             if (!string.IsNullOrEmpty(DefenseBehaviorName) && DefenseBehaviors.ContainsKey(DefenseBehaviorName))
                 return _defenseModifier = DefenseBehaviors[DefenseBehaviorName];
-            return _attackModifier = DefaultBehavior;
+            return _defenseModifier = DefaultBehavior;
         }
     } 
 

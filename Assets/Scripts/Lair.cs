@@ -15,32 +15,34 @@ public class Lair : MonoBehaviour
         {
             // Instantiate a new text message.
             TextMesh message = (TextMesh) Instantiate(EventNotifier, transform.position, Quaternion.identity);
-            StringBuilder text = new StringBuilder();
+            StringBuilder text = new StringBuilder("COMBAT LOG:");
 
             //Spawn the monster
             Monster enemy = (Monster) Instantiate(MonsterPrefab, transform.position, Quaternion.identity);
-            //while (Player.Health > 0 && Monster.Health > 0)
-            //{
+            text.AppendLine("Combat between Player (" + Player.Health + "HP) and a(n) " + enemy.name + " (" +
+                            enemy.Health + "HP).");
+
+            while (Player.Health > 0 && enemy.Health > 0)
+            {
                 int attackValue = Player.GetAttackValue();
                 int defenseValue = enemy.GetDefenseValue();
                 int dmg = attackValue - defenseValue;
-
                 // Display attack
-                Debug.Log("You attack for " + attackValue + "!");
-                Debug.Log("Monster defends for " + defenseValue + "!");
+                text.AppendLine("You attack for " + attackValue + "!");
+                text.AppendLine("Monster defends for " + defenseValue + "!");
                 if (dmg > 0)
                 {
                     enemy.Health -= dmg;
-                    Debug.Log("Hit! You deal " + dmg + " damage! Their health now " + enemy.Health);
+                    text.AppendLine("Hit! You deal " + dmg + " damage! Their health now " + enemy.Health);
                     if (enemy.Health <= 0)
                     {
-                        Debug.Log("Monster dies!");
-                        //break;
+                        text.AppendLine("Monster dies!");
+                        break;
                     }
                 }
                 else
                 {
-                    Debug.Log("They dodge your attack!");
+                    text.AppendLine("They dodge your attack!");
                 }
 
                 // We switch sides now!
@@ -48,25 +50,25 @@ public class Lair : MonoBehaviour
                 defenseValue = Player.GetDefenseValue();
                 dmg = attackValue - defenseValue;
 
-                Debug.Log("Monster attacks for " + attackValue);
-                Debug.Log("You defend for " + defenseValue);
+                text.AppendLine("Monster attacks for " + attackValue);
+                text.AppendLine("You defend for " + defenseValue);
                 if (dmg > 0)
                 {
                     Player.Health -= dmg;
-                    Debug.Log("You are hit for " + dmg + " damage! Your health now " + Player.Health);
+                    text.AppendLine("You are hit for " + dmg + " damage! Your health now " + Player.Health);
                     if (Player.Health <= 0)
                     {
-                        Debug.Log("You died! Game Over!");
-                        //break;
+                        text.AppendLine("You died! Game Over!");
+                        break;
                     }
                 }
                 else
                 {
-                    Debug.Log("You parry the blow!");
+                    text.AppendLine("You parry the blow!");
                 }
+            }
 
-                //Debug.Break();
-            //}
+            Destroy(enemy.gameObject);
 
             Debug.Log(text.ToString());
             message.text = text.ToString();
