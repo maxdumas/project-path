@@ -30,7 +30,7 @@ public class Item : MonoBehaviour
     {
         get
         {
-            if (_defenseModifier != null) return _attackModifier;
+            if (_defenseModifier != null) return _defenseModifier;
             if (!string.IsNullOrEmpty(DefenseBehaviorName) && DefenseBehaviors.ContainsKey(DefenseBehaviorName))
                 return _defenseModifier = DefenseBehaviors[DefenseBehaviorName];
             return _defenseModifier = DefaultBehavior;
