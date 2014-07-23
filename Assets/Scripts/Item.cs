@@ -77,16 +77,24 @@ public class Item : MonoBehaviour
     public static readonly Dictionary<string, Func<int>> AttackBehaviors = new Dictionary<string, Func<int>>
     {
         {"Fists", () => Dice.Roll(4)},
+		{"Fists1",() => 
+		{
+			int d = Dice.Roll(4);
+			return d+1;
+		}
+		},
         {"Dagger", () =>
         {
             int d = Dice.Roll(4);
             return d == 4 ? 5 : d; // Roll increases to a 5 on a critical hit.
         }
-        }
+        },
+		{"ShortSword", () => Dice.Roll(6)}
     };
 
     public static readonly Dictionary<string, Func<int>> DefenseBehaviors = new Dictionary<string, Func<int>>
     {
-        {"Buckler", () => Dice.Roll(4)}
+        {"Buckler", () => Dice.Roll(4)},
+		{"LeatherArmor", () => {return 1;}}
     };
 }
