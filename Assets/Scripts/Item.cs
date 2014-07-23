@@ -83,12 +83,14 @@ public class Item : MonoBehaviour
 			return d+1;
 		}
 		},
+
         {"Dagger", () =>
         {
             int d = Dice.Roll(4);
             return d == 4 ? 5 : d; // Roll increases to a 5 on a critical hit.
         }
         },
+
 		{"ShortSword", () => Dice.Roll(6)}
     };
 
