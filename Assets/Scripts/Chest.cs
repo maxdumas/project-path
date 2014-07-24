@@ -24,6 +24,7 @@ public class Chest : MonoBehaviour
                 else text = "You already have one of these.";
                 ContainedItem = null;
             }
+			message.color = Color.red;
             message.text = text;
             Debug.Log(text);
         }

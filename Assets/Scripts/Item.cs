@@ -81,22 +81,35 @@ public class Item : MonoBehaviour
 		{
 			int d = Dice.Roll(4);
 			return d+1;
-		}
-		},
-
+		}},
         {"Dagger", () =>
         {
             int d = Dice.Roll(4);
             return d == 4 ? 5 : d; // Roll increases to a 5 on a critical hit.
-        }
-        },
+        }},
+		{"ShortSword", () => Dice.Roll(6)},
+		{"ShortSword1", () => 
+		{
+			int d = Dice.Roll(6);
+			return d+1;
+		}},
+		{"Spear", () => Dice.Roll(8)},
+		{"Spear1", () =>
+		{
+			int d = Dice.Roll(8);
+			return d+1;
+		}} 
 
-		{"ShortSword", () => Dice.Roll(6)}
     };
 
     public static readonly Dictionary<string, Func<int>> DefenseBehaviors = new Dictionary<string, Func<int>>
     {
         {"Buckler", () => Dice.Roll(4)},
-		{"LeatherArmor", () => {return 1;}}
+		{"LeatherArmor", () => {return 1;}},
+		{"Heater", () => Dice.Roll(6)},
+		{"BronzeArmor", () => {return 2;}},
+		{"IronArmor", () => {return 3;}},
+		{"SteelArmor", () => {return 4;}},
+		{"Greatshield", () => Dice.Roll(8)},
     };
 }

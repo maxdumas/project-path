@@ -22,7 +22,7 @@ public class Trap : MonoBehaviour
                 text = "Trap hits successfully for " + Damage + " damage!";
             }
             else text = "Trap misses!";
-
+			message.color = Color.red;
             message.text = text;
             Debug.Log(text);
         }
