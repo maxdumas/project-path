@@ -1,145 +1,119 @@
-using System.Runtime.InteropServices;
 using System.Text;
 using UnityEngine;
 using System.Collections;
 
-public class Lair : MonoBehaviour
+public class Lair : PieceBehavior
 {
+    public Monster MonsterPrefab;
 
-	public Player Player;
-	public Monster MonsterPrefab;
-	public TextMesh EventNotifier;
-	public StringBuilder text;
+    private StringBuilder _log;
 
-
-    private void OnTriggerEnter2D(Collider2D other) // Called when another piece intersects this piece
+    protected override IEnumerator OnInteractionBegin()
     {
-        if (other.tag.Equals("Player") && MonsterPrefab != null) // Check if the other piece is the player
-        {
-            // Instantiate a new text message.
-			text = new StringBuilder("COMBAT LOG:\n");
-			StartCoroutine(Combat(0.5f));
-		}
-           
+        _log = new StringBuilder("COMBAT LOG:\n");
+        return base.OnInteractionBegin();
     }
 
-	IEnumerator Combat(float waitTime) {
-	
-		string t;
+    protected override IEnumerator OnInteraction(float waitTime)
+    {
+        //Spawn the monster
+        Monster enemy = (Monster) Instantiate(MonsterPrefab, transform.position, Quaternion.identity);
 
-		//Spawn the monster
-		Monster enemy = (Monster) Instantiate(MonsterPrefab, transform.position, Quaternion.identity);
+        //Print start of combat
+        LogMessage("Combat between Player (" + Player.Health + "HP) and a(n) " + enemy.name + " (" + enemy.Health +
+                   "HP).");
+        yield return new WaitForSeconds(waitTime);
 
-		//Print start of combat
-		t = "Combat between Player (" + Player.Health + "HP) and a(n) " + enemy.name + " (" +
-			enemy.Health + "HP).";
-		DisplayMsg(t);
-		yield return new WaitForSeconds(waitTime);
+        while (Player.Health > 0 && enemy.Health > 0)
+        {
+            int attackValue = Player.GetAttackValue();
+            int defenseValue = enemy.GetDefenseValue();
+            int dmg = attackValue - defenseValue;
+            
+            // Display player attack
+            LogMessage("You attack for " + attackValue + "!");
+            yield return new WaitForSeconds(waitTime);
 
-		while (Player.Health > 0 && enemy.Health > 0)
-		{
-			int attackValue = Player.GetAttackValue();
-			int defenseValue = enemy.GetDefenseValue();
-			int dmg = attackValue - defenseValue;
+            //Display monster defend
+            LogMessage("Monster defends for " + defenseValue + "!");
+            yield return new WaitForSeconds(waitTime);
 
-			// Display player attack
-			t = "You attack for " + attackValue + "!";
-			DisplayMsg(t);
-			yield return new WaitForSeconds(waitTime);
+            if (dmg > 0)
+            {
+                enemy.Health -= dmg;
 
-			//Display monster defend
-			t = "Monster defends for " + defenseValue + "!";
-			DisplayMsg(t);
-			yield return new WaitForSeconds(waitTime);
-			
-			if (dmg > 0)
-			{
-				enemy.Health -= dmg;
+                //Display successful player hit
+                LogMessage("Hit! You deal " + dmg + " damage! Their health now " + enemy.Health);
+                yield return new WaitForSeconds(waitTime);
 
-				//Display successful player hit
-				t = "Hit! You deal " + dmg + " damage! Their health now " + enemy.Health;
-				DisplayMsg(t);
-				yield return new WaitForSeconds(waitTime);
+                if (enemy.Health <= 0)
+                {
+                    //Display monster death
+                    LogMessage("Monster dies!");
+                    yield return new WaitForSeconds(waitTime);
 
-				if (enemy.Health <= 0)
-				{
-					//Display monster death
-					t = "Monster dies!";
-					DisplayMsg(t);
-					yield return new WaitForSeconds(waitTime);
+                    //Combat over; end while loop
+                    break;
+                }
+            }
+            else
+            {
+                //Display failed player hit
+                LogMessage("They dodge your attack!");
+                yield return new WaitForSeconds(waitTime);
+            }
 
-					//Combat over; end while loop
-					break;
-				}
-			}
-			else
-			{
-				//Display failed player hit
-				t = "They dodge your attack!";
-				DisplayMsg(t);
-				yield return new WaitForSeconds(waitTime);
-			}
-			
-			
-			// We switch sides now!
-			attackValue = enemy.GetAttackValue();
-			defenseValue = Player.GetDefenseValue();
-			dmg = attackValue - defenseValue;
+            // We switch sides now!
+            attackValue = enemy.GetAttackValue();
+            defenseValue = Player.GetDefenseValue();
+            dmg = attackValue - defenseValue;
 
-			//Display monster attack
-			t = "Monster attacks for " + attackValue;
-			DisplayMsg(t);
-			yield return new WaitForSeconds(waitTime);
+            //Display monster attack
+            LogMessage("Monster attacks for " + attackValue);
+            yield return new WaitForSeconds(waitTime);
 
+            //Display player defend
+            LogMessage("You defend for " + defenseValue);
+            yield return new WaitForSeconds(waitTime);
 
-			//Display player defend
-			t = "You defend for " + defenseValue;
-			DisplayMsg(t);
-			yield return new WaitForSeconds(waitTime);
+            if (dmg > 0)
+            {
+                Player.Health -= dmg;
 
-			if (dmg > 0)
-			{
-				Player.Health -= dmg;
+                //Display successful monster hit
+                LogMessage("You are hit for " + dmg + " damage! Your health now " + Player.Health);
+                yield return new WaitForSeconds(waitTime);
 
-				//Display successful monster hit
-				t = "You are hit for " + dmg + " damage! Your health now " + Player.Health;
-				DisplayMsg(t);
-				yield return new WaitForSeconds(waitTime);
+                if (Player.Health <= 0)
+                {
+                    //Display player death
+                    LogMessage("You died! Game Over!");
+                    yield return new WaitForSeconds(waitTime);
 
-				if (Player.Health <= 0)
-				{
-					//Display player death
-					t = "You died! Game Over!";
-					DisplayMsg(t);
-					yield return new WaitForSeconds(waitTime);
+                    //Combat over; end while loop
+                    break;
+                }
+            }
+            else
+            {
+                //Display failed monster hit
+                LogMessage("You parry the blow!");
+                yield return new WaitForSeconds(waitTime);
+            }
+        }
 
-					//Combat over; end while loop
-					break;
-				}
-			}
-			else
-			{
-				//Display failed monster hit
-				t = "You parry the blow!";
-				DisplayMsg(t);
-				yield return new WaitForSeconds(waitTime);
-			}
-		}
-		
-		Destroy(enemy.gameObject);	
-		Debug.Log(text.ToString());
-	}
+        Destroy(enemy.gameObject);
+    }
 
-	public void DisplayMsg(string t) {
+    protected override void OnInteractionEnd()
+    {
+        Debug.Log(_log.ToString());
+        base.OnInteractionEnd();
+    }
 
-		float x = transform.position.x;
-		float y = transform.position.y;
-		Vector3 v = new Vector3(x,y+1.0f,transform.position.z);
-
-		text.AppendLine(t);
-		TextMesh message = (TextMesh) Instantiate(EventNotifier, v, Quaternion.identity);
-		message.color = Color.red;
-		message.text = t;
-	}
-
+    private void LogMessage(string message)
+    {
+        _log.AppendLine(message);
+        DisplayMessage(message);
+    }
 }

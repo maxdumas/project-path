@@ -17,11 +17,8 @@ public class Item : MonoBehaviour
         {
             if (_attackModifier != null) return _attackModifier;
             if (!string.IsNullOrEmpty(AttackBehaviorName) && AttackBehaviors.ContainsKey(AttackBehaviorName))
-            {
-                Debug.Log("Assigned weapon " + AttackBehaviorName + " behavior");
                 return _attackModifier = AttackBehaviors[AttackBehaviorName];
-            }
-            Debug.Log("Assigned weapon default behavior. AttackBehaviorName is " + AttackBehaviorName);
+
             return _attackModifier = DefaultBehavior;
         }
     }
@@ -105,11 +102,11 @@ public class Item : MonoBehaviour
     public static readonly Dictionary<string, Func<int>> DefenseBehaviors = new Dictionary<string, Func<int>>
     {
         {"Buckler", () => Dice.Roll(4)},
-		{"LeatherArmor", () => {return 1;}},
+		{"LeatherArmor", () => 1},
 		{"Heater", () => Dice.Roll(6)},
-		{"BronzeArmor", () => {return 2;}},
-		{"IronArmor", () => {return 3;}},
-		{"SteelArmor", () => {return 4;}},
+		{"BronzeArmor", () => 2},
+		{"IronArmor", () => 3},
+		{"SteelArmor", () => 4},
 		{"Greatshield", () => Dice.Roll(8)},
     };
 }

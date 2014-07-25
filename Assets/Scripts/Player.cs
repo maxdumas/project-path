@@ -6,7 +6,13 @@ using UnityEngine;
 /// </summary>
 public class Player : Actor
 {
-    public readonly List<Item> AllItems = new List<Item>(); 
+    public PathFollower PathFollower;
+    public List<Item> AllItems = new List<Item>();
+
+    void Start()
+    {
+        if (PathFollower == null) PathFollower = GetComponent<PathFollower>();
+    }
 
     /// <summary>
     /// Equip an item as well as add it to the inventory if it does not already exist there.
