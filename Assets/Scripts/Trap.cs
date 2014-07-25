@@ -3,7 +3,8 @@ using UnityEngine;
 
 public class Trap : PieceBehavior
 {
-    public float ChanceToDamage = 0.5f;
+	public float ChanceToDamage;
+	public float ChanceToBreak;
     public int Damage;
 
     protected override IEnumerator OnInteraction(float waitTime)
@@ -16,11 +17,28 @@ public class Trap : PieceBehavior
             // Display Message regarding trap hit
             text = "Trap hits successfully for " + Damage + " damage!";
         }
-        else text = "Trap misses!";
+        else text = "Trap misses damage!";
 
-        DisplayMessage(text);
-        Debug.Log(text);
+		DisplayMessage(text);
+		Debug.Log(text);
+		yield return new WaitForSeconds(waitTime);
 
+		if (ChanceToBreak != 0)
+		{
+			float brk = Random.Range(0f,1f);
+			if (brk > ChanceToBreak)
+			{
+
+				text = "Trap breaks your " + Player.MiscSlot.DisplayName;
+				Player.MiscSlot = null;
+			}
+			else text = "Trap misses break!";
+
+			DisplayMessage(text);
+			Debug.Log(text);
+		}
+        
         yield return new WaitForSeconds(waitTime);
+		Destroy(this.gameObject);
     }
 }

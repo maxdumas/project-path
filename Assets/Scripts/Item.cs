@@ -109,4 +109,21 @@ public class Item : MonoBehaviour
 		{"SteelArmor", () => 4},
 		{"Greatshield", () => Dice.Roll(8)},
     };
+
+	public static readonly Dictionary<string,string> ItemDescriptors = new Dictionary<string, string>
+	{
+		{"Dagger", "A small but sharp dagger. Fits neatly between the ribs. Roll: d4 Effect: All 4 become 5."},
+		{"ShortSword", "A short but sturdy sword. Perfect for an adventurer. Roll: d6 Effect: None."},
+		{"ShortSword1", "A short sword that's been sharpened well. Roll: d6+1 Effect: None."},
+		{"Spear", "A long soldier's spear. The shaft shows wear but holds true. Roll: d8 Effect: None."},
+		{"Spear1", "A soldier's spear fitted with a diamond-shaped head. Strong and sturdy. Roll: d8+1 Effect: None."},
+		{"Buckler", "A round, small parrying shield. Not designed to take full frontal blows. Roll: d4 Effect: None."},
+		{"Heater", "A plain knight's shield. The crest has worn off over time. Roll: d6 Effect: None."},
+		{"Greatshield", "A heavy square greatshield. A solid core can deflect the heaviest of blows. Roll: d8 Effect: None."},
+		{"LeatherArmor", "A worn and comfortable leather kit. Light and mobile, but not too sturdy. Effect: +1 Defense."},
+		{"BronzeArmor", "Shoddily crafted bronze armor. Good for a squire. Effect: +2 Defense."},
+		{"IronArmor", "A complete set of iron armor. Good for a travelling adventurer. Effect: +3 Defense."},
+		{"SteelArmor", "Shining steel armor. Even the scratches glint in the sunlight. Effect: +4 Defense."}
+	};
+	
 }

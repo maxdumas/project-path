@@ -102,7 +102,7 @@ public class Lair : PieceBehavior
             }
         }
 
-        Destroy(enemy.gameObject);
+        Destroy(this.gameObject);
     }
 
     protected override void OnInteractionEnd()
