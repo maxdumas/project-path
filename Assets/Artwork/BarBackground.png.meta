@@ -1,8 +1,8 @@
 fileFormatVersion: 2
-guid: 075371e8c16a4104589a4c139abaaf8d
+guid: 51e073aaf92086d458f457245e438a90
 TextureImporter:
   fileIDToRecycleName:
-    21300000: sword
+    21300000: BarBackground
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -25,10 +25,10 @@ TextureImporter:
   textureFormat: -1
   maxTextureSize: 1024
   textureSettings:
-    filterMode: 2
-    aniso: 1
+    filterMode: -1
+    aniso: -1
     mipBias: -1
-    wrapMode: 1
+    wrapMode: -1
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50

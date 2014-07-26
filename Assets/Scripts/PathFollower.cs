@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 public class PathFollower : MonoBehaviour
@@ -17,7 +18,7 @@ public class PathFollower : MonoBehaviour
     private const float PositionTolerance = 0.001f;
     private const float RotationTolerance = 0.1f;
 
-    private readonly Queue<Vector3> _path = new Queue<Vector3>();
+    private readonly Queue<Transform> _path = new Queue<Transform>();
     public FollowingState _state = FollowingState.Idle;
     private GameObject _lastSelection = null;
     private Vector3? _target = null;
@@ -36,9 +37,9 @@ public class PathFollower : MonoBehaviour
                 e.MoveNext();
                 while (true)
                 {
-                    var a = e.Current;
+                    var a = e.Current.position;
                     if (!e.MoveNext()) break;
-                    var b = e.Current;
+                    var b = e.Current.position;
                     Debug.DrawLine(a, b, Color.white);
                 }
             }
@@ -68,7 +69,8 @@ public class PathFollower : MonoBehaviour
                  selection.transform.gameObject != _lastSelection)
         // And don't reselect the last piece we selected
         {
-            _path.Enqueue(selection.transform.position);
+            selection.transform.gameObject.renderer.material.color = Color.blue;
+            _path.Enqueue(selection.transform);
             _lastSelection = selection.transform.gameObject;
             Debug.Log("Added new selection to path. There are now " + _path.Count + " nodes in the path.");
         }
@@ -86,6 +88,7 @@ public class PathFollower : MonoBehaviour
             Debug.LogWarning("This path is longer than the maximum allowed. Path is " + _path.Count +
                              " units long while maximum is " + MaxMoves + ".");
             _state = FollowingState.Idle;
+            AllowContinue = false;
         }
         else
         {
@@ -109,11 +112,7 @@ public class PathFollower : MonoBehaviour
             }
             else
             {
-                if (AllowContinue)
-                {
-                    _target = _path.Dequeue();
-                    Debug.Log("Next target is assigned: " + _target + ". " + _path.Count + " targets remaining.");
-                }
+                if (AllowContinue && _path.Count >= 1) _target = _path.Dequeue().position;
                 else _target = null;
             }
         }
@@ -129,6 +128,11 @@ public class PathFollower : MonoBehaviour
             {
                 AllowContinue = false;
                 _state = FollowingState.CreatingPath;
+
+                // Reset old path's colors
+                foreach (Transform t in _path)
+                    t.gameObject.renderer.material.color = Color.white;
+
                 _path.Clear();
             }
         }

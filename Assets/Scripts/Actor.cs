@@ -2,13 +2,20 @@
 using UnityEngine;
 using System.Collections;
 
-public class Actor : MonoBehaviour {
+public class Actor : MonoBehaviour
+{
+    public int MaxHealth;
     public int Health;
     public int BaseAttack;
     public int BaseDefense;
     public Item WeaponSlot;
     public Item ShieldSlot;
     public Item MiscSlot;
+
+    public virtual void Start()
+    {
+        if (MaxHealth < Health) MaxHealth = Health;
+    }
 
     /// <summary>
     /// Gets an offensive "roll" for the player by combining the attack

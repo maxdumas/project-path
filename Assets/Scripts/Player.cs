@@ -9,9 +9,11 @@ public class Player : Actor
     public PathFollower PathFollower;
     public List<Item> AllItems = new List<Item>();
 
-    void Start()
+    public override void Start()
     {
         if (PathFollower == null) PathFollower = GetComponent<PathFollower>();
+
+        base.Start();
     }
 
     /// <summary>

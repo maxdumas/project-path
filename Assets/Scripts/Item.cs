@@ -10,6 +10,7 @@ public class Item : MonoBehaviour
     public ItemType Type;
     public string AttackBehaviorName;
     public string DefenseBehaviorName;
+    public string DescriptorName;
 
     public Func<int> AttackModifier
     {
@@ -32,10 +33,24 @@ public class Item : MonoBehaviour
                 return _defenseModifier = DefenseBehaviors[DefenseBehaviorName];
             return _defenseModifier = DefaultBehavior;
         }
-    } 
+    }
+
+    public string ItemDescription
+    {
+        get
+        {
+            if (!string.IsNullOrEmpty(_itemDescription))
+                return _itemDescription;
+            if (ItemDescriptors.ContainsKey(DescriptorName))
+                _itemDescription = ItemDescriptors[DescriptorName];
+            else _itemDescription = "";
+            return _itemDescription;
+        }
+    }
 
     private Func<int> _attackModifier;
     private Func<int> _defenseModifier;
+    private string _itemDescription = null;
 
 	// Use this for initialization
 	void Start ()
