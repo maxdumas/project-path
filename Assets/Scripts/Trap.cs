@@ -23,7 +23,7 @@ public class Trap : PieceBehavior
 		Debug.Log(text);
 		yield return new WaitForSeconds(waitTime);
 
-		if (ChanceToBreak != 0)
+		if (ChanceToBreak != 0 && Player.MiscSlot != null)
 		{
 			float brk = Random.Range(0f,1f);
 			if (brk > ChanceToBreak)
