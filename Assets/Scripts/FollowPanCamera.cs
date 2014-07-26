@@ -2,7 +2,7 @@
 
 public class FollowPanCamera : MonoBehaviour
 {
-    public GameObject Target = null;
+    public Transform Target = null;
     public bool FollowTarget = false;
     /// <summary>
     /// The lerp coefficient for following the target.
@@ -24,7 +24,7 @@ public class FollowPanCamera : MonoBehaviour
 	void Update () {
 	    if (FollowTarget && Target != null) // Lazy-follow the target
 	    {
-	        if (!Target.transform.position.Equals(transform.position))
+	        if (!Target.position.Equals(transform.position))
 	        {
 	            float x = Mathf.SmoothStep(transform.position.x, Target.transform.position.x, FollowSpeed);
 	            float y = Mathf.SmoothStep(transform.position.y, Target.transform.position.y, FollowSpeed);
@@ -43,7 +43,10 @@ public class FollowPanCamera : MonoBehaviour
 	    {
 	        if (Input.GetMouseButtonUp(1)) _isPanning = false;
             Vector3 delta = new Vector3(-Input.GetAxis("Mouse X"), -Input.GetAxis("Mouse Y"));
-	        transform.Translate(delta / camera.orthographicSize);
+	        transform.Translate(delta / 20 * camera.orthographicSize);
 	    }
+
+	    if (Input.GetKeyUp(KeyCode.Space))
+	        FollowTarget = true;
 	}
 }
