@@ -69,7 +69,7 @@ public class PathFollower : MonoBehaviour
                  selection.transform.gameObject != _lastSelection)
         // And don't reselect the last piece we selected
         {
-            selection.transform.gameObject.renderer.material.color = Color.blue;
+            selection.transform.gameObject.renderer.material.color = Color.gray;
             _path.Enqueue(selection.transform);
             _lastSelection = selection.transform.gameObject;
             Debug.Log("Added new selection to path. There are now " + _path.Count + " nodes in the path.");

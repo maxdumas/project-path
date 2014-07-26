@@ -14,7 +14,16 @@ public class Potion : PieceBehavior
     protected override IEnumerator OnInteraction(float waitTime)
     {
         LogMessage("Player healed for 3!");
-        Player.Health += 3;
+
+        if (Player.Health + 3 > Player.MaxHealth)
+        {
+            Player.Health = Player.MaxHealth;
+        }
+        else 
+        {
+            Player.Health += 3;
+        }
+        
         yield return new WaitForSeconds(waitTime);
 		Destroy(this.gameObject);
     }
