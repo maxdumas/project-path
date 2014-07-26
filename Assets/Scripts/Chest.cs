@@ -21,7 +21,8 @@ public class Chest : PieceBehavior
 
         DisplayMessage(text);
         Debug.Log(text);
-
+        
         yield return new WaitForSeconds(waitTime);
+        Destroy(this.gameObject);
     }
 }

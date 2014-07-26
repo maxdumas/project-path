@@ -4,7 +4,8 @@ using System.Collections;
 
 public class Lair : PieceBehavior
 {
-    public Monster MonsterPrefab;
+    public Monster enemy; //MonsterPrefab;
+
 
     private StringBuilder _log;
 
@@ -17,7 +18,7 @@ public class Lair : PieceBehavior
     protected override IEnumerator OnInteraction(float waitTime)
     {
         //Spawn the monster
-        Monster enemy = (Monster) Instantiate(MonsterPrefab, transform.position, Quaternion.identity);
+        //Monster enemy = (Monster) Instantiate(MonsterPrefab, transform.position, Quaternion.identity);
 
         //Print start of combat
         LogMessage("Combat between Player (" + Player.Health + "HP) and a(n) " + enemy.name + " (" + enemy.Health +
@@ -102,6 +103,13 @@ public class Lair : PieceBehavior
             }
         }
 
+        if (enemy.MasterExists())
+        {
+            enemy.buff = true;
+            LogMessage("Debuff activated for " + enemy.Master.MonsterName + "!");
+            yield return new WaitForSeconds(waitTime);
+        }
+        Destroy(enemy.gameObject);
         Destroy(this.gameObject);
     }
 
