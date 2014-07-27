@@ -105,12 +105,12 @@ public class Lair : PieceBehavior
 
         if (enemy.MasterExists())
         {
-            enemy.buff = true;
+            enemy.Buff = true;
             LogMessage("Debuff activated for " + enemy.Master.MonsterName + "!");
             yield return new WaitForSeconds(waitTime);
         }
         Destroy(enemy.gameObject);
-        Destroy(this.gameObject);
+        Destroy(gameObject);
     }
 
     protected override void OnInteractionEnd()
@@ -123,5 +123,34 @@ public class Lair : PieceBehavior
     {
         _log.AppendLine(message);
         DisplayMessage(message);
+    }
+
+    private int _showInfoState = 0;
+    private Vector2 _clickLocation;
+
+    void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            if (transform.parent.collider2D.OverlapPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition)) && _showInfoState == 0)
+                _showInfoState = 1;
+            else _showInfoState = 0;
+        }
+        else if (Input.GetMouseButtonUp(0))
+        {
+            if (transform.parent.collider2D.OverlapPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition)) && _showInfoState == 1)
+            {
+                _showInfoState = 2;
+                _clickLocation = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
+            }
+            else _showInfoState = 0;
+        }
+    }
+
+    void OnGUI()
+    {
+        GUI.skin.box.wordWrap = true;
+        if(_showInfoState == 2)
+            GUI.Box(new Rect(_clickLocation.x - 50, _clickLocation.y - 120, 100, 100), enemy.MonsterDescription);
     }
 }
