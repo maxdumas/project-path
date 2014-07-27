@@ -11,7 +11,7 @@ public class Trap : PieceBehavior
     {
         string text;
         float roll = Random.Range(0f, 1f);
-        if (roll > ChanceToDamage)
+        if (roll < ChanceToDamage)
         {
             Player.Health -= Damage;
             // Display Message regarding trap hit
@@ -26,7 +26,7 @@ public class Trap : PieceBehavior
 		if (ChanceToBreak != 0 && Player.MiscSlot != null)
 		{
 			float brk = Random.Range(0f,1f);
-			if (brk > ChanceToBreak)
+			if (brk < ChanceToBreak)
 			{
 
 				text = "Trap breaks your " + Player.MiscSlot.DisplayName;

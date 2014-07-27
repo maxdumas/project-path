@@ -46,7 +46,7 @@ public class ActorInfoUI : MonoBehaviour
     {
         _selection = -1;
         GUI.skin.box.wordWrap = true;
-        var contents = new List<GUIContent>();
+        var contents = new List<GUIContent>();  
         if (Actor.WeaponSlot != null)
             contents.Add(new GUIContent(Actor.WeaponSlot.GetComponent<SpriteRenderer>().sprite.texture,
                 Actor.WeaponSlot.ItemDescription));
