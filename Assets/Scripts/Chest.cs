@@ -5,6 +5,11 @@ public class Chest : PieceBehavior
 {
     public Item ContainedItem;
 
+    protected override string Description
+    {
+        get { return "A chest holding the following item: " + ContainedItem.ItemDescription; }
+    }
+
     protected override IEnumerator OnInteraction(float waitTime)
     {
         string text;

@@ -4,33 +4,26 @@ using UnityEngine;
 
 public class Potion : PieceBehavior
 {
-    private StringBuilder _log;
-
-    protected override IEnumerator OnInteractionBegin()
+    protected override string Description
     {
-        _log = new StringBuilder("");
-        return base.OnInteractionBegin();
+        get { return "A potion! Heals 3 health."; }
     }
+
     protected override IEnumerator OnInteraction(float waitTime)
     {
         LogMessage("Player healed for 3!");
 
         if (Player.Health + 3 > Player.MaxHealth)
-        {
             Player.Health = Player.MaxHealth;
-        }
-        else 
-        {
-            Player.Health += 3;
-        }
+        else Player.Health += 3;
         
         yield return new WaitForSeconds(waitTime);
-		Destroy(this.gameObject);
+		Destroy(gameObject);
     }
 
     private void LogMessage(string message)
     {
-        _log.AppendLine(message);
+        Debug.Log(message);
         DisplayMessage(message);
     }
 }
