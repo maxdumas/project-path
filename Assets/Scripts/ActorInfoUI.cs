@@ -7,6 +7,7 @@ public class ActorInfoUI : MonoBehaviour
     public Actor Actor;
     public Texture2D HealthBarBackground;
     public Texture2D HealthBarForeground;
+    public Texture2D MiniBoxBackground;
 
     private int _lastSelection = -1;
     private int _selection = -1;
@@ -33,6 +34,7 @@ public class ActorInfoUI : MonoBehaviour
     {
         DisplayInventory();
         DisplayHealthBar();
+        DisplayScreen();
     }
 
     private void DisplayHealthBar()
@@ -63,5 +65,10 @@ public class ActorInfoUI : MonoBehaviour
         if (_lastSelection >= 0)
             GUI.Box(new Rect(80, _lastSelection * 65 + 10, 150f, 100f),
                 contents[_lastSelection].tooltip);
+    }
+
+    private void DisplayScreen()
+    {
+        GUI.Box(new Rect(0, Screen.height - 150, 300, 150), MiniBoxBackground);
     }
 }

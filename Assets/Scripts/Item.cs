@@ -110,8 +110,7 @@ public class Item : MonoBehaviour
 		{
 			int d = Dice.Roll(8);
 			return d+1;
-		}} 
-
+		}}
     };
 
     public static readonly Dictionary<string, Func<int>> DefenseBehaviors = new Dictionary<string, Func<int>>
