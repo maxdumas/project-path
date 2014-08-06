@@ -11,6 +11,8 @@ public class Monster : Actor
     public string DescriptorName;
     private string _monsterDescription = null;
 
+	public int NumAttacks;
+
 	void Update() {
 		if (Buff) {
             GetBuffModifier();

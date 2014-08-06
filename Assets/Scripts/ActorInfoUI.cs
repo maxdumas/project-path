@@ -34,7 +34,6 @@ public class ActorInfoUI : MonoBehaviour
     {
         DisplayInventory();
         DisplayHealthBar();
-        DisplayScreen();
     }
 
     private void DisplayHealthBar()
@@ -67,8 +66,4 @@ public class ActorInfoUI : MonoBehaviour
                 contents[_lastSelection].tooltip);
     }
 
-    private void DisplayScreen()
-    {
-        GUI.Box(new Rect(0, Screen.height - 150, 300, 150), MiniBoxBackground);
-    }
 }
