@@ -4,6 +4,7 @@ using System.Collections;
 
 public class Actor : MonoBehaviour
 {
+    public string DisplayName;
     public int MaxHealth;
     public int Health;
     public int BaseAttack;
@@ -15,6 +16,8 @@ public class Actor : MonoBehaviour
     public virtual void Start()
     {
         if (MaxHealth < Health) MaxHealth = Health;
+
+        if (string.IsNullOrEmpty(DisplayName)) DisplayName = name;
     }
 
     /// <summary>

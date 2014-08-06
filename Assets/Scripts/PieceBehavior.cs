@@ -7,15 +7,10 @@ public abstract class PieceBehavior : MonoBehaviour
     public TextMesh EventNotifier;
     public float WaitTime = 0.5f;
 
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+    private int _showInfoState = 0;
+    private Vector2 _clickLocation;
+
+    protected abstract string Description { get; }
 
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -51,5 +46,31 @@ public abstract class PieceBehavior : MonoBehaviour
         TextMesh message = (TextMesh)Instantiate(EventNotifier, transform.position + offset, Quaternion.identity);
         message.color = Color.red;
         message.text = text;
+    }
+
+    protected virtual void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            if (transform.parent.collider2D.OverlapPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition)) && _showInfoState == 0)
+                _showInfoState = 1;
+            else _showInfoState = 0;
+        }
+        else if (Input.GetMouseButtonUp(0))
+        {
+            if (transform.parent.collider2D.OverlapPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition)) && _showInfoState == 1)
+            {
+                _showInfoState = 2;
+                _clickLocation = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
+            }
+            else _showInfoState = 0;
+        }
+    }
+
+    protected virtual void OnGUI()
+    {
+        GUI.skin.box.wordWrap = true;
+        if (_showInfoState == 2)
+            GUI.Box(new Rect(_clickLocation.x - 75, _clickLocation.y - 170, 150, 150), Description);
     }
 }
