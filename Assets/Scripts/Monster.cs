@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public class Monster : Actor
 {
-<<<<<<< HEAD
+
 	public Monster Master;
 	public bool Buff = false;
     public string MonsterName;
@@ -32,8 +32,6 @@ public class Monster : Actor
         return !(Master == null);
     }
 
-=======
->>>>>>> 345946165b188acbc47b2693212afcac00585451
     public string MonsterDescription
     {
         get
@@ -46,8 +44,6 @@ public class Monster : Actor
             return _monsterDescription;
         }
     }
-
-    private string _monsterDescription = null;
 
     public readonly Dictionary<string, string> MonsterDescriptors = new Dictionary<string, string> 
     {

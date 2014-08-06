@@ -5,14 +5,12 @@ using System.Collections;
 public class Lair : PieceBehavior
 {
     public Monster enemy; //MonsterPrefab;
-<<<<<<< HEAD
 	public SpriteRenderer PlayerSpritePrefab;
 	public SpriteRenderer BackgroundPrefab;
     public CombatWindow combat;
 
     private StringBuilder _log;
-
-=======
+	
 
     private StringBuilder _log;
 
@@ -20,7 +18,6 @@ public class Lair : PieceBehavior
     {
         get { return enemy == null ? "" : "A lair with the following monster: " + enemy.MonsterDescription; }
     }
->>>>>>> 345946165b188acbc47b2693212afcac00585451
 
     protected override IEnumerator OnInteractionBegin()
     {
@@ -33,14 +30,14 @@ public class Lair : PieceBehavior
     {
         yield return new WaitForSeconds(waitTime);
 
-<<<<<<< HEAD
 		combat = (CombatWindow)Instantiate(combat,transform.position,Quaternion.identity);
 		combat.MonsterPrefab = this.enemy;
 		combat.player = Player;
 		combat.PlayerSpritePrefab = this.PlayerSpritePrefab;
 		combat.BackgroundPrefab = this.BackgroundPrefab;
         combat.Enable();
-=======
+
+		/*
         while (Player.Health > 0 && enemy.Health > 0)
         {
             int attackValue = Player.GetAttackValue();
@@ -117,6 +114,7 @@ public class Lair : PieceBehavior
                 LogMessage("You parry the blow!");
                 yield return new WaitForSeconds(waitTime);
             }
+
         }
 
 
@@ -129,7 +127,7 @@ public class Lair : PieceBehavior
         }
         Destroy(enemy.gameObject);
         Destroy(gameObject);
->>>>>>> 345946165b188acbc47b2693212afcac00585451
+        */
     }
 
     protected override void OnInteractionEnd()
@@ -143,7 +141,6 @@ public class Lair : PieceBehavior
         _log.AppendLine(message);
         DisplayMessage(message);
     }
-<<<<<<< HEAD
 
     private int _showInfoState = 0;
     private Vector2 _clickLocation;
