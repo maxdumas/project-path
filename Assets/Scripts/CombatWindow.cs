@@ -61,8 +61,12 @@ public class CombatWindow : MonoBehaviour
 
 			if (!IsMonsterDefending)
 			{
-				Debug.Log("Hit for 1! Enemy Health: " + enemy.Health);
+				Debug.Log("Hit for 1! Enemy Health: " + (enemy.Health-1));
 				enemy.Health -= player.GetAttackValue();
+			} 
+			else
+			{
+				Debug.Log("Monster blocks your attack!");
 			}
 		}
 		else if (Input.GetKey("down") && Time.time > NextPlayerCombat)
@@ -90,10 +94,13 @@ public class CombatWindow : MonoBehaviour
 				Debug.Log("Take damage for 1! Your Health: " + player.Health);
 				player.Health -= enemy.GetAttackValue();
 			}
+			else
+			{
+				Debug.Log("You block monster's attack!");
+			}
 		}
 		else if (MonsterCurrAttacks >= MonsterNumAttacks && Time.time > NextMonsterCombat)
 		{
-			Debug.Log("Monster is defending");
 			NextMonsterCombat = Time.time + MonsterCombatSpeed + MonsterPause;
 			MonsterAnimator.SetBool("defending",true);
 			MonsterCurrAttacks = 0;

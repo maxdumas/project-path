@@ -10,9 +10,6 @@ public class Lair : PieceBehavior
     public CombatWindow combat;
 
     private StringBuilder _log;
-	
-
-    private StringBuilder _log;
 
     protected override string Description
     {
@@ -170,7 +167,5 @@ public class Lair : PieceBehavior
         if(_showInfoState == 2)
             GUI.Box(new Rect(_clickLocation.x - 50, _clickLocation.y - 120, 100, 100), enemy.MonsterDescription);
     }
-
-=======
->>>>>>> 345946165b188acbc47b2693212afcac00585451
+	
 }

@@ -13,24 +13,7 @@ public class Monster : Actor
     private string _monsterDescription = null;
 
 	public int NumAttacks;
-
-	void Update() {
-		if (Buff) {
-            GetBuffModifier();
-            Buff = false;
-		}
-	}
-
-    public void GetBuffModifier()
-    {
-        if (!string.IsNullOrEmpty(MonsterName) && BuffBehaviors.ContainsKey(MonsterName))
-            BuffBehaviors[MonsterName](this);
-    }
-
-    public bool MasterExists()
-    {
-        return !(Master == null);
-    }
+	
 
     public string MonsterDescription
     {

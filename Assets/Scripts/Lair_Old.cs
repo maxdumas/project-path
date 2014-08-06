@@ -2,8 +2,8 @@ using System.Text;
 using UnityEngine;
 using System.Collections;
 
-public class Lair_Old : PieceBehavior
-{
+public class Lair_Old //: PieceBehavior
+{/*
     public Monster enemy; //MonsterPrefab;
     //public CombatWindow combat;
     
@@ -159,5 +159,5 @@ public class Lair_Old : PieceBehavior
         GUI.skin.box.wordWrap = true;
         if(_showInfoState == 2)
             GUI.Box(new Rect(_clickLocation.x - 50, _clickLocation.y - 120, 100, 100), enemy.MonsterDescription);
-    }
+    }*/
 }
