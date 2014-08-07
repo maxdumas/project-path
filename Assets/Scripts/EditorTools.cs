@@ -15,15 +15,15 @@ public class EditorTools : ScriptableObject
             Undo.RecordObject(t, "Snap to Hexagonal Coordinates");
             float x = t.position.x, y = t.position.y;
 
-            int r = Mathf.RoundToInt((Sqrt3*x - y)/(3f*PieceRadius));
-            int g = Mathf.RoundToInt((-Sqrt3*x - y)/(3f*PieceRadius));
+            int r = Mathf.RoundToInt((Sqrt3 * x - y) / (3f * PieceRadius));
+            int g = Mathf.RoundToInt((-Sqrt3 * x - y) / (3f * PieceRadius));
             int b = -(r + g);
 
             t.position = new Vector3(
-                Sqrt3*PieceRadius*(b/2f + r),
-                3f/2f*PieceRadius*b,
+                Sqrt3 * PieceRadius * (b / 2f + r),
+                1.4f * PieceRadius * b,
                 t.position.z
-                );
+            );
         }
     }
 }

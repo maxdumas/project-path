@@ -26,7 +26,7 @@ public class Lair : PieceBehavior
 
         //Print start of combat
         LogMessage("Combat between Player (" + Player.Health + "HP) and a(n) " + enemy.name + " (" + enemy.Health +
-                   "HP).");
+            "HP).");
         yield return new WaitForSeconds(waitTime);
 
         while (Player.Health > 0 && enemy.Health > 0)
@@ -107,7 +107,7 @@ public class Lair : PieceBehavior
             }
         }
 
-
+      
         ChildMonster e = enemy as ChildMonster;
         if (e != null && e.MasterExists())
         {
@@ -116,12 +116,13 @@ public class Lair : PieceBehavior
             yield return new WaitForSeconds(waitTime);
         }
         Destroy(enemy.gameObject);
-        Destroy(gameObject);
     }
 
     protected override void OnInteractionEnd()
     {
         Debug.Log(_log.ToString());
+        SendMessage("StartChangeLevel");
+        Destroy(gameObject);
         base.OnInteractionEnd();
     }
 
