@@ -132,7 +132,6 @@ public class CombatWindow : MonoBehaviour
 		MonsterNumAttacks = enemy.NumAttacks;
 		
 		PlayerAnimator = PlayerSprite.GetComponent<Animator>();
-		
 		MonsterAnimator = MonsterSprite.GetComponent<Animator>();
 
 		
