@@ -48,6 +48,11 @@ MonoBehaviour:
   WeaponSlot: {fileID: 11400000, guid: 4a4ac3e213d784c1aa5fd897602577a1, type: 2}
   ShieldSlot: {fileID: 0}
   MiscSlot: {fileID: 0}
+  Master: {fileID: 0}
+  Buff: 0
+  MonsterName: Tentacle
+  DescriptorName: 
+  NumAttacks: 0
 --- !u!212 &21200000
 SpriteRenderer:
   m_ObjectHideFlags: 1

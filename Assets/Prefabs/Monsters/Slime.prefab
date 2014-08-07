@@ -48,6 +48,11 @@ MonoBehaviour:
   WeaponSlot: {fileID: 11400000, guid: a79805a131233614baf2aed7f31b28a4, type: 2}
   ShieldSlot: {fileID: 0}
   MiscSlot: {fileID: 0}
+  Master: {fileID: 0}
+  Buff: 0
+  MonsterName: Slime
+  DescriptorName: Slime
+  NumAttacks: 0
 --- !u!212 &21200000
 SpriteRenderer:
   m_ObjectHideFlags: 1

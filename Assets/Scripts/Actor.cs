@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 using System.Collections;
 
@@ -28,9 +28,9 @@ public class Actor : MonoBehaviour
     public int GetAttackValue()
     {
         int attack = BaseAttack;
-        if (WeaponSlot != null) attack += WeaponSlot.AttackModifier();
-        if (ShieldSlot != null) attack += ShieldSlot.AttackModifier();
-        if (MiscSlot != null) attack += MiscSlot.AttackModifier();
+        //if (WeaponSlot != null) attack += WeaponSlot.AttackModifier();
+        //if (ShieldSlot != null) attack += ShieldSlot.AttackModifier();
+        //if (MiscSlot != null) attack += MiscSlot.AttackModifier();
         return attack;
     }
 

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 using System.Collections;
 
@@ -64,4 +64,5 @@ public class ActorInfoUI : MonoBehaviour
             GUI.Box(new Rect(80, _lastSelection * 65 + 10, 150f, 100f),
                 contents[_lastSelection].tooltip);
     }
+
 }

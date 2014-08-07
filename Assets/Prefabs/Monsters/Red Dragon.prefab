@@ -48,6 +48,11 @@ MonoBehaviour:
   WeaponSlot: {fileID: 11400000, guid: 12230d5693758b548b2351aa640afe58, type: 2}
   ShieldSlot: {fileID: 0}
   MiscSlot: {fileID: 0}
+  Master: {fileID: 0}
+  Buff: 0
+  MonsterName: RedWing
+  DescriptorName: 
+  NumAttacks: 0
 --- !u!212 &21200000
 SpriteRenderer:
   m_ObjectHideFlags: 1
