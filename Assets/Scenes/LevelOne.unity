@@ -992,6 +992,7 @@ MonoBehaviour:
   WeaponSlot: {fileID: 11400000, guid: 1fc496fb3e12045c082282c051fa67e3, type: 2}
   ShieldSlot: {fileID: 0}
   MiscSlot: {fileID: 0}
+  NumAttacks: 0
 --- !u!212 &484422157
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1269,6 +1270,7 @@ MonoBehaviour:
   WeaponSlot: {fileID: 11400000, guid: 1fc496fb3e12045c082282c051fa67e3, type: 2}
   ShieldSlot: {fileID: 0}
   MiscSlot: {fileID: 0}
+  NumAttacks: 0
 --- !u!212 &608773375
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1413,6 +1415,9 @@ MonoBehaviour:
   EventNotifier: {fileID: 10200000, guid: 777e7eaa7a54d0c48b4ce1aa5c971787, type: 2}
   WaitTime: .5
   enemy: {fileID: 1543490133}
+  PlayerSpritePrefab: {fileID: 21200000, guid: b3ab5958e531b4ad4b61c8d01c8507f6, type: 2}
+  BackgroundPrefab: {fileID: 21200000, guid: debfa8883a8e88446bea47734002ebb5, type: 2}
+  combat: {fileID: 11400000, guid: 62f84332f7ee98b4f89de3c5a79d1ea0, type: 2}
 --- !u!58 &654550731
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -2106,6 +2111,21 @@ Prefab:
       propertyPath: enemy
       value: 
       objectReference: {fileID: 1543490133}
+    - target: {fileID: 11400000, guid: d5edc62f03194ba46b4ed1661d6f2216, type: 2}
+      propertyPath: combat
+      value: 
+      objectReference: {fileID: 11400000, guid: 62f84332f7ee98b4f89de3c5a79d1ea0,
+        type: 2}
+    - target: {fileID: 11400000, guid: d5edc62f03194ba46b4ed1661d6f2216, type: 2}
+      propertyPath: PlayerSpritePrefab
+      value: 
+      objectReference: {fileID: 21200000, guid: b3ab5958e531b4ad4b61c8d01c8507f6,
+        type: 2}
+    - target: {fileID: 11400000, guid: d5edc62f03194ba46b4ed1661d6f2216, type: 2}
+      propertyPath: BackgroundPrefab
+      value: 
+      objectReference: {fileID: 21200000, guid: debfa8883a8e88446bea47734002ebb5,
+        type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: d5edc62f03194ba46b4ed1661d6f2216, type: 2}
   m_RootGameObject: {fileID: 654550727}
@@ -2860,6 +2880,9 @@ MonoBehaviour:
   EventNotifier: {fileID: 10200000, guid: 777e7eaa7a54d0c48b4ce1aa5c971787, type: 2}
   WaitTime: .5
   enemy: {fileID: 608773374}
+  PlayerSpritePrefab: {fileID: 0}
+  BackgroundPrefab: {fileID: 0}
+  combat: {fileID: 0}
 --- !u!58 &1358724362
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -3097,6 +3120,7 @@ MonoBehaviour:
   WeaponSlot: {fileID: 11400000, guid: a79805a131233614baf2aed7f31b28a4, type: 2}
   ShieldSlot: {fileID: 0}
   MiscSlot: {fileID: 0}
+  NumAttacks: 0
 --- !u!212 &1543490134
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -4293,6 +4317,9 @@ MonoBehaviour:
   EventNotifier: {fileID: 10200000, guid: 777e7eaa7a54d0c48b4ce1aa5c971787, type: 2}
   WaitTime: .5
   enemy: {fileID: 484422156}
+  PlayerSpritePrefab: {fileID: 0}
+  BackgroundPrefab: {fileID: 0}
+  combat: {fileID: 0}
 --- !u!58 &2011253654
 CircleCollider2D:
   m_ObjectHideFlags: 0

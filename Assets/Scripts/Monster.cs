@@ -5,6 +5,8 @@ using System.Collections.Generic;
 
 public class Monster : Actor
 {
+    public int NumAttacks;
+
     public string MonsterDescription
     {
         get
@@ -12,8 +14,9 @@ public class Monster : Actor
             if (!string.IsNullOrEmpty(_monsterDescription))
                 return _monsterDescription;
             if (MonsterDescriptors.ContainsKey(name))
-                _monsterDescription = MonsterDescriptors[name];
-            else _monsterDescription = "";
+                _monsterDescription = MonsterDescriptors [name];
+            else
+                _monsterDescription = "";
             return _monsterDescription;
         }
     }
