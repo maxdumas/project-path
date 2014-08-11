@@ -56,17 +56,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DisplayName: 
-  MaxHealth: 10
-  Health: 10
+  MaxHealth: 100
+  Health: 100
   BaseAttack: 1
   BaseDefense: 1
   WeaponSlot: {fileID: 11400000, guid: a79805a131233614baf2aed7f31b28a4, type: 2}
   ShieldSlot: {fileID: 0}
   MiscSlot: {fileID: 0}
-  Master: {fileID: 0}
-  Buff: 0
-  MonsterName: Slime
-  DescriptorName: Slime
+  IsPoisoned: 0
+  TakingPoisonFadeValue: 0
+  TakingPoisonTickSpeed: 0
+  IsPoisonous: 0
+  PoisonChance: 0
+  PoisonDamageValue: 0
+  PoisonTickSpeed: 0
   NumAttacks: 2
 --- !u!212 &21200000
 SpriteRenderer:

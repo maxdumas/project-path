@@ -20,7 +20,7 @@ public class CombatWindow : MonoBehaviour
     private SpriteRenderer MonsterSprite;
 	private SpriteRenderer PlayerSprite;
     private SpriteRenderer Background;
-	private Monster enemy;
+	private Monster monster;
 
 	private Animator PlayerAnimator;
 	private Animator MonsterAnimator;
@@ -39,6 +39,9 @@ public class CombatWindow : MonoBehaviour
 	private bool IsPlayerDefending = false;
 	private bool IsMonsterDefending = false;
 
+	//Poison
+	private float PlayerNextPoisonTick = 0.0f;
+	private float MonsterNextPoisonTick = 0.0f;
 
 	void Update()
 	{
@@ -47,10 +50,17 @@ public class CombatWindow : MonoBehaviour
 			Debug.Log("You die!");
 			DestroyWindow();
 
-		} else if (enemy.Health <= 0) {
-			Debug.Log("Enemy dies!");
+		} else if (monster.Health <= 0) {
+			Debug.Log("monster dies!");
 			DestroyWindow();
 		}
+
+		if (player.IsPoisoned || monster.IsPoisoned)
+		{
+			DistributePoisonDamage();
+		}
+
+
 
 
 		if(Input.GetKey("up") && Time.time > NextPlayerCombat) 
@@ -61,8 +71,20 @@ public class CombatWindow : MonoBehaviour
 
 			if (!IsMonsterDefending)
 			{
-				Debug.Log("Hit for 1! Enemy Health: " + (enemy.Health-1));
-				enemy.Health -= player.GetAttackValue();
+				Debug.Log("Hit for 1! monster Health: " + (monster.Health-1));
+				monster.Health -= player.GetAttackValue();
+
+
+				//Poison
+				float roll = Random.Range(0f,1f);
+				if (player.IsPoisonous && player.PoisonChance > roll)
+				{
+					Debug.Log("Monster is poisoned for " + player.PoisonDamageValue + " damage.");
+					monster.TakingPoisonFadeValue = player.PoisonDamageValue;
+					monster.TakingPoisonTickSpeed = player.PoisonTickSpeed;
+					monster.IsPoisoned = true;		
+				}
+			
 			} 
 			else
 			{
@@ -82,6 +104,8 @@ public class CombatWindow : MonoBehaviour
 			IsPlayerDefending = false;
 		}
 
+
+		//Monster Attack
 		if (MonsterCurrAttacks < MonsterNumAttacks && Time.time > NextMonsterCombat)
 		{
 			NextMonsterCombat = Time.time + MonsterCombatSpeed + MonsterPause;
@@ -92,7 +116,16 @@ public class CombatWindow : MonoBehaviour
 			if (!IsPlayerDefending) 
 			{
 				Debug.Log("Take damage for 1! Your Health: " + player.Health);
-				player.Health -= enemy.GetAttackValue();
+				player.Health -= monster.GetAttackValue();
+
+				float roll = Random.Range(0f,1f);
+				if (monster.IsPoisonous && monster.PoisonChance > roll)
+				{
+					Debug.Log("Monster is poisoned for " + monster.PoisonDamageValue + " damage");
+					player.TakingPoisonFadeValue = monster.PoisonDamageValue;
+					player.TakingPoisonTickSpeed = monster.PoisonTickSpeed;
+					player.IsPoisoned = true;		
+				}
 			}
 			else
 			{
@@ -117,7 +150,7 @@ public class CombatWindow : MonoBehaviour
 
     public void Enable()
     {
-		enemy = (Monster)Instantiate(MonsterPrefab, transform.position, Quaternion.identity);
+		monster = (Monster)Instantiate(MonsterPrefab, transform.position, Quaternion.identity);
 		Background = (SpriteRenderer)Instantiate(BackgroundPrefab, transform.position, Quaternion.identity);
 		PlayerSprite = (SpriteRenderer)Instantiate(PlayerSpritePrefab, transform.position, Quaternion.identity);
 		MonsterSprite = (SpriteRenderer)Instantiate(MonsterPrefab.GetComponent<SpriteRenderer>(),transform.position,Quaternion.identity);
@@ -129,7 +162,7 @@ public class CombatWindow : MonoBehaviour
 		PlayerSprite.enabled = false;
 		MonsterSprite.enabled = false;
 		
-		MonsterNumAttacks = enemy.NumAttacks;
+		MonsterNumAttacks = monster.NumAttacks;
 		
 		PlayerAnimator = PlayerSprite.GetComponent<Animator>();
 		MonsterAnimator = MonsterSprite.GetComponent<Animator>();
@@ -157,13 +190,56 @@ public class CombatWindow : MonoBehaviour
 	public void DestroyWindow()
 	{
 
-		Destroy(enemy);
+		Destroy(monster);
 		Destroy(PlayerSprite);
 		Destroy(MonsterSprite);
 		Destroy(Background);
 		Destroy(this);
 	}
 
-    //public void 
+    public void DistributePoisonDamage()
+	{
+		//Distribute poison damage to Player
+		if (player.IsPoisoned && Time.time > PlayerNextPoisonTick)
+		{
+			PlayerNextPoisonTick = Time.time + player.TakingPoisonTickSpeed;
+			
+			Debug.Log("Player takes " + player.TakingPoisonFadeValue + " poison damage!");
+			player.Health -= player.TakingPoisonFadeValue;
+			
+			
+			
+			if (player.TakingPoisonFadeValue <= 1)
+			{
+				player.IsPoisoned = false;
+				player.TakingPoisonFadeValue = 0;
+				player.TakingPoisonTickSpeed = 0;
+				Debug.Log("Player is no longer poisoned.");
+			}
+			
+			player.TakingPoisonFadeValue = player.TakingPoisonFadeValue / 2;
+		}
+		
+		//Distribute poison damage to Monster
+		if (monster.IsPoisoned && Time.time > MonsterNextPoisonTick)
+		{
+			MonsterNextPoisonTick = Time.time + monster.TakingPoisonTickSpeed;
+			
+			Debug.Log("Monster takes " + monster.TakingPoisonFadeValue + " poison damage!");
+			monster.Health -= monster.TakingPoisonFadeValue;
+			
+			
+			
+			if (monster.TakingPoisonFadeValue <= 0)
+			{
+				monster.IsPoisoned = false;
+				monster.TakingPoisonFadeValue = 0;
+				monster.TakingPoisonTickSpeed = 0;
+				Debug.Log("Monster is no longer poisoned.");
+			}
+			
+			monster.TakingPoisonFadeValue = monster.TakingPoisonFadeValue / 2;
+		}
+	}
 }
 

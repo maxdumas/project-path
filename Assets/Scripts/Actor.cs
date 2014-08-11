@@ -13,6 +13,19 @@ public class Actor : MonoBehaviour
     public Item ShieldSlot;
     public Item MiscSlot;
 
+	public bool IsPoisoned;
+	public int TakingPoisonFadeValue;
+	public float TakingPoisonTickSpeed;
+	
+
+	public bool IsPoisonous;
+	public float PoisonChance;
+	public int PoisonDamageValue;
+	public float PoisonTickSpeed;
+
+
+
+
     public virtual void Start()
     {
         if (MaxHealth < Health) MaxHealth = Health;

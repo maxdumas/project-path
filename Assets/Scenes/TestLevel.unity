@@ -128,7 +128,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11400002, guid: d315dea1efdfb204f9cb19321d00c169, type: 2}
       propertyPath: Health
-      value: 10
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 11400000, guid: d315dea1efdfb204f9cb19321d00c169, type: 2}
       propertyPath: MaxMoves
@@ -147,6 +147,26 @@ Prefab:
     - target: {fileID: 11400002, guid: d315dea1efdfb204f9cb19321d00c169, type: 2}
       propertyPath: PathFollower
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400002, guid: d315dea1efdfb204f9cb19321d00c169, type: 2}
+      propertyPath: IsPoisonous
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400002, guid: d315dea1efdfb204f9cb19321d00c169, type: 2}
+      propertyPath: PoisonChance
+      value: .200000003
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400002, guid: d315dea1efdfb204f9cb19321d00c169, type: 2}
+      propertyPath: PoisonDamageValue
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400002, guid: d315dea1efdfb204f9cb19321d00c169, type: 2}
+      propertyPath: PoisonTickSpeed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400002, guid: d315dea1efdfb204f9cb19321d00c169, type: 2}
+      propertyPath: MaxHealth
+      value: 100
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: d315dea1efdfb204f9cb19321d00c169, type: 2}
@@ -634,13 +654,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DisplayName: 
-  MaxHealth: 0
-  Health: 10
+  MaxHealth: 100
+  Health: 100
   BaseAttack: 1
   BaseDefense: 1
   WeaponSlot: {fileID: 11400000, guid: 4a4ac3e213d784c1aa5fd897602577a1, type: 2}
   ShieldSlot: {fileID: 11400000, guid: d96ed380f29ce4645abfce0b9bebab78, type: 2}
   MiscSlot: {fileID: 11400000, guid: 6990d39fd9a6749e8ba1395cddaae0d8, type: 2}
+  IsPoisoned: 0
+  TakingPoisonFadeValue: 0
+  TakingPoisonTickSpeed: 0
+  IsPoisonous: 1
+  PoisonChance: .200000003
+  PoisonDamageValue: 3
+  PoisonTickSpeed: 1
   PathFollower: {fileID: 0}
   AllItems: []
 --- !u!50 &1634848043
