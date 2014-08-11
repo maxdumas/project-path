@@ -54,6 +54,7 @@ public class CombatWindow : MonoBehaviour
 			Debug.Log("monster dies!");
 			DestroyWindow();
 		}
+	
 
 		if (player.IsPoisoned || monster.IsPoisoned)
 		{
@@ -75,7 +76,11 @@ public class CombatWindow : MonoBehaviour
 				monster.Health -= player.GetAttackValue();
 
 
-				//Poison
+				// Poison Chance
+				//
+				// Each attack, the actor has a chance to poison IF the actor IsPoisonous. 
+				// If the other actor is already poisoned and it procs, the fade damage value is refreshed.
+	
 				float roll = Random.Range(0f,1f);
 				if (player.IsPoisonous && player.PoisonChance > roll)
 				{
@@ -196,6 +201,15 @@ public class CombatWindow : MonoBehaviour
 		Destroy(Background);
 		Destroy(this);
 	}
+
+
+	// Poison Damage
+	//
+	// Poison damage works as a "fading" poison. When an actor takes poison damage, the fade damage value is divided in half.
+	// Once the fade damage value is below 1, the actor is no longer poisoned.
+	//
+	// For example: A player becomes poisoned. The first tick does 4 damage, the second does 2, the third does 1.
+	//              After that, the player is no longer poisoned.
 
     public void DistributePoisonDamage()
 	{
