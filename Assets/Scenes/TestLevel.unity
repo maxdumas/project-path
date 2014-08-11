@@ -147,7 +147,7 @@ Prefab:
     - target: {fileID: 11400002, guid: d315dea1efdfb204f9cb19321d00c169, type: 2}
       propertyPath: PathFollower
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1634848037}
     - target: {fileID: 11400002, guid: d315dea1efdfb204f9cb19321d00c169, type: 2}
       propertyPath: IsPoisonous
       value: 1
@@ -158,11 +158,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11400002, guid: d315dea1efdfb204f9cb19321d00c169, type: 2}
       propertyPath: PoisonDamageValue
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 11400002, guid: d315dea1efdfb204f9cb19321d00c169, type: 2}
       propertyPath: PoisonTickSpeed
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 11400002, guid: d315dea1efdfb204f9cb19321d00c169, type: 2}
       propertyPath: MaxHealth
@@ -666,9 +666,9 @@ MonoBehaviour:
   TakingPoisonTickSpeed: 0
   IsPoisonous: 1
   PoisonChance: .200000003
-  PoisonDamageValue: 3
-  PoisonTickSpeed: 1
-  PathFollower: {fileID: 0}
+  PoisonDamageValue: 4
+  PoisonTickSpeed: 3
+  PathFollower: {fileID: 1634848037}
   AllItems: []
 --- !u!50 &1634848043
 Rigidbody2D:

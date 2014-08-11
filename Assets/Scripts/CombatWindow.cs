@@ -244,7 +244,7 @@ public class CombatWindow : MonoBehaviour
 			
 			
 			
-			if (monster.TakingPoisonFadeValue <= 0)
+			if (monster.TakingPoisonFadeValue <= 1)
 			{
 				monster.IsPoisoned = false;
 				monster.TakingPoisonFadeValue = 0;
