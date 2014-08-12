@@ -13,15 +13,20 @@ public class Actor : MonoBehaviour
     public Item ShieldSlot;
     public Item MiscSlot;
 
+	//While Poisoned Values
 	public bool IsPoisoned;
 	public int TakingPoisonFadeValue;
 	public float TakingPoisonTickSpeed;
 	
-
+	//Poison Attack Values
 	public bool IsPoisonous;
 	public float PoisonChance;
 	public int PoisonDamageValue;
 	public float PoisonTickSpeed;
+
+	//Accuracy and Evasion Values
+	public int Accuracy;
+	public int Evasion;
 
 
 

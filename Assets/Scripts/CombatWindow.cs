@@ -39,9 +39,17 @@ public class CombatWindow : MonoBehaviour
 	private bool IsPlayerDefending = false;
 	private bool IsMonsterDefending = false;
 
+
+	//Attack Chances based on Accuracy and Evasion
+	private float PlayerAttackChance;
+	private float MonsterAttackChance;
+
 	//Poison
 	private float PlayerNextPoisonTick = 0.0f;
 	private float MonsterNextPoisonTick = 0.0f;
+
+
+	private float roll;
 
 	void Update()
 	{
@@ -56,54 +64,51 @@ public class CombatWindow : MonoBehaviour
 		}
 	
 
-		if (player.IsPoisoned || monster.IsPoisoned)
-		{
+		if (player.IsPoisoned || monster.IsPoisoned) {
 			DistributePoisonDamage();
 		}
 
 
 
 
-		if(Input.GetKey("up") && Time.time > NextPlayerCombat) 
-		{
+		if(Input.GetKey("up") && Time.time > NextPlayerCombat) {
 			NextPlayerCombat = Time.time + PlayerCombatSpeed + PlayerPause;
 			PlayerAnimator.SetBool("attacking",true);
 			IsPlayerDefending = false;
 
-			if (!IsMonsterDefending)
-			{
-				Debug.Log("Hit for 1! monster Health: " + (monster.Health-1));
-				monster.Health -= player.GetAttackValue();
+			if (!IsMonsterDefending) {
+
+				roll = Random.Range(0f,1f); 
+
+				if (PlayerAttackChance > roll) {
+					Debug.Log("Hit for 1! monster Health: " + (monster.Health-1));
+					monster.Health -= player.GetAttackValue();
 
 
-				// Poison Chance
-				//
-				// Each attack, the actor has a chance to poison IF the actor IsPoisonous. 
-				// If the other actor is already poisoned and it procs, the fade damage value is refreshed.
-	
-				float roll = Random.Range(0f,1f);
-				if (player.IsPoisonous && player.PoisonChance > roll)
-				{
-					Debug.Log("Monster is poisoned for " + player.PoisonDamageValue + " damage.");
-					monster.TakingPoisonFadeValue = player.PoisonDamageValue;
-					monster.TakingPoisonTickSpeed = player.PoisonTickSpeed;
-					monster.IsPoisoned = true;		
+					// Poison Chance
+					//
+					// Each attack, the actor has a chance to poison IF the actor IsPoisonous. 
+					// If the other actor is already poisoned and it procs, the fade damage value is refreshed.
+		
+					roll = Random.Range(0f,1f);
+					if (player.IsPoisonous && player.PoisonChance > roll) {
+						Debug.Log("Monster is poisoned for " + player.PoisonDamageValue + " damage.");
+						monster.TakingPoisonFadeValue = player.PoisonDamageValue;
+						monster.TakingPoisonTickSpeed = player.PoisonTickSpeed;
+						monster.IsPoisoned = true;		
+					}
+				} else {
+					Debug.Log("Player misses.");
 				}
 			
-			} 
-			else
-			{
+			} else {
 				Debug.Log("Monster blocks your attack!");
 			}
-		}
-		else if (Input.GetKey("down") && Time.time > NextPlayerCombat)
-		{
+		} else if (Input.GetKey("down") && Time.time > NextPlayerCombat) {
 			NextPlayerCombat = Time.time + PlayerCombatSpeed + PlayerPause;
 			PlayerAnimator.SetBool("defending",true);
 			IsPlayerDefending = true;
-		} 
-		else if (Time.time > NextPlayerCombat - PlayerPause) 
-		{
+		} else if (Time.time > NextPlayerCombat - PlayerPause) {
 			PlayerAnimator.SetBool("attacking",false);
 			PlayerAnimator.SetBool("defending",false);
 			IsPlayerDefending = false;
@@ -111,41 +116,43 @@ public class CombatWindow : MonoBehaviour
 
 
 		//Monster Attack
-		if (MonsterCurrAttacks < MonsterNumAttacks && Time.time > NextMonsterCombat)
-		{
+		if (MonsterCurrAttacks < MonsterNumAttacks && Time.time > NextMonsterCombat) {
+
 			NextMonsterCombat = Time.time + MonsterCombatSpeed + MonsterPause;
 			MonsterAnimator.SetBool("attacking",true);
 			IsMonsterDefending = false;
 			MonsterCurrAttacks += 1;
 
-			if (!IsPlayerDefending) 
-			{
-				Debug.Log("Take damage for 1! Your Health: " + player.Health);
-				player.Health -= monster.GetAttackValue();
+			if (!IsPlayerDefending) {
 
-				float roll = Random.Range(0f,1f);
-				if (monster.IsPoisonous && monster.PoisonChance > roll)
-				{
-					Debug.Log("Monster is poisoned for " + monster.PoisonDamageValue + " damage");
-					player.TakingPoisonFadeValue = monster.PoisonDamageValue;
-					player.TakingPoisonTickSpeed = monster.PoisonTickSpeed;
-					player.IsPoisoned = true;		
+				roll = Random.Range(0f,1f);
+
+				if (MonsterAttackChance > roll) {
+
+					Debug.Log("Take damage for 1! Your Health: " + player.Health);
+					player.Health -= monster.GetAttackValue();
+
+					roll = Random.Range(0f,1f);
+					if (monster.IsPoisonous && monster.PoisonChance > roll) {
+						Debug.Log("Monster is poisoned for " + monster.PoisonDamageValue + " damage");
+						player.TakingPoisonFadeValue = monster.PoisonDamageValue;
+						player.TakingPoisonTickSpeed = monster.PoisonTickSpeed;
+						player.IsPoisoned = true;		
+					}
+
+				} else {
+					Debug.Log("Monster misses.");
 				}
-			}
-			else
-			{
+
+			} else {
 				Debug.Log("You block monster's attack!");
 			}
-		}
-		else if (MonsterCurrAttacks >= MonsterNumAttacks && Time.time > NextMonsterCombat)
-		{
+		} else if (MonsterCurrAttacks >= MonsterNumAttacks && Time.time > NextMonsterCombat) {
 			NextMonsterCombat = Time.time + MonsterCombatSpeed + MonsterPause;
 			MonsterAnimator.SetBool("defending",true);
 			MonsterCurrAttacks = 0;
 			IsMonsterDefending = true;
-		}
-		else if (Time.time > NextMonsterCombat - MonsterPause)
-		{
+		} else if (Time.time > NextMonsterCombat - MonsterPause) {
 			MonsterAnimator.SetBool("attacking",false);
 			MonsterAnimator.SetBool("defending",false);
 			IsMonsterDefending = false;
@@ -172,7 +179,8 @@ public class CombatWindow : MonoBehaviour
 		PlayerAnimator = PlayerSprite.GetComponent<Animator>();
 		MonsterAnimator = MonsterSprite.GetComponent<Animator>();
 
-		
+
+		//Set up visuals
 		Vector3 pos = new Vector3(player.transform.position.x, player.transform.position.y, player.transform.position.z);
 
         Background.transform.position = pos;
@@ -190,6 +198,17 @@ public class CombatWindow : MonoBehaviour
         MonsterSprite.transform.position = new Vector3(player.transform.position.x + 2.6f, player.transform.position.y - 1.1f, player.transform.position.z);
         MonsterSprite.enabled = true;
         MonsterSprite.sortingLayerName = "Midground";
+
+
+		//
+		Debug.Log("Player Accuracy / Evasion: " + player.Accuracy + " " + player.Evasion);
+		Debug.Log("Monster Accuracy / Evasion: " + monster.Accuracy + " " + monster.Evasion);
+
+		//Set Initial Attack Chances
+		PlayerAttackChance = (float) player.Accuracy / (float) monster.Evasion;
+		Debug.Log("Player Attack Chance = " + PlayerAttackChance);
+		MonsterAttackChance = (float) monster.Accuracy / (float) player.Evasion;
+		Debug.Log("Monster Attack Chance = " + MonsterAttackChance);
     }
 
 	public void DestroyWindow()
@@ -214,8 +233,8 @@ public class CombatWindow : MonoBehaviour
     public void DistributePoisonDamage()
 	{
 		//Distribute poison damage to Player
-		if (player.IsPoisoned && Time.time > PlayerNextPoisonTick)
-		{
+		if (player.IsPoisoned && Time.time > PlayerNextPoisonTick) { 
+
 			PlayerNextPoisonTick = Time.time + player.TakingPoisonTickSpeed;
 			
 			Debug.Log("Player takes " + player.TakingPoisonFadeValue + " poison damage!");
@@ -223,8 +242,7 @@ public class CombatWindow : MonoBehaviour
 			
 			
 			
-			if (player.TakingPoisonFadeValue <= 1)
-			{
+			if (player.TakingPoisonFadeValue <= 1) {
 				player.IsPoisoned = false;
 				player.TakingPoisonFadeValue = 0;
 				player.TakingPoisonTickSpeed = 0;
@@ -235,8 +253,8 @@ public class CombatWindow : MonoBehaviour
 		}
 		
 		//Distribute poison damage to Monster
-		if (monster.IsPoisoned && Time.time > MonsterNextPoisonTick)
-		{
+		if (monster.IsPoisoned && Time.time > MonsterNextPoisonTick) {
+
 			MonsterNextPoisonTick = Time.time + monster.TakingPoisonTickSpeed;
 			
 			Debug.Log("Monster takes " + monster.TakingPoisonFadeValue + " poison damage!");
@@ -244,8 +262,7 @@ public class CombatWindow : MonoBehaviour
 			
 			
 			
-			if (monster.TakingPoisonFadeValue <= 1)
-			{
+			if (monster.TakingPoisonFadeValue <= 1) {
 				monster.IsPoisoned = false;
 				monster.TakingPoisonFadeValue = 0;
 				monster.TakingPoisonTickSpeed = 0;
