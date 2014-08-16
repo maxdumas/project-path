@@ -66,10 +66,16 @@ MonoBehaviour:
   IsPoisoned: 0
   TakingPoisonFadeValue: 0
   TakingPoisonTickSpeed: 0
-  IsPoisonous: 0
-  PoisonChance: 0
-  PoisonDamageValue: 0
-  PoisonTickSpeed: 0
+  IsPoisonous: 1
+  PoisonChance: 1
+  PoisonDamageValue: 2
+  PoisonTickSpeed: 3
+  Accuracy: 100
+  Evasion: 100
+  IsBlinded: 0
+  IsBlinding: 1
+  BlindChance: 1
+  BlindAttackLength: 5
   NumAttacks: 2
 --- !u!212 &21200000
 SpriteRenderer:

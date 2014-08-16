@@ -10,12 +10,18 @@
 using System.Text;
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+
 public class CombatWindow : MonoBehaviour
 {
     public Player player;
     public Monster MonsterPrefab;
 	public SpriteRenderer PlayerSpritePrefab;
 	public SpriteRenderer BackgroundPrefab;
+
+	public SpriteRenderer PoisonDebuff;
+	public SpriteRenderer BlindDebuff;
+
 
     private SpriteRenderer MonsterSprite;
 	private SpriteRenderer PlayerSprite;
@@ -25,7 +31,7 @@ public class CombatWindow : MonoBehaviour
 	private Animator PlayerAnimator;
 	private Animator MonsterAnimator;
 
-	private float PlayerCombatSpeed = 1.0f;
+	private float PlayerCombatSpeed = 0.5f;
 	private float NextPlayerCombat = 0.0f;
 	private float PlayerPause = 0.1f;
 
@@ -48,8 +54,20 @@ public class CombatWindow : MonoBehaviour
 	private float PlayerNextPoisonTick = 0.0f;
 	private float MonsterNextPoisonTick = 0.0f;
 
+	//Blind
+	private float PlayerBlindLength = 0.0f;
+	private float MonsterBlindLength = 0.0f;
+	
 
 	private float roll;
+
+	//private List<SpriteRenderer> PlayerBuffs = new List<SpriteRenderer>();
+	//private List<SpriteRenderer> MonsterBuffs = new List<SpriteRenderer>();
+
+	private Dictionary<string,SpriteRenderer> PlayerBuffs;// = new Dictionary<string,SpriteRenderer>();
+	private Dictionary<string,SpriteRenderer> MonsterBuffs;// = new Dictionary<string,SpriteRenderer>();
+
+	private bool BuffUpdate;
 
 	void Update()
 	{
@@ -62,13 +80,37 @@ public class CombatWindow : MonoBehaviour
 			Debug.Log("monster dies!");
 			DestroyWindow();
 		}
+
+		//Display Debuffs and Buffs
+
+
+
+		//Blind 
+		if (Time.time > PlayerBlindLength && PlayerBlindLength > 0) {
+			PlayerAttackChance = (float) player.Accuracy / (float) monster.Evasion;
+			player.IsBlinded = false;
+			PlayerBlindLength = 0.0f;
+			BuffUpdate = true;
+			Debug.Log("Player is no longer blinded.");
+		} 
+
+		if (Time.time > MonsterBlindLength && MonsterBlindLength > 0) {
+			MonsterAttackChance = (float) monster.Accuracy / (float) player.Evasion;
+			monster.IsBlinded = false;
+			MonsterBlindLength = 0.0f;
+			BuffUpdate = true;
+			Debug.Log("Monster is no longer blinded.");
+		}
 	
 
+		//Poison
 		if (player.IsPoisoned || monster.IsPoisoned) {
 			DistributePoisonDamage();
 		}
 
-
+		if (BuffUpdate) {
+			DisplayBuffs();
+		}
 
 
 		if(Input.GetKey("up") && Time.time > NextPlayerCombat) {
@@ -92,15 +134,36 @@ public class CombatWindow : MonoBehaviour
 		
 					roll = Random.Range(0f,1f);
 					if (player.IsPoisonous && player.PoisonChance > roll) {
+						BuffUpdate = true;
 						Debug.Log("Monster is poisoned for " + player.PoisonDamageValue + " damage.");
 						monster.TakingPoisonFadeValue = player.PoisonDamageValue;
 						monster.TakingPoisonTickSpeed = player.PoisonTickSpeed;
 						monster.IsPoisoned = true;		
 					}
+
+					// Blind Chance
+					//
+					// Each attack, the actor has a chance to poison IF the actor IsBlinding.
+					// If the other actor is already blinded and it procs, the blind length is refreshed.
+					roll = Random.Range(0f,1f);
+					if (player.IsBlinding && player.BlindChance > roll) 
+					{
+						if(!monster.IsBlinded) {
+							BuffUpdate = true;
+							Debug.Log("Monster is blinded! Accuracy cut in half for " + player.BlindAttackLength + " seconds.");
+							MonsterAttackChance = MonsterAttackChance / 2.0f;
+							MonsterBlindLength = Time.time + player.BlindAttackLength;
+							monster.IsBlinded = true;
+						} else {
+							BuffUpdate = true;
+							Debug.Log("Monster is blinded! Accuracy cut in half for " + player.BlindAttackLength + " seconds.");
+							MonsterBlindLength = Time.time + player.BlindAttackLength;
+						}
+					} 
+
 				} else {
 					Debug.Log("Player misses.");
-				}
-			
+				}		
 			} else {
 				Debug.Log("Monster blocks your attack!");
 			}
@@ -129,16 +192,36 @@ public class CombatWindow : MonoBehaviour
 
 				if (MonsterAttackChance > roll) {
 
+
 					Debug.Log("Take damage for 1! Your Health: " + player.Health);
 					player.Health -= monster.GetAttackValue();
 
+					//Poison
 					roll = Random.Range(0f,1f);
 					if (monster.IsPoisonous && monster.PoisonChance > roll) {
+						BuffUpdate = true;
 						Debug.Log("Monster is poisoned for " + monster.PoisonDamageValue + " damage");
 						player.TakingPoisonFadeValue = monster.PoisonDamageValue;
 						player.TakingPoisonTickSpeed = monster.PoisonTickSpeed;
 						player.IsPoisoned = true;		
 					}
+
+					//Blind
+					roll = Random.Range(0f,1f);
+					if (monster.IsBlinding && monster.BlindChance > roll) 
+					{
+						if(!player.IsBlinded) {
+							BuffUpdate = true;
+							Debug.Log("Player is blinded! Accuracy cut in half for " + monster.BlindAttackLength + " seconds.");
+							PlayerAttackChance = PlayerAttackChance / 2.0f;
+							PlayerBlindLength = Time.time + monster.BlindAttackLength;
+							player.IsBlinded = true;
+						} else {
+							BuffUpdate = true;
+							Debug.Log("Player is blinded! Accuracy cut in half for " + monster.BlindAttackLength + " seconds.");
+							PlayerBlindLength = Time.time + monster.BlindAttackLength;
+						}
+					} 
 
 				} else {
 					Debug.Log("Monster misses.");
@@ -166,7 +249,17 @@ public class CombatWindow : MonoBehaviour
 		Background = (SpriteRenderer)Instantiate(BackgroundPrefab, transform.position, Quaternion.identity);
 		PlayerSprite = (SpriteRenderer)Instantiate(PlayerSpritePrefab, transform.position, Quaternion.identity);
 		MonsterSprite = (SpriteRenderer)Instantiate(MonsterPrefab.GetComponent<SpriteRenderer>(),transform.position,Quaternion.identity);
-		
+
+		PlayerBuffs = new Dictionary<string,SpriteRenderer>();
+		MonsterBuffs = new Dictionary<string,SpriteRenderer>();
+
+
+		PlayerBuffs.Add("Poison",(SpriteRenderer)Instantiate(PoisonDebuff,transform.position, Quaternion.identity));
+		MonsterBuffs.Add("Poison",(SpriteRenderer)Instantiate(PoisonDebuff,transform.position, Quaternion.identity));
+
+		PlayerBuffs.Add("Blind",(SpriteRenderer)Instantiate(BlindDebuff, transform.position, Quaternion.identity));
+		MonsterBuffs.Add("Blind",(SpriteRenderer)Instantiate(BlindDebuff, transform.position, Quaternion.identity));
+
 		//PlayerCombatRate = player.CombatSpeed;
 		//MonsterCombatRate = MonsterPrefab.CombatSpeed;
 		
@@ -209,6 +302,9 @@ public class CombatWindow : MonoBehaviour
 		Debug.Log("Player Attack Chance = " + PlayerAttackChance);
 		MonsterAttackChance = (float) monster.Accuracy / (float) player.Evasion;
 		Debug.Log("Monster Attack Chance = " + MonsterAttackChance);
+
+
+		PlayerAnimator.speed = 2;
     }
 
 	public void DestroyWindow()
@@ -244,6 +340,7 @@ public class CombatWindow : MonoBehaviour
 			
 			if (player.TakingPoisonFadeValue <= 1) {
 				player.IsPoisoned = false;
+				BuffUpdate = true;
 				player.TakingPoisonFadeValue = 0;
 				player.TakingPoisonTickSpeed = 0;
 				Debug.Log("Player is no longer poisoned.");
@@ -264,6 +361,7 @@ public class CombatWindow : MonoBehaviour
 			
 			if (monster.TakingPoisonFadeValue <= 1) {
 				monster.IsPoisoned = false;
+				BuffUpdate = true;
 				monster.TakingPoisonFadeValue = 0;
 				monster.TakingPoisonTickSpeed = 0;
 				Debug.Log("Monster is no longer poisoned.");
@@ -271,6 +369,85 @@ public class CombatWindow : MonoBehaviour
 			
 			monster.TakingPoisonFadeValue = monster.TakingPoisonFadeValue / 2;
 		}
+	}
+
+	public void DisplayBuffs() {
+
+		Debug.Log("Displaying Debuffs");
+
+		//Player Debuffs
+		if(player.IsPoisoned) {
+			PlayerBuffs["Poison"].enabled = true;
+		} else {
+			PlayerBuffs["Poison"].enabled = false;
+			PlayerBuffs["Poison"].sortingLayerName = "Idle";
+		}
+
+		if(player.IsBlinded) {
+			PlayerBuffs["Blind"].enabled = true;
+		} else {
+			PlayerBuffs["Blind"].enabled = false;
+			PlayerBuffs["Blind"].sortingLayerName = "Idle";
+		}
+
+		//Monster Debuffs
+		if (monster.IsPoisoned) {
+			Debug.Log("Poison Debuff enabled");
+			MonsterBuffs["Poison"].enabled = true;
+		} else {
+			MonsterBuffs["Poison"].enabled = false;
+			MonsterBuffs["Poison"].sortingLayerName = "Idle";
+		}
+
+		if (monster.IsBlinded) {
+			Debug.Log("Blind Debuff enabled");
+			MonsterBuffs["Blind"].enabled = true;
+		} else {
+			MonsterBuffs["Blind"].enabled = false;
+			MonsterBuffs["Blind"].sortingLayerName = "Idle";
+		}
+
+		/*
+		Vector3 playerbuffs = new Vector3(-5, 2,0);
+
+		foreach (SpriteRenderer buff in PlayerBuffs) {
+			buff.transform.position = playerbuffs;
+			buff.enabled = true;
+			buff.sortingLayerName = "Foreground";
+			playerbuffs.x += 1;
+		}
+		*/
+		Vector3 playerbuffs = new Vector3(player.transform.position.x, player.transform.position.y, player.transform.position.z);
+
+		playerbuffs.x -= 3;
+		playerbuffs.y += 1;
+
+		Dictionary<string,SpriteRenderer>.ValueCollection PlayerValues = PlayerBuffs.Values;
+
+		foreach (SpriteRenderer pbuff in PlayerValues) {
+			if (pbuff.enabled == true) {
+				pbuff.transform.position = playerbuffs;
+				pbuff.sortingLayerName = "Foreground";
+				playerbuffs.x += 0.5f;
+			}
+		}
+
+		Vector3 monsterbuffs = new Vector3(player.transform.position.x, player.transform.position.y, player.transform.position.z);
+
+		monsterbuffs.x += 3;
+		monsterbuffs.y += 1;
+
+		Dictionary<string,SpriteRenderer>.ValueCollection MonsterValues = MonsterBuffs.Values;
+
+		foreach (SpriteRenderer buff in MonsterValues) {
+			if (buff.enabled == true) {
+				buff.transform.position = monsterbuffs;
+				buff.sortingLayerName = "Foreground";
+				monsterbuffs.x -= 0.5f;
+			}
+		}
+
+		BuffUpdate = false;
 	}
 }
 

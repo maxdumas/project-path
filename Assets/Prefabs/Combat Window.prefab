@@ -43,6 +43,8 @@ MonoBehaviour:
   MonsterPrefab: {fileID: 0}
   PlayerSpritePrefab: {fileID: 0}
   BackgroundPrefab: {fileID: 0}
+  PoisonDebuff: {fileID: 21200000, guid: e874fe3bdcdf6440b932779bdcea879b, type: 2}
+  BlindDebuff: {fileID: 21200000, guid: bd87e55a6a9184c42b8c97f8698a1a8e, type: 2}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

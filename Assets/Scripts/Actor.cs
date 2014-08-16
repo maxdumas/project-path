@@ -25,8 +25,16 @@ public class Actor : MonoBehaviour
 	public float PoisonTickSpeed;
 
 	//Accuracy and Evasion Values
-	public int Accuracy;
-	public int Evasion;
+	public float Accuracy;
+	public float Evasion;
+
+	//While Blinded Values
+	public bool IsBlinded;
+
+	//Blind Values
+	public bool IsBlinding;
+	public float BlindChance;
+	public float BlindAttackLength;
 
 
 
