@@ -245,11 +245,72 @@ public class CombatWindow : MonoBehaviour
 
     public void Enable()
     {
-		monster = (Monster)Instantiate(MonsterPrefab, transform.position, Quaternion.identity);
+		Camera cam = Camera.main;
+		float CamHeight = 2f * cam.orthographicSize;
+		float CamWidth = CamHeight * cam.aspect;
+		
+		float HalfCamWidth = CamWidth / 2f;
+		float HalfCamHeight = cam.orthographicSize;
+		
+		
+		//Background
 		Background = (SpriteRenderer)Instantiate(BackgroundPrefab, transform.position, Quaternion.identity);
+		
+		Background.enabled = false;
+		Debug.Log("Background Local Scale = " + Background.transform.localScale);
+		Debug.Log("Screen Width = " + Screen.width);
+		Debug.Log("Screen Height = " + Screen.height);
+		
+		Debug.Log("Camera Local Scale = " + cam.transform.localScale);
+		Debug.Log("Camera Width = " + CamWidth);
+		Debug.Log("Camera Height = " + CamHeight);
+		
+		float bgWidth = Background.transform.renderer.bounds.max.x - Background.transform.renderer.bounds.min.x;
+		float bgHeight = Background.transform.renderer.bounds.max.y - Background.transform.renderer.bounds.min.y;
+		
+		float bgWidthScale = (CamWidth / bgWidth);
+		float bgHeightScale = (CamHeight / bgHeight);
+		
+		Debug.Log("bgWidthScale = " + bgWidthScale);	
+		
+		Background.transform.localScale = new Vector3(bgWidthScale, bgHeightScale, 0);
+		
+		Background.transform.position = new Vector3(this.transform.position.x, player.transform.position.y, player.transform.position.z);
+		Background.sortingLayerName = "Background";
+		Background.enabled = true;
+		
+		
+		
+		//PlayerSprite
+		
 		PlayerSprite = (SpriteRenderer)Instantiate(PlayerSpritePrefab, transform.position, Quaternion.identity);
+		PlayerSprite.enabled = false;
+		
+		float PlayerXPos = player.transform.position.x - (HalfCamWidth * 0.68f);
+		float PlayerYPos = player.transform.position.y - (HalfCamHeight * 0.57f);
+		
+		PlayerSprite.transform.position = new Vector3(PlayerXPos,PlayerYPos,0);
+		PlayerSprite.sortingLayerName = "Midground";
+		PlayerSprite.enabled = true;
+		
+		
+		
+		//MonsterSprite
+		
 		MonsterSprite = (SpriteRenderer)Instantiate(MonsterPrefab.GetComponent<SpriteRenderer>(),transform.position,Quaternion.identity);
+		monster = (Monster)Instantiate(MonsterPrefab, transform.position, Quaternion.identity);
+		MonsterSprite.enabled = false;
+		
+		float MonsterXPos = player.transform.position.x + (HalfCamWidth * 0.68f);
+		float MonsterYPos = player.transform.position.y - (HalfCamHeight * 0.57f);
+		
+		MonsterSprite.transform.position = new Vector3(MonsterXPos,MonsterYPos,0);
+		MonsterSprite.sortingLayerName = "Midground";
+		MonsterSprite.enabled = true;
 
+
+
+		// Player / Monster Buffs
 		PlayerBuffs = new Dictionary<string,SpriteRenderer>();
 		MonsterBuffs = new Dictionary<string,SpriteRenderer>();
 
@@ -262,42 +323,20 @@ public class CombatWindow : MonoBehaviour
 
 		//PlayerCombatRate = player.CombatSpeed;
 		//MonsterCombatRate = MonsterPrefab.CombatSpeed;
+	
 		
-		Background.enabled = false;
-		PlayerSprite.enabled = false;
-		MonsterSprite.enabled = false;
-		
-		MonsterNumAttacks = monster.NumAttacks;
-		
+
+
+		//Player / Monster Animators
 		PlayerAnimator = PlayerSprite.GetComponent<Animator>();
 		MonsterAnimator = MonsterSprite.GetComponent<Animator>();
 
 
-		//Set up visuals
-		Vector3 pos = new Vector3(player.transform.position.x, player.transform.position.y, player.transform.position.z);
 
-        Background.transform.position = pos;
-        Background.enabled = true;
-        Background.sortingLayerName = "Background";
-
-        //Foreground.transform.position = pos;
-        //Foreground.enabled = true;
-        //Foreground.sortingLayerName = "Foreground";
-
-        PlayerSprite.transform.position = new Vector3(player.transform.position.x - 2.6f, player.transform.position.y-1.1f, player.transform.position.z);
-        PlayerSprite.enabled = true; 
-        PlayerSprite.sortingLayerName = "Midground";
-
-        MonsterSprite.transform.position = new Vector3(player.transform.position.x + 2.6f, player.transform.position.y - 1.1f, player.transform.position.z);
-        MonsterSprite.enabled = true;
-        MonsterSprite.sortingLayerName = "Midground";
-
-
-		//
 		Debug.Log("Player Accuracy / Evasion: " + player.Accuracy + " " + player.Evasion);
 		Debug.Log("Monster Accuracy / Evasion: " + monster.Accuracy + " " + monster.Evasion);
 
-		//Set Initial Attack Chances
+		//Initial Attack Chances
 		PlayerAttackChance = (float) player.Accuracy / (float) monster.Evasion;
 		Debug.Log("Player Attack Chance = " + PlayerAttackChance);
 		MonsterAttackChance = (float) monster.Accuracy / (float) player.Evasion;
@@ -305,6 +344,8 @@ public class CombatWindow : MonoBehaviour
 
 
 		PlayerAnimator.speed = 2;
+		MonsterNumAttacks = monster.NumAttacks;
+
     }
 
 	public void DestroyWindow()
@@ -417,10 +458,10 @@ public class CombatWindow : MonoBehaviour
 			playerbuffs.x += 1;
 		}
 		*/
-		Vector3 playerbuffs = new Vector3(player.transform.position.x, player.transform.position.y, player.transform.position.z);
+		Vector3 playerbuffs = new Vector3(PlayerSprite.transform.position.x, PlayerSprite.transform.position.y, PlayerSprite.transform.position.z);
 
-		playerbuffs.x -= 3;
-		playerbuffs.y += 1;
+		playerbuffs.x -= 0.3f;
+		playerbuffs.y += 1.5f;
 
 		Dictionary<string,SpriteRenderer>.ValueCollection PlayerValues = PlayerBuffs.Values;
 
@@ -432,10 +473,10 @@ public class CombatWindow : MonoBehaviour
 			}
 		}
 
-		Vector3 monsterbuffs = new Vector3(player.transform.position.x, player.transform.position.y, player.transform.position.z);
+		Vector3 monsterbuffs = new Vector3(MonsterSprite.transform.position.x, MonsterSprite.transform.position.y, MonsterSprite.transform.position.z);
 
-		monsterbuffs.x += 3;
-		monsterbuffs.y += 1;
+		monsterbuffs.x += 0.3f;
+		monsterbuffs.y += 1.5f;
 
 		Dictionary<string,SpriteRenderer>.ValueCollection MonsterValues = MonsterBuffs.Values;
 
