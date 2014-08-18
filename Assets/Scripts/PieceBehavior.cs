@@ -34,17 +34,17 @@ public abstract class PieceBehavior : MonoBehaviour
         Player.PathFollower.AllowContinue = true;
     }
 
-    protected void DisplayMessage(string text, float xOffset = 0f, float yOffset = 0f, float zOffset = 0f)
+	protected void DisplayMessage(string text, float xOffset = 0f, float yOffset = 0f, float zOffset = 0f)
     {
         Vector3 offset = new Vector3(xOffset, yOffset, zOffset);
 
         DisplayMessage(text, offset);
     }
 
-    protected void DisplayMessage(string text, Vector3 offset)
+	protected void DisplayMessage(string text, Vector3 offset)
     {
         TextMesh message = (TextMesh)Instantiate(EventNotifier, transform.position + offset, Quaternion.identity);
-        message.color = Color.red;
+		message.color = Color.red;
         message.text = text;
     }
 

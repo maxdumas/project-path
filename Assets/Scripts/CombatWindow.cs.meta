@@ -2,7 +2,14 @@ fileFormatVersion: 2
 guid: 2537eff13e146604390d6c3cb22a7398
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - EventNotifier: {fileID: 10200000, guid: 777e7eaa7a54d0c48b4ce1aa5c971787, type: 2}
+  - player: {instanceID: 0}
+  - MonsterPrefab: {instanceID: 0}
+  - PlayerSpritePrefab: {instanceID: 0}
+  - BackgroundPrefab: {instanceID: 0}
+  - PoisonDebuff: {instanceID: 0}
+  - BlindDebuff: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

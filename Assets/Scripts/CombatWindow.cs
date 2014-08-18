@@ -14,7 +14,10 @@ using System.Collections.Generic;
 
 public class CombatWindow : MonoBehaviour
 {
-    public Player player;
+	public TextMesh EventNotifier;
+
+	
+	public Player player;
     public Monster MonsterPrefab;
 	public SpriteRenderer PlayerSpritePrefab;
 	public SpriteRenderer BackgroundPrefab;
@@ -58,6 +61,12 @@ public class CombatWindow : MonoBehaviour
 	private float PlayerBlindLength = 0.0f;
 	private float MonsterBlindLength = 0.0f;
 	
+
+	private Vector3 PlayerLocation;
+	private Vector3 MonsterLocation;
+
+	private Vector3 PlayerDmgLocation;
+	private Vector3 MonsterDmgLocation;
 
 	private float roll;
 
@@ -124,6 +133,11 @@ public class CombatWindow : MonoBehaviour
 
 				if (PlayerAttackChance > roll) {
 					Debug.Log("Hit for 1! monster Health: " + (monster.Health-1));
+
+
+
+					DisplayMessage(player.GetAttackValue().ToString(),Color.red,MonsterDmgLocation);
+
 					monster.Health -= player.GetAttackValue();
 
 
@@ -138,7 +152,9 @@ public class CombatWindow : MonoBehaviour
 						Debug.Log("Monster is poisoned for " + player.PoisonDamageValue + " damage.");
 						monster.TakingPoisonFadeValue = player.PoisonDamageValue;
 						monster.TakingPoisonTickSpeed = player.PoisonTickSpeed;
-						monster.IsPoisoned = true;		
+						monster.IsPoisoned = true;
+
+						MonsterSprite.color = new Color(230f/255f,0,250f/255f,1);
 					}
 
 					// Blind Chance
@@ -193,7 +209,10 @@ public class CombatWindow : MonoBehaviour
 				if (MonsterAttackChance > roll) {
 
 
-					Debug.Log("Take damage for 1! Your Health: " + player.Health);
+					Debug.Log("Take damage for 1! Your Health: " + (player.Health-1));
+
+					DisplayMessage(monster.GetAttackValue().ToString(),Color.red,PlayerDmgLocation);
+
 					player.Health -= monster.GetAttackValue();
 
 					//Poison
@@ -203,7 +222,10 @@ public class CombatWindow : MonoBehaviour
 						Debug.Log("Monster is poisoned for " + monster.PoisonDamageValue + " damage");
 						player.TakingPoisonFadeValue = monster.PoisonDamageValue;
 						player.TakingPoisonTickSpeed = monster.PoisonTickSpeed;
-						player.IsPoisoned = true;		
+						player.IsPoisoned = true;	
+
+						PlayerSprite.color = new Color(230f/255f,0,250f/255f,1);
+				
 					}
 
 					//Blind
@@ -290,11 +312,13 @@ public class CombatWindow : MonoBehaviour
 		float PlayerYPos = player.transform.position.y - (HalfCamHeight * 0.57f);
 		
 		PlayerSprite.transform.position = new Vector3(PlayerXPos,PlayerYPos,0);
+		PlayerLocation = PlayerSprite.transform.position;
+		PlayerDmgLocation = new Vector3(PlayerXPos,PlayerYPos + 0.5f, 0);
 		PlayerSprite.sortingLayerName = "Midground";
 		PlayerSprite.enabled = true;
-		
-		
-		
+
+
+		Debug.Log("Player Colors = " + PlayerSprite.color.r + " " + PlayerSprite.color.g + " " + PlayerSprite.color.b + " " + PlayerSprite.color.a);
 		//MonsterSprite
 		
 		MonsterSprite = (SpriteRenderer)Instantiate(MonsterPrefab.GetComponent<SpriteRenderer>(),transform.position,Quaternion.identity);
@@ -305,6 +329,8 @@ public class CombatWindow : MonoBehaviour
 		float MonsterYPos = player.transform.position.y - (HalfCamHeight * 0.57f);
 		
 		MonsterSprite.transform.position = new Vector3(MonsterXPos,MonsterYPos,0);
+		MonsterLocation = MonsterSprite.transform.position;
+		MonsterDmgLocation = new Vector3(MonsterXPos,MonsterYPos + 0.5f, 0);
 		MonsterSprite.sortingLayerName = "Midground";
 		MonsterSprite.enabled = true;
 
@@ -376,7 +402,8 @@ public class CombatWindow : MonoBehaviour
 			
 			Debug.Log("Player takes " + player.TakingPoisonFadeValue + " poison damage!");
 			player.Health -= player.TakingPoisonFadeValue;
-			
+
+			DisplayMessage(player.TakingPoisonFadeValue.ToString(), new Color(170f/255f,0,250f/255f,1),PlayerDmgLocation);
 			
 			
 			if (player.TakingPoisonFadeValue <= 1) {
@@ -384,6 +411,7 @@ public class CombatWindow : MonoBehaviour
 				BuffUpdate = true;
 				player.TakingPoisonFadeValue = 0;
 				player.TakingPoisonTickSpeed = 0;
+				PlayerSprite.color = Color.white;
 				Debug.Log("Player is no longer poisoned.");
 			}
 			
@@ -398,13 +426,14 @@ public class CombatWindow : MonoBehaviour
 			Debug.Log("Monster takes " + monster.TakingPoisonFadeValue + " poison damage!");
 			monster.Health -= monster.TakingPoisonFadeValue;
 			
-			
+			DisplayMessage(monster.TakingPoisonFadeValue.ToString(), new Color(170f/255f,0,250f/255f,1),MonsterDmgLocation);
 			
 			if (monster.TakingPoisonFadeValue <= 1) {
 				monster.IsPoisoned = false;
 				BuffUpdate = true;
 				monster.TakingPoisonFadeValue = 0;
 				monster.TakingPoisonTickSpeed = 0;
+				MonsterSprite.color = Color.white;
 				Debug.Log("Monster is no longer poisoned.");
 			}
 			
@@ -458,10 +487,7 @@ public class CombatWindow : MonoBehaviour
 			playerbuffs.x += 1;
 		}
 		*/
-		Vector3 playerbuffs = new Vector3(PlayerSprite.transform.position.x, PlayerSprite.transform.position.y, PlayerSprite.transform.position.z);
-
-		playerbuffs.x -= 0.3f;
-		playerbuffs.y += 1.5f;
+		Vector3 playerbuffs = new Vector3(PlayerLocation.x - 0.3f, PlayerLocation.y + 1.5f, 0);
 
 		Dictionary<string,SpriteRenderer>.ValueCollection PlayerValues = PlayerBuffs.Values;
 
@@ -473,10 +499,7 @@ public class CombatWindow : MonoBehaviour
 			}
 		}
 
-		Vector3 monsterbuffs = new Vector3(MonsterSprite.transform.position.x, MonsterSprite.transform.position.y, MonsterSprite.transform.position.z);
-
-		monsterbuffs.x += 0.3f;
-		monsterbuffs.y += 1.5f;
+		Vector3 monsterbuffs = new Vector3(MonsterLocation.x + 0.3f, MonsterLocation.y + 1.5f, 0);
 
 		Dictionary<string,SpriteRenderer>.ValueCollection MonsterValues = MonsterBuffs.Values;
 
@@ -489,6 +512,21 @@ public class CombatWindow : MonoBehaviour
 		}
 
 		BuffUpdate = false;
+	}
+
+
+	protected void DisplayMessage(string text, Color color, float xOffset = 0f, float yOffset = 0f, float zOffset = 0f)
+	{
+		Vector3 offset = new Vector3(xOffset, yOffset, zOffset);
+		
+		DisplayMessage(text, color, offset);
+	}
+	
+	protected void DisplayMessage(string text, Color color, Vector3 location)
+	{
+		TextMesh message = (TextMesh)Instantiate(EventNotifier, location, Quaternion.identity);
+		message.color = color;
+		message.text = text;
 	}
 }
 

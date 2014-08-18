@@ -132,6 +132,7 @@ public class CombatWindowTest : MonoBehaviour
 		PlayerSprite.sortingLayerName = "Midground";
 		PlayerSprite.enabled = true;
 
+		PlayerSprite.color = Color.cyan;
 
 
 		//MonsterSprite
@@ -145,10 +146,6 @@ public class CombatWindowTest : MonoBehaviour
 		MonsterSprite.transform.position = new Vector3(MonsterXPos,MonsterYPos,0);
 		MonsterSprite.sortingLayerName = "Midground";
 		MonsterSprite.enabled = true;
-
-
-
-
 
     }
 
