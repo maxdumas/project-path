@@ -7,8 +7,8 @@ public abstract class PieceBehavior : MonoBehaviour
     public TextMesh EventNotifier;
     public float WaitTime = 0.5f;
 
-    private int _showInfoState = 0;
-    private Vector2 _clickLocation;
+    protected int ShowInfoState = 0;
+    protected Vector2 ClickLocation;
 
     protected abstract string Description { get; }
 
@@ -52,25 +52,25 @@ public abstract class PieceBehavior : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            if (transform.parent.collider2D.OverlapPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition)) && _showInfoState == 0)
-                _showInfoState = 1;
-            else _showInfoState = 0;
+            if (transform.parent.collider2D.OverlapPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition)) && ShowInfoState == 0)
+                ShowInfoState = 1;
+            else ShowInfoState = 0;
         }
         else if (Input.GetMouseButtonUp(0))
         {
-            if (transform.parent.collider2D.OverlapPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition)) && _showInfoState == 1)
+            if (transform.parent.collider2D.OverlapPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition)) && ShowInfoState == 1)
             {
-                _showInfoState = 2;
-                _clickLocation = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
+                ShowInfoState = 2;
+                ClickLocation = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
             }
-            else _showInfoState = 0;
+            else ShowInfoState = 0;
         }
     }
 
     protected virtual void OnGUI()
     {
         GUI.skin.box.wordWrap = true;
-        if (_showInfoState == 2)
-            GUI.Box(new Rect(_clickLocation.x - 75, _clickLocation.y - 170, 150, 150), Description);
+        if (ShowInfoState == 2)
+            GUI.Box(new Rect(ClickLocation.x - 75, ClickLocation.y - 170, 150, 150), Description);
     }
 }

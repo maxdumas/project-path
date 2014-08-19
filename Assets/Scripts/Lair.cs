@@ -29,9 +29,10 @@ public class Lair : PieceBehavior
 
         combat = (CombatWindow)Instantiate(combat, transform.position, Quaternion.identity);
         combat.MonsterPrefab = this.enemy;
-        combat.player = Player;
+        combat.Player = Player;
         combat.PlayerSpritePrefab = this.PlayerSpritePrefab;
         combat.BackgroundPrefab = this.BackgroundPrefab;
+        combat.EventNotifier = EventNotifier;
         combat.Enable();
 
         /*
@@ -141,35 +142,31 @@ public class Lair : PieceBehavior
         DisplayMessage(message);
     }
 
-    private int _showInfoState = 0;
-    private Vector2 _clickLocation;
-
     protected override void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
-            if (transform.parent.collider2D.OverlapPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition)) && _showInfoState == 0)
-                _showInfoState = 1;
+            if (transform.parent.collider2D.OverlapPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition)) && ShowInfoState == 0)
+                ShowInfoState = 1;
             else
-                _showInfoState = 0;
+                ShowInfoState = 0;
         }
         else if (Input.GetMouseButtonUp(0))
         {
-            if (transform.parent.collider2D.OverlapPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition)) && _showInfoState == 1)
+            if (transform.parent.collider2D.OverlapPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition)) && ShowInfoState == 1)
             {
-                _showInfoState = 2;
-                _clickLocation = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
+                ShowInfoState = 2;
+                ClickLocation = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
             }
             else
-                _showInfoState = 0;
+                ShowInfoState = 0;
         }
     }
 
     protected override void OnGUI()
     {
         GUI.skin.box.wordWrap = true;
-        if (_showInfoState == 2)
-            GUI.Box(new Rect(_clickLocation.x - 50, _clickLocation.y - 120, 100, 100), enemy.MonsterDescription);
+        if (ShowInfoState == 2)
+            GUI.Box(new Rect(ClickLocation.x - 50, ClickLocation.y - 120, 100, 100), enemy.MonsterDescription);
     }
-	
 }
