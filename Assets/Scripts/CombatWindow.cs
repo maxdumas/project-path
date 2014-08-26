@@ -20,32 +20,10 @@ public class CombatWindow : MonoBehaviour
 
     private int _monsterCurrAttacks = 0;
 
-    private readonly CwActorInfo _playerInfo = new CwActorInfo {CombatPeriod = 0.5f, PauseTime = 0.1f};
-    private readonly CwActorInfo _monsterInfo = new CwActorInfo {CombatPeriod = 0.5f, PauseTime = 1.0f};
-
-    private class CwActorInfo
-    {
-        public SpriteRenderer Sprite;
-        public Animator Animator;
-        public float CombatPeriod;
-        public float NextCombatTime; // Probably should not be here
-        public float PauseTime;
-        public bool Defending;
-        public float AttackChance;
-        public float NextPoisonTick;
-        public float BlindLength;
-        public Vector3 Location;
-        public Vector3 DamageLocation;
-    }
-
-    private float _roll;
-
     private readonly Dictionary<string, SpriteRenderer> _playerBuffs = new Dictionary<string, SpriteRenderer>();
     private readonly Dictionary<string, SpriteRenderer> _monsterBuffs = new Dictionary<string, SpriteRenderer>();
 
-    private bool BuffUpdate;
-
-    void Update()
+    private void Update()
     {
         if (Player.Health <= 0)
         {
@@ -58,165 +36,95 @@ public class CombatWindow : MonoBehaviour
             DestroyWindow();
         }
 
-        // End player blinding status effect if it has expired
-        if (Time.time > _playerInfo.BlindLength && _playerInfo.BlindLength > 0)
+        ShowStatusEffects(Player, _playerBuffs);
+        ShowStatusEffects(_monster, _monsterBuffs);
+
+        if (Time.time > Player.CwInfo.NextCombatTime)
         {
-            _playerInfo.AttackChance = Player.Accuracy / _monster.Evasion;
-            Player.IsBlinded = false;
-            _playerInfo.BlindLength = 0.0f;
-            BuffUpdate = true;
-            Debug.Log("Player is no longer blinded.");
+            // Player Attack
+            if (Input.GetKey("up")) HandleAttack(Player, _monster);
+            // Player Defense
+            else if (Input.GetKey("down")) HandleDefend(Player);
         }
+            // Player Idle
+        else if (Time.time > Player.CwInfo.NextCombatTime - Player.CwInfo.PauseTime)
+            HandleIdle(Player);
 
-        // End monster blinding status effect if it has expired
-        if (Time.time > _monsterInfo.BlindLength && _monsterInfo.BlindLength > 0)
+        if (Time.time > _monster.CwInfo.NextCombatTime)
         {
-            _monsterInfo.AttackChance = _monster.Accuracy / Player.Evasion;
-            _monster.IsBlinded = false;
-            _monsterInfo.BlindLength = 0.0f;
-            BuffUpdate = true;
-            Debug.Log("Monster is no longer blinded.");
-        }
-
-        //Distribute poison damage to Player
-        HandlePoison(Player, _playerInfo);
-
-        //Distribute poison damage to Monster
-        HandlePoison(_monster, _monsterInfo);
-
-        if (BuffUpdate)
-            DisplayBuffs();
-
-        // Player Attack
-        if (Input.GetKey("up") && Time.time > _playerInfo.NextCombatTime)
-            HandleAttack(Player, _playerInfo, _monster, _monsterInfo);
-        // Player Defense
-        else if (Input.GetKey("down") && Time.time > _playerInfo.NextCombatTime)
-            HandleDefend(Player, _playerInfo);
-        // Player Idle
-        else if (Time.time > _playerInfo.NextCombatTime - _playerInfo.PauseTime)
-            HandleIdle(Player, _playerInfo);
-
-        //Monster Attack
-        if (_monsterCurrAttacks < _monster.NumAttacks && Time.time > _monsterInfo.NextCombatTime)
-        {
-            HandleAttack(_monster, _monsterInfo, Player, _playerInfo);
-            ++_monsterCurrAttacks;
-        }
-        // Monster Defense
-        else if (_monsterCurrAttacks >= _monster.NumAttacks && Time.time > _monsterInfo.NextCombatTime)
-        {
-            HandleDefend(_monster, _monsterInfo);
-            _monsterCurrAttacks = 0;
-        }
-        // Monster Idle
-        else if (Time.time > _monsterInfo.NextCombatTime - _monsterInfo.PauseTime)
-            HandleIdle(_monster, _monsterInfo);
-    }
-
-    // Poison Damage
-    //
-    // Poison damage works as a "fading" poison. When an actor takes poison damage, the fade damage value is divided in half.
-    // Once the fade damage value is below 1, the actor is no longer poisoned.
-    //
-    // For example: A player becomes poisoned. The first tick does 4 damage, the second does 2, the third does 1.
-    //              After that, the player is no longer poisoned.
-
-    private void HandlePoison(Actor actor, CwActorInfo info)
-    {
-        if (actor.IsPoisoned && Time.time > info.NextPoisonTick)
-        {
-            info.NextPoisonTick = Time.time + actor.TakingPoisonTickSpeed;
-
-            Debug.Log(actor.DisplayName + " takes " + actor.TakingPoisonFadeValue + " poison damage!");
-            actor.Health -= actor.TakingPoisonFadeValue;
-
-            DisplayMessage(actor.TakingPoisonFadeValue.ToString(), new Color(170f / 255f, 0, 250f / 255f, 1), info.DamageLocation);
-
-            if (actor.TakingPoisonFadeValue <= 1)
+            //Monster Attack
+            if (_monsterCurrAttacks < _monster.NumAttacks)
             {
-                actor.IsPoisoned = false;
-                BuffUpdate = true;
-                actor.TakingPoisonFadeValue = 0;
-                actor.TakingPoisonTickSpeed = 0;
-                info.Sprite.color = Color.white;
-                Debug.Log(actor.DisplayName + " is no longer poisoned.");
+                HandleAttack(_monster, Player);
+                ++_monsterCurrAttacks;
             }
-
-            actor.TakingPoisonFadeValue = actor.TakingPoisonFadeValue / 2;
+            // Monster Defense
+            else if (_monsterCurrAttacks >= _monster.NumAttacks)
+            {
+                HandleDefend(_monster);
+                _monsterCurrAttacks = 0;
+            }
         }
+            // Monster Idle
+        else if (Time.time > _monster.CwInfo.NextCombatTime - _monster.CwInfo.PauseTime)
+            HandleIdle(_monster);
     }
 
-    private void HandleIdle(Actor actor, CwActorInfo info)
+    private void HandleIdle(Actor actor)
     {
-        info.Animator.SetBool("attacking", false);
-        info.Animator.SetBool("defending", false);
-        info.Defending = false;
+        actor.CwInfo.Animator.SetBool("attacking", false);
+        actor.CwInfo.Animator.SetBool("defending", false);
+        actor.CwInfo.Defending = false;
     }
 
-    private void HandleDefend(Actor actor, CwActorInfo info)
+    private void HandleDefend(Actor actor)
     {
-        info.NextCombatTime = Time.time + info.CombatPeriod + info.PauseTime;
-        info.Animator.SetBool("defending", true);
-        info.Defending = true;
+        actor.CwInfo.NextCombatTime = Time.time + actor.CwInfo.CombatPeriod + actor.CwInfo.PauseTime;
+        actor.CwInfo.Animator.SetBool("defending", true);
+        actor.CwInfo.Defending = true;
     }
 
-    private void HandleAttack(Actor attacker, CwActorInfo attackerInfo, Actor defender, CwActorInfo defenderInfo)
+    private void HandleAttack(Actor attacker, Actor defender)
     {
-        attackerInfo.NextCombatTime = Time.time + attackerInfo.CombatPeriod + attackerInfo.PauseTime;
-        attackerInfo.Animator.SetBool("attacking", true);
-        attackerInfo.Defending = false;
+        attacker.CwInfo.NextCombatTime = Time.time + attacker.CwInfo.CombatPeriod + attacker.CwInfo.PauseTime;
+        attacker.CwInfo.Animator.SetBool("attacking", true);
+        attacker.CwInfo.Defending = false;
 
-        if (!defenderInfo.Defending)
+        if (!defender.CwInfo.Defending)
         {
-            _roll = Random.Range(0f, 1f);
+            float roll = Random.Range(0f, 1f);
 
-            if (attackerInfo.AttackChance > _roll)
+            if (attacker.CwInfo.AttackChance > roll)
             {
                 int damage = attacker.GetAttackValue();
                 _monster.Health -= damage;
 
                 Debug.Log(string.Format("{1} is hit for {0}! {1} Health: {2}", damage, defender.DisplayName, _monster.Health));
-                DisplayMessage(damage.ToString(), Color.red, defenderInfo.DamageLocation);
+                DisplayMessage(damage.ToString(), Color.red, defender.CwInfo.DamageLocation);
 
                 // Poison Chance
                 //
                 // Each attack, the actor has a chance to poison IF the actor IsPoisonous. 
                 // If the other actor is already poisoned and it procs, the fade damage value is refreshed.
-
-                _roll = Random.Range(0f, 1f);
-                if (attacker.IsPoisonous && attacker.PoisonChance > _roll)
+                roll = Random.Range(0f, 1f);
+                if (attacker.IsPoisonous && attacker.PoisonChance > roll)
                 {
-                    BuffUpdate = true;
-                    Debug.Log(string.Format("{0} is poisoned for {1} damage.", defender.DisplayName, attacker.PoisonDamageValue));
-                    defender.TakingPoisonFadeValue = attacker.PoisonDamageValue;
-                    defender.TakingPoisonTickSpeed = attacker.PoisonTickSpeed;
-                    defender.IsPoisoned = true;
-
-                    defenderInfo.Sprite.color = new Color(230f/255f, 0, 250f/255f, 1);
+                    Debug.Log(string.Format("{0} is poisoned for {1} damage.", defender.DisplayName,
+                        attacker.PoisonDamageValue));
+                    defender.AddStatusEffect("Poison",
+                        new PoisonStatusEffect(attacker.PoisonDamageValue, attacker.PoisonTickSpeed));
                 }
 
                 // Blind Chance
                 //
                 // Each attack, the actor has a chance to poison IF the actor IsBlinding.
                 // If the other actor is already blinded and it procs, the blind length is refreshed.
-                _roll = Random.Range(0f, 1f);
-                if (attacker.IsBlinding && attacker.BlindChance > _roll)
+                roll = Random.Range(0f, 1f);
+                if (attacker.IsBlinding && attacker.BlindChance > roll)
                 {
-                    if (!defender.IsBlinded)
-                    {
-                        BuffUpdate = true;
-                        Debug.Log(string.Format("{0} is blinded! Accuracy cut in half for {1} seconds.", defender.DisplayName, attacker.BlindAttackLength));
-                        defenderInfo.AttackChance = defenderInfo.AttackChance/2.0f;
-                        defenderInfo.BlindLength = Time.time + attacker.BlindAttackLength;
-                        defender.IsBlinded = true;
-                    }
-                    else
-                    {
-                        BuffUpdate = true;
-                        Debug.Log(string.Format("{0} is blinded! Accuracy cut in half for {1} seconds.", defender.DisplayName, attacker.BlindAttackLength));
-                        defenderInfo.BlindLength = Time.time + attacker.BlindAttackLength;
-                    }
+                    Debug.Log(string.Format("{0} is blinded! Accuracy cut in half for {1} seconds.",
+                        defender.DisplayName, attacker.BlindAttackLength));
+                    defender.AddStatusEffect("Blind", new BlindStatusEffect(attacker.BlindAttackLength));
                 }
             }
             else Debug.Log(attacker.DisplayName + " misses.");
@@ -261,12 +169,12 @@ public class CombatWindow : MonoBehaviour
         #endregion
 
         //PlayerSprite
-        InitActor(Player, _playerInfo, -(halfCamWidth*0.68f), -(halfCamHeight*0.57f), PlayerSpritePrefab, _playerBuffs);
+        InitActor(Player, -(halfCamWidth*0.68f), -(halfCamHeight*0.57f), PlayerSpritePrefab, _playerBuffs);
 
         //MonsterSprite
         _monster = (Monster)Instantiate(MonsterPrefab, transform.position, Quaternion.identity);
 
-        InitActor(_monster, _monsterInfo, +(halfCamWidth*0.68f), -(halfCamHeight*0.57f),
+        InitActor(_monster, +(halfCamWidth*0.68f), -(halfCamHeight*0.57f),
             MonsterPrefab.GetComponent<SpriteRenderer>(), _monsterBuffs);
 
         // Player / Monster Buffs
@@ -274,30 +182,29 @@ public class CombatWindow : MonoBehaviour
         Debug.Log("Monster Accuracy / Evasion: " + _monster.Accuracy + " " + _monster.Evasion);
 
         //Initial Attack Chances
-        _playerInfo.AttackChance = Player.Accuracy / _monster.Evasion;
-        Debug.Log("Player Attack Chance = " + _playerInfo.AttackChance);
-        _monsterInfo.AttackChance = _monster.Accuracy / Player.Evasion;
-        Debug.Log("Monster Attack Chance = " + _monsterInfo.AttackChance);
+        Player.CwInfo.AttackChance = Player.Accuracy / _monster.Evasion;
+        Debug.Log("Player Attack Chance = " + Player.CwInfo.AttackChance);
+        _monster.CwInfo.AttackChance = _monster.Accuracy / Player.Evasion;
+        Debug.Log("Monster Attack Chance = " + _monster.CwInfo.AttackChance);
 
-        _playerInfo.Animator.speed = 2;
+        Player.CwInfo.Animator.speed = 2;
     }
 
-    private void InitActor(Actor actor, CwActorInfo info, float x, float y, SpriteRenderer prefab,
-        Dictionary<string, SpriteRenderer> buffs)
+    private void InitActor(Actor actor, float x, float y, SpriteRenderer prefab, Dictionary<string, SpriteRenderer> buffs)
     {
-        info.Sprite = (SpriteRenderer)Instantiate(prefab, transform.position, Quaternion.identity);
+        actor.CwInfo.Sprite = (SpriteRenderer)Instantiate(prefab, transform.position, Quaternion.identity);
         //_monsterInfo.Sprite = _monster.GetComponent<SpriteRenderer>();
-        info.Sprite.enabled = false;
+        actor.CwInfo.Sprite.enabled = false;
 
         float xPos = Player.transform.position.x + x;
         float yPos = Player.transform.position.y + y;
 
-        info.Sprite.transform.position = new Vector3(xPos, yPos, 0);
-        info.Location = info.Sprite.transform.position;
-        info.DamageLocation = new Vector3(xPos, yPos + 0.5f, 0);
-        info.Sprite.sortingLayerName = "Midground";
-        info.Sprite.enabled = true;
-        info.Animator = info.Sprite.GetComponent<Animator>();
+        actor.CwInfo.Sprite.transform.position = new Vector3(xPos, yPos, 0);
+        actor.CwInfo.Location = actor.CwInfo.Sprite.transform.position;
+        actor.CwInfo.DamageLocation = new Vector3(xPos, yPos + 0.5f, 0);
+        actor.CwInfo.Sprite.sortingLayerName = "Midground";
+        actor.CwInfo.Sprite.enabled = true;
+        actor.CwInfo.Animator = actor.CwInfo.Sprite.GetComponent<Animator>();
 
         buffs.Clear();
         buffs.Add("Poison", (SpriteRenderer) Instantiate(PoisonDebuff, transform.position, Quaternion.identity));
@@ -307,50 +214,34 @@ public class CombatWindow : MonoBehaviour
     public void DestroyWindow()
     {
         Destroy(_monster);
-        Destroy(_playerInfo.Sprite);
-        Destroy(_monsterInfo.Sprite);
         Destroy(_background);
+        Destroy(Player.CwInfo.Sprite);
+        Destroy(_monster.CwInfo.Sprite);
+        foreach(var b in _monsterBuffs.Values)
+            Destroy(b);
+        foreach(var b in _playerBuffs.Values)
+            Destroy(b);
         Destroy(this);
     }
 
-    public void DisplayBuffs()
+    private void ShowStatusEffects(Actor actor, Dictionary<string, SpriteRenderer> buffs)
     {
+        if (actor.StatusEffects.Count == 0 || buffs.Count == 0) return;
 
-        Debug.Log("Displaying Debuffs");
+        Vector3 buffLocations = new Vector3(actor.CwInfo.Location.x - 0.3f, actor.CwInfo.Location.y + 1.5f, 0);
 
-        //Player Debuffs
-        ShowBuffs(Player, _playerInfo, _playerBuffs);
-        ShowBuffs(_monster, _monsterInfo, _monsterBuffs);
-
-        BuffUpdate = false;
-    }
-
-    private void ShowBuffs(Actor actor, CwActorInfo info, Dictionary<string, SpriteRenderer> buffs)
-    {
-        if (actor.IsPoisoned)
-            buffs["Poison"].enabled = true;
-        else
-        {
-            buffs["Poison"].enabled = false;
-            buffs["Poison"].sortingLayerName = "Idle";
-        }
-
-        if (Player.IsBlinded)
-            buffs["Blind"].enabled = true;
-        else
-        {
-            buffs["Blind"].enabled = false;
-            buffs["Blind"].sortingLayerName = "Idle";
-        }
-
-        Vector3 buffLocations = new Vector3(info.Location.x - 0.3f, info.Location.y + 1.5f, 0);
-
-        foreach (SpriteRenderer buff in buffs.Values)
-            if (buff.enabled)
+        foreach (var kvp in buffs)
+            if (actor.StatusEffects.ContainsKey(kvp.Key))
             {
-                buff.transform.position = buffLocations;
-                buff.sortingLayerName = "Foreground";
+                kvp.Value.enabled = true;
+                kvp.Value.transform.position = buffLocations;
+                kvp.Value.sortingLayerName = "Foreground";
                 buffLocations.x += 0.5f;
+            }
+            else
+            {
+                kvp.Value.enabled = false;
+                kvp.Value.sortingLayerName = "Idle";
             }
     }
 

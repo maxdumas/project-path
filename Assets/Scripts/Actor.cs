@@ -1,6 +1,7 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-using System.Collections;
 
 public class Actor : MonoBehaviour
 {
@@ -13,11 +14,16 @@ public class Actor : MonoBehaviour
     public Item ShieldSlot;
     public Item MiscSlot;
 
-	//While Poisoned Values
-	public bool IsPoisoned;
-	public int TakingPoisonFadeValue;
-	public float TakingPoisonTickSpeed;
-	
+    public IEnumerable<Item> AllSlots
+    {
+        get
+        {
+            if(WeaponSlot != null) yield return WeaponSlot;
+            if(ShieldSlot != null) yield return ShieldSlot;
+            if(MiscSlot != null) yield return MiscSlot;
+        }
+    }
+
 	//Poison Attack Values
 	public bool IsPoisonous;
 	public float PoisonChance;
@@ -28,22 +34,46 @@ public class Actor : MonoBehaviour
 	public float Accuracy;
 	public float Evasion;
 
-	//While Blinded Values
-	public bool IsBlinded;
-
 	//Blind Values
 	public bool IsBlinding;
 	public float BlindChance;
 	public float BlindAttackLength;
 
+    public readonly IDictionary<string, IActorStatusEffect> StatusEffects = new Dictionary<string, IActorStatusEffect>();
+    public CwActorInfo CwInfo;
 
+    [Serializable]
+    public class CwActorInfo
+    {
+        public SpriteRenderer Sprite;
+        public Animator Animator;
+        public float CombatPeriod;
+        public float NextCombatTime;
+        public float PauseTime;
+        public bool Defending;
+        public float AttackChance;
+        public Vector3 Location;
+        public Vector3 DamageLocation;
+    }
 
 
     public virtual void Start()
     {
         if (MaxHealth < Health) MaxHealth = Health;
 
-        if (string.IsNullOrEmpty(DisplayName)) DisplayName = name;
+        if (String.IsNullOrEmpty(DisplayName)) DisplayName = name;
+    }
+
+    public virtual void Update()
+    {
+        var expiredEffects = new List<string>();
+        foreach(var kvp in StatusEffects)
+            if (!kvp.Value.Expired)
+                kvp.Value.ApplyEffect(this);
+            else expiredEffects.Add(kvp.Key);
+
+        foreach (string s in expiredEffects)
+            StatusEffects.Remove(s);
     }
 
     /// <summary>
@@ -53,11 +83,7 @@ public class Actor : MonoBehaviour
     /// <returns></returns>
     public int GetAttackValue()
     {
-        int attack = BaseAttack;
-        //if (WeaponSlot != null) attack += WeaponSlot.AttackModifier();
-        //if (ShieldSlot != null) attack += ShieldSlot.AttackModifier();
-        //if (MiscSlot != null) attack += MiscSlot.AttackModifier();
-        return attack;
+        return BaseAttack + AllSlots.Sum(item => item.AttackModifier());
     }
 
     /// <summary>
@@ -67,11 +93,15 @@ public class Actor : MonoBehaviour
     /// <returns></returns>
     public int GetDefenseValue()
     {
-        int defense = BaseDefense; // Innate defense value
-        if (WeaponSlot != null) defense += WeaponSlot.DefenseModifier(); // Who knows, maybe it can have one!
-        if (ShieldSlot != null) defense += ShieldSlot.DefenseModifier();
-        if (MiscSlot != null) defense += MiscSlot.DefenseModifier();
+        return BaseDefense + AllSlots.Sum(item => item.DefenseModifier());
+    }
 
-        return defense;
+    public void AddStatusEffect(string effectName, IActorStatusEffect effect)
+    {
+        if (StatusEffects.ContainsKey(effectName))
+            StatusEffects[effectName] = effect; // Replace the existing effect (thus refreshing it)
+        else StatusEffects.Add(effectName, effect);
+
+        effect.OnAdd(this);
     }
 }

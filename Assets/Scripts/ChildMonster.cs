@@ -9,13 +9,15 @@ public class ChildMonster : Monster
     public bool Buff = false;
 
     // Update is called once per frame
-    private void Update()
+    public override void Update()
     {
         if (Buff)
         {
             GetBuffModifier();
             Buff = false;
         }
+
+        base.Update();
     }
 
     public void GetBuffModifier()
