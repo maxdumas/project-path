@@ -11,7 +11,7 @@ public class MoveContainer
 
 public enum MoveType
 {
-    Attack,
-    Defend,
-    Idle
+    Idle = 0,
+    Attack = 1,
+    Defend = -1,
 }

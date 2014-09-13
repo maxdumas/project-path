@@ -1,6 +1,6 @@
 # Format: delay;move. 
 # Delay indicates how long to wait after last action before performing the move
-# Move is one of [attack, defend, idle]. Move is performed after delay time passes from last move
+# Move is one of [attack, defend]. Move is performed after delay time passes from last move
 2.5;attack
 2.25;attack
 2.5;defend

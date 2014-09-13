@@ -24,9 +24,11 @@ public class CombatWindow : MonoBehaviour
     private SpriteRenderer _background;
     private Monster _monster;
 
-    private int _monsterCurrAttacks = 0;
     private List<MoveContainer> _monsterMoves;
-    private int _currentMove = 0;
+    private int _moveIndex = 0;
+
+    private MoveType _currentMonsterMove = MoveType.Idle;
+    private MoveType _currentPlayerMove = MoveType.Idle;
 
     private float _lastMonsterActionTime;
 
@@ -49,27 +51,33 @@ public class CombatWindow : MonoBehaviour
         ShowStatusEffects(Player, _playerBuffs);
         ShowStatusEffects(_monster, _monsterBuffs);
 
-
-
-        if (Player.CwInfo.Animator.GetCurrentAnimatorStateInfo(0).IsName("Player_Idle"))
-        {
-            HandleIdle(Player);
-
+        if (_currentPlayerMove == MoveType.Idle)
+        { // We only want the player to be able to perform moves from the idle position
             if (Input.GetKey("up"))
             {
+                Debug.Log("Now we attackin'");
+                _currentPlayerMove = MoveType.Attack;
                 HandleAttack(Player, _monster);
-            } 
+            }
             else if (Input.GetKey("down"))
             {
+                Debug.Log("Now we defendin'");
+                _currentPlayerMove = MoveType.Defend;
                 HandleDefend(Player);
             }
         }
-
-
-        if (Time.time > _lastMonsterActionTime + _monsterMoves[_currentMove].Delay)
+        else if (Player.CwInfo.Animator.GetCurrentAnimatorStateInfo(0).IsName("Player_Idle") && _currentPlayerMove != MoveType.Idle)
         {
+            Debug.Log("Now we idlin'");
+            _currentPlayerMove = MoveType.Idle;
+            HandleIdle(Player);
+        }
+
+        if (Time.time > _lastMonsterActionTime + _monsterMoves[_moveIndex].Delay)
+        { // The monster performs the next action in its pattern whenever the delay for that move is exceeded
             _lastMonsterActionTime = Time.time;
-            switch (_monsterMoves[_currentMove].MoveType)
+            _currentMonsterMove = _monsterMoves[_moveIndex].MoveType;
+            switch (_currentMonsterMove)
             {
                 case MoveType.Attack:
                     HandleAttack(_monster, Player);
@@ -77,11 +85,13 @@ public class CombatWindow : MonoBehaviour
                 case MoveType.Defend:
                     HandleDefend(_monster);
                     break;
-                case MoveType.Idle:
-                    HandleIdle(_monster);
-                    break;
             }
-            _currentMove = (_currentMove + 1)%_monsterMoves.Count;
+            _moveIndex = (_moveIndex + 1)%_monsterMoves.Count;
+        }
+        else if (_monster.CwInfo.Animator.GetCurrentAnimatorStateInfo(0).IsTag("Idle") && _currentMonsterMove != MoveType.Idle)
+        { // We check for _monsterState != MoveType.Idle because this should only happen exactly when the monster becomes idle
+            _currentMonsterMove = MoveType.Idle;
+            HandleIdle(_monster);
         }
     }
 
@@ -93,13 +103,13 @@ public class CombatWindow : MonoBehaviour
 
     private void HandleDefend(Actor actor)
     {
-        actor.CwInfo.Animator.SetInteger("State",-1);
+        actor.CwInfo.Animator.SetInteger("State", -1);
         actor.CwInfo.Defending = true;
     }
 
     private void HandleAttack(Actor attacker, Actor defender)
     {
-        attacker.CwInfo.Animator.SetInteger("State",1);
+        attacker.CwInfo.Animator.SetInteger("State", 1);
         attacker.CwInfo.Defending = false;
 
         if (!defender.CwInfo.Defending)
