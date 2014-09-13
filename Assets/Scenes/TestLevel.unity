@@ -488,6 +488,7 @@ MonoBehaviour:
   PlayerSpritePrefab: {fileID: 21200000, guid: b3ab5958e531b4ad4b61c8d01c8507f6, type: 2}
   BackgroundPrefab: {fileID: 21200000, guid: 4c6b1b48a1efc7943a8ae4cca55a860d, type: 2}
   combat: {fileID: 11400000, guid: 62f84332f7ee98b4f89de3c5a79d1ea0, type: 2}
+  MonsterPattern: {fileID: 4900000, guid: 6e67948ab45466d4db21ae6ae0ba9072, type: 3}
 --- !u!58 &1261960614
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -848,6 +849,10 @@ Prefab:
       propertyPath: Player
       value: 
       objectReference: {fileID: 1634848042}
+    - target: {fileID: 11400000, guid: d5edc62f03194ba46b4ed1661d6f2216, type: 2}
+      propertyPath: MonsterPattern
+      value: 
+      objectReference: {fileID: 4900000, guid: 6e67948ab45466d4db21ae6ae0ba9072, type: 3}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: d5edc62f03194ba46b4ed1661d6f2216, type: 2}
   m_RootGameObject: {fileID: 1261960611}

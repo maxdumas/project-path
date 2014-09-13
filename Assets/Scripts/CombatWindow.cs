@@ -1,7 +1,10 @@
+using System;
+using System.Linq;
 using System.Text;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Random = UnityEngine.Random;
 
 public class CombatWindow : MonoBehaviour
 {
@@ -12,6 +15,8 @@ public class CombatWindow : MonoBehaviour
     public SpriteRenderer PlayerSpritePrefab;
     public SpriteRenderer BackgroundPrefab;
 
+    public TextAsset MonsterPattern;
+
     public SpriteRenderer PoisonDebuff;
     public SpriteRenderer BlindDebuff;
 
@@ -19,6 +24,10 @@ public class CombatWindow : MonoBehaviour
     private Monster _monster;
 
     private int _monsterCurrAttacks = 0;
+    private List<MoveContainer> _monsterMoves;
+    private int _currentMove = 0;
+
+    private float _lastMonsterActionTime;
 
     private readonly Dictionary<string, SpriteRenderer> _playerBuffs = new Dictionary<string, SpriteRenderer>();
     private readonly Dictionary<string, SpriteRenderer> _monsterBuffs = new Dictionary<string, SpriteRenderer>();
@@ -42,32 +51,39 @@ public class CombatWindow : MonoBehaviour
         if (Time.time > Player.CwInfo.NextCombatTime)
         {
             // Player Attack
-            if (Input.GetKey("up")) HandleAttack(Player, _monster);
+            if (Input.GetKey("up"))
+            {
+                Player.CwInfo.NextCombatTime = Time.time + Player.CwInfo.CombatPeriod + Player.CwInfo.PauseTime;
+                HandleAttack(Player, _monster);
+            }
             // Player Defense
-            else if (Input.GetKey("down")) HandleDefend(Player);
+            else if (Input.GetKey("down"))
+            {
+                Player.CwInfo.NextCombatTime = Time.time + Player.CwInfo.CombatPeriod + Player.CwInfo.PauseTime;
+                HandleDefend(Player);
+            }
         }
             // Player Idle
         else if (Time.time > Player.CwInfo.NextCombatTime - Player.CwInfo.PauseTime)
             HandleIdle(Player);
 
-        if (Time.time > _monster.CwInfo.NextCombatTime)
+        if (Time.time > _lastMonsterActionTime + _monsterMoves[_currentMove].Delay)
         {
-            //Monster Attack
-            if (_monsterCurrAttacks < _monster.NumAttacks)
+            _lastMonsterActionTime = Time.time;
+            switch (_monsterMoves[_currentMove].MoveType)
             {
-                HandleAttack(_monster, Player);
-                ++_monsterCurrAttacks;
+                case MoveType.Attack:
+                    HandleAttack(_monster, Player);
+                    break;
+                case MoveType.Defend:
+                    HandleDefend(_monster);
+                    break;
+                case MoveType.Idle:
+                    HandleIdle(_monster);
+                    break;
             }
-            // Monster Defense
-            else if (_monsterCurrAttacks >= _monster.NumAttacks)
-            {
-                HandleDefend(_monster);
-                _monsterCurrAttacks = 0;
-            }
+            _currentMove = (_currentMove + 1)%_monsterMoves.Count;
         }
-            // Monster Idle
-        else if (Time.time > _monster.CwInfo.NextCombatTime - _monster.CwInfo.PauseTime)
-            HandleIdle(_monster);
     }
 
     private void HandleIdle(Actor actor)
@@ -79,14 +95,12 @@ public class CombatWindow : MonoBehaviour
 
     private void HandleDefend(Actor actor)
     {
-        actor.CwInfo.NextCombatTime = Time.time + actor.CwInfo.CombatPeriod + actor.CwInfo.PauseTime;
         actor.CwInfo.Animator.SetBool("defending", true);
         actor.CwInfo.Defending = true;
     }
 
     private void HandleAttack(Actor attacker, Actor defender)
     {
-        attacker.CwInfo.NextCombatTime = Time.time + attacker.CwInfo.CombatPeriod + attacker.CwInfo.PauseTime;
         attacker.CwInfo.Animator.SetBool("attacking", true);
         attacker.CwInfo.Defending = false;
 
@@ -97,7 +111,7 @@ public class CombatWindow : MonoBehaviour
             if (attacker.CwInfo.AttackChance > roll)
             {
                 int damage = attacker.GetAttackValue();
-                _monster.Health -= damage;
+                defender.Health -= damage;
 
                 Debug.Log(string.Format("{1} is hit for {0}! {1} Health: {2}", damage, defender.DisplayName, _monster.Health));
                 DisplayMessage(damage.ToString(), Color.red, defender.CwInfo.DamageLocation);
@@ -127,18 +141,16 @@ public class CombatWindow : MonoBehaviour
                     defender.AddStatusEffect("Blind", new BlindStatusEffect(attacker.BlindAttackLength));
                 }
             }
-            else Debug.Log(attacker.DisplayName + " misses.");
+            //else Debug.Log(attacker.DisplayName + " misses.");
         }
-        else Debug.Log(defender.DisplayName + " blocks " + attacker.DisplayName + "'s attack!");
+        //else Debug.Log(defender.DisplayName + " blocks " + attacker.DisplayName + "'s attack!");
     }
 
     public void Enable()
     {
         Camera cam = Camera.main;
         //float camHeight = 2f * cam.orthographicSize;
-        //float camWidth = camHeight * cam.aspect;
-
-        
+        //float camWidth = camHeight * cam.aspect
 
         //Background
         _background = (SpriteRenderer)Instantiate(BackgroundPrefab);
@@ -182,6 +194,19 @@ public class CombatWindow : MonoBehaviour
 
         InitActor(_monster, +(halfCamWidth*0.68f), -(halfCamHeight*0.57f),
             MonsterPrefab.GetComponent<SpriteRenderer>(), _monsterBuffs);
+
+
+        string[] lines = MonsterPattern.text.Split('\n');
+        _monsterMoves = new List<MoveContainer>(lines.Length);
+        for(int i = 0; i < lines.Length; ++i)
+        {
+            if (lines[i][0] == '#') continue;
+            string[] tokens = lines[i].Split(';');
+            float delay = float.Parse(tokens[0]);
+            MoveType moveType = (MoveType)Enum.Parse(typeof(MoveType), tokens[1], true);
+            _monsterMoves.Add(new MoveContainer {Delay = delay, MoveType = moveType});
+            Debug.Log(moveType + " " + delay);
+        }
 
         // Player / Monster Buffs
         Debug.Log("Player Accuracy / Evasion: " + Player.Accuracy + " " + Player.Evasion);
