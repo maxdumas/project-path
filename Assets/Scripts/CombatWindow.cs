@@ -15,10 +15,12 @@ public class CombatWindow : MonoBehaviour
     public SpriteRenderer PlayerSpritePrefab;
     public SpriteRenderer MonsterSpritePrefab;
     public SpriteRenderer BackgroundPrefab;
+    public SpriteRenderer FramePrefab;
 
     public TextAsset MonsterPattern;
 
     private SpriteRenderer _background;
+    private SpriteRenderer _frame;
     private Monster _monster;
 
     private List<MoveContainer> _monsterMoves;
@@ -156,8 +158,15 @@ public class CombatWindow : MonoBehaviour
         _background = (SpriteRenderer)Instantiate(BackgroundPrefab);
         _background.transform.parent = this.transform;
 
+        //Frame
+        _frame = (SpriteRenderer)Instantiate(FramePrefab);
+        _frame.transform.parent = this.transform;
+
         float bgWidth = _background.transform.renderer.bounds.max.x - _background.transform.renderer.bounds.min.x;
         float bgHeight = _background.transform.renderer.bounds.max.y - _background.transform.renderer.bounds.min.y;
+
+        float frameWidth = _frame.transform.renderer.bounds.max.x - _frame.transform.renderer.bounds.min.x;
+        float frameHeight = _frame.transform.renderer.bounds.max.y - _frame.transform.renderer.bounds.min.y;
 
         Vector3 bl = Camera.main.ViewportToWorldPoint(Vector3.zero);
         Vector3 ur = Camera.main.ViewportToWorldPoint(new Vector3(1f, 1f, 0f));
@@ -171,10 +180,18 @@ public class CombatWindow : MonoBehaviour
         float bgWidthScale = (camWidth / bgWidth);
         float bgHeightScale = (camHeight / bgHeight);
 
+        float frameWidthScale = (camWidth / frameWidth);
+        float frameHeightScale = (camHeight / frameHeight);
+
         _background.transform.localScale = new Vector3(bgWidthScale, bgHeightScale, 0);
         _background.transform.position = new Vector3((bl.x + ur.x) * 0.5f, (bl.y + ur.y) * 0.5f, 5f); //new Vector3(transform.position.x, Player.transform.position.y, Player.transform.position.z);
         _background.sortingLayerName = "Background";
         _background.enabled = true;
+
+        _frame.transform.localScale = new Vector3(frameWidthScale, frameHeightScale, 0);
+        _frame.transform.position = new Vector3((bl.x + ur.x) * 0.5f, (bl.y + ur.y) * 0.5f, 5f);
+        _frame.sortingLayerName = "Front";
+        _frame.enabled = true;
 
         #region Debug Logging
         Debug.Log("Background Local Scale = " + _background.transform.localScale);
