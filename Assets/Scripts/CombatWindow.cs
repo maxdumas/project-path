@@ -88,20 +88,19 @@ public class CombatWindow : MonoBehaviour
 
     private void HandleIdle(Actor actor)
     {
-        actor.CwInfo.Animator.SetBool("attacking", false);
-        actor.CwInfo.Animator.SetBool("defending", false);
+        //actor.CwInfo.Animator.SetTrigger("Attack");
+        //actor.CwInfo.Animator.SetBool("Defend", false);
         actor.CwInfo.Defending = false;
     }
 
     private void HandleDefend(Actor actor)
     {
-        actor.CwInfo.Animator.SetBool("defending", true);
-        actor.CwInfo.Defending = true;
+        actor.CwInfo.Animator.SetTrigger("Defend");
     }
 
     private void HandleAttack(Actor attacker, Actor defender)
     {
-        attacker.CwInfo.Animator.SetBool("attacking", true);
+        attacker.CwInfo.Animator.SetTrigger("Attack");
         attacker.CwInfo.Defending = false;
 
         if (!defender.CwInfo.Defending)
@@ -154,6 +153,7 @@ public class CombatWindow : MonoBehaviour
 
         //Background
         _background = (SpriteRenderer)Instantiate(BackgroundPrefab);
+        _background.transform.parent = this.transform;
 
         float bgWidth = _background.transform.renderer.bounds.max.x - _background.transform.renderer.bounds.min.x;
         float bgHeight = _background.transform.renderer.bounds.max.y - _background.transform.renderer.bounds.min.y;
@@ -187,13 +187,15 @@ public class CombatWindow : MonoBehaviour
         #endregion
 
         //PlayerSprite
-        InitActor(Player, -(halfCamWidth*0.68f), -(halfCamHeight*0.57f), PlayerSpritePrefab, _playerBuffs);
+        Player.CwInfo.Sprite = (SpriteRenderer)Instantiate(PlayerSpritePrefab, transform.position, Quaternion.identity);
+        InitActor(Player, -(halfCamWidth * 0.6f), -(halfCamHeight * 0.75f), _playerBuffs);
 
         //MonsterSprite
         _monster = (Monster)Instantiate(MonsterPrefab, transform.position, Quaternion.identity);
+        _monster.transform.parent = this.transform;
+        _monster.CwInfo.Sprite = _monster.GetComponent<SpriteRenderer>();
 
-        InitActor(_monster, +(halfCamWidth*0.68f), -(halfCamHeight*0.57f),
-            MonsterPrefab.GetComponent<SpriteRenderer>(), _monsterBuffs);
+        InitActor(_monster, +(halfCamWidth * 0.6f), -(halfCamHeight * 0.75f), _monsterBuffs);
 
 
         string[] lines = MonsterPattern.text.Split('\n');
@@ -218,13 +220,13 @@ public class CombatWindow : MonoBehaviour
         _monster.CwInfo.AttackChance = _monster.Accuracy / Player.Evasion;
         Debug.Log("Monster Attack Chance = " + _monster.CwInfo.AttackChance);
 
-        Player.CwInfo.Animator.speed = 2;
+        //Player.CwInfo.Animator.speed = 2;
     }
 
-    private void InitActor(Actor actor, float x, float y, SpriteRenderer prefab, Dictionary<string, SpriteRenderer> buffs)
+    private void InitActor(Actor actor, float x, float y, Dictionary<string, SpriteRenderer> buffs)
     {
-        actor.CwInfo.Sprite = (SpriteRenderer)Instantiate(prefab, transform.position, Quaternion.identity);
         //_monsterInfo.Sprite = _monster.GetComponent<SpriteRenderer>();
+        actor.CwInfo.Sprite.transform.parent = this.transform;
         actor.CwInfo.Sprite.enabled = false;
 
         float xPos = Player.transform.position.x + x;
