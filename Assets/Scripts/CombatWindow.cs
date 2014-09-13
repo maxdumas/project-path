@@ -18,18 +18,13 @@ public class CombatWindow : MonoBehaviour
 
     public TextAsset MonsterPattern;
 
-    public SpriteRenderer PoisonDebuff;
-    public SpriteRenderer BlindDebuff;
-
     private SpriteRenderer _background;
     private Monster _monster;
 
     private List<MoveContainer> _monsterMoves;
     private int _moveIndex = 0;
-
     private MoveType _currentMonsterMove = MoveType.Idle;
     private MoveType _currentPlayerMove = MoveType.Idle;
-
     private float _lastMonsterActionTime;
 
     private readonly Dictionary<string, SpriteRenderer> _playerBuffs = new Dictionary<string, SpriteRenderer>();
@@ -55,20 +50,17 @@ public class CombatWindow : MonoBehaviour
         { // We only want the player to be able to perform moves from the idle position
             if (Input.GetKey("up"))
             {
-                Debug.Log("Now we attackin'");
                 _currentPlayerMove = MoveType.Attack;
                 HandleAttack(Player, _monster);
             }
             else if (Input.GetKey("down"))
             {
-                Debug.Log("Now we defendin'");
                 _currentPlayerMove = MoveType.Defend;
                 HandleDefend(Player);
             }
         }
         else if (Player.CwInfo.Animator.GetCurrentAnimatorStateInfo(0).IsName("Player_Idle") && _currentPlayerMove != MoveType.Idle)
         {
-            Debug.Log("Now we idlin'");
             _currentPlayerMove = MoveType.Idle;
             HandleIdle(Player);
         }
@@ -133,7 +125,7 @@ public class CombatWindow : MonoBehaviour
                 {
                     Debug.Log(string.Format("{0} is poisoned for {1} damage.", defender.DisplayName,
                         attacker.PoisonDamageValue));
-                    defender.AddStatusEffect("Poison",
+                    defender.AddStatusEffect("PoisonStatusEffect",
                         new PoisonStatusEffect(attacker.PoisonDamageValue, attacker.PoisonTickSpeed));
                 }
 
@@ -146,7 +138,7 @@ public class CombatWindow : MonoBehaviour
                 {
                     Debug.Log(string.Format("{0} is blinded! Accuracy cut in half for {1} seconds.",
                         defender.DisplayName, attacker.BlindAttackLength));
-                    defender.AddStatusEffect("Blind", new BlindStatusEffect(attacker.BlindAttackLength));
+                    defender.AddStatusEffect("BlindStatusEffect", new BlindStatusEffect(attacker.BlindAttackLength));
                 }
             }
             //else Debug.Log(attacker.DisplayName + " misses.");
@@ -246,8 +238,16 @@ public class CombatWindow : MonoBehaviour
         actor.CwInfo.Animator = actor.CwInfo.Sprite.GetComponent<Animator>();
 
         buffs.Clear();
-        buffs.Add("Poison", (SpriteRenderer) Instantiate(PoisonDebuff, transform.position, Quaternion.identity));
-        buffs.Add("Blind", (SpriteRenderer) Instantiate(BlindDebuff, transform.position, Quaternion.identity));
+        Sprite[] seTextures = Resources.LoadAll<Sprite>("StatusEffects");
+        foreach (var sprite in seTextures)
+        {
+            Debug.Log(sprite.name);
+            var g = new GameObject(sprite.name);
+            g.transform.parent = transform;
+            var s = g.AddComponent<SpriteRenderer>();
+            s.sprite = sprite;
+            buffs.Add(sprite.name, s);
+        }
     }
 
     public void DestroyWindow()
