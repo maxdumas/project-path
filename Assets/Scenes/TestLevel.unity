@@ -111,7 +111,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: d315dea1efdfb204f9cb19321d00c169, type: 2}
       propertyPath: m_RootOrder
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 11400002, guid: d315dea1efdfb204f9cb19321d00c169, type: 2}
       propertyPath: WeaponSlot
@@ -479,7 +479,9 @@ MonoBehaviour:
   Player: {fileID: 1634848042}
   EventNotifier: {fileID: 10200000, guid: 777e7eaa7a54d0c48b4ce1aa5c971787, type: 2}
   WaitTime: .5
-  enemy: {fileID: 11400000, guid: e3ca8ce15d28b85469fa6fb84e2f726a, type: 2}
+  MonsterPrefab: {fileID: 11400000, guid: 722e3404ad101c54ba91dc90d3fcb54c, type: 2}
+  MonsterSpritePrefab: {fileID: 21200000, guid: e3ca8ce15d28b85469fa6fb84e2f726a,
+    type: 2}
   PlayerSpritePrefab: {fileID: 21200000, guid: c8676f9a3f669a64b95754a58ee01aec, type: 2}
   BackgroundPrefab: {fileID: 21200000, guid: 4c6b1b48a1efc7943a8ae4cca55a860d, type: 2}
   combat: {fileID: 11400000, guid: 62f84332f7ee98b4f89de3c5a79d1ea0, type: 2}
@@ -559,7 +561,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 92b9f79add0b37d498dc9afa02611220, type: 2}
       propertyPath: m_RootOrder
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 21200000, guid: 92b9f79add0b37d498dc9afa02611220, type: 2}
       propertyPath: m_SortingOrder
@@ -770,7 +772,7 @@ MonoBehaviour:
   CwInfo:
     Sprite: {fileID: 0}
     Animator: {fileID: 0}
-    CombatPeriod: .5
+    CombatPeriod: 1
     NextCombatTime: 0
     PauseTime: .100000001
     Defending: 0
@@ -837,7 +839,7 @@ Prefab:
     - target: {fileID: 11400000, guid: d5edc62f03194ba46b4ed1661d6f2216, type: 2}
       propertyPath: enemy
       value: 
-      objectReference: {fileID: 11400000, guid: e3ca8ce15d28b85469fa6fb84e2f726a,
+      objectReference: {fileID: 11400000, guid: 722e3404ad101c54ba91dc90d3fcb54c,
         type: 2}
     - target: {fileID: 11400000, guid: d5edc62f03194ba46b4ed1661d6f2216, type: 2}
       propertyPath: PlayerSpritePrefab
@@ -862,6 +864,16 @@ Prefab:
       propertyPath: MonsterPattern
       value: 
       objectReference: {fileID: 4900000, guid: 6e67948ab45466d4db21ae6ae0ba9072, type: 3}
+    - target: {fileID: 11400000, guid: d5edc62f03194ba46b4ed1661d6f2216, type: 2}
+      propertyPath: MonsterPrefab
+      value: 
+      objectReference: {fileID: 11400000, guid: 722e3404ad101c54ba91dc90d3fcb54c,
+        type: 2}
+    - target: {fileID: 11400000, guid: d5edc62f03194ba46b4ed1661d6f2216, type: 2}
+      propertyPath: MonsterSpritePrefab
+      value: 
+      objectReference: {fileID: 21200000, guid: e3ca8ce15d28b85469fa6fb84e2f726a,
+        type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: d5edc62f03194ba46b4ed1661d6f2216, type: 2}
   m_RootGameObject: {fileID: 1261960611}

@@ -13,6 +13,7 @@ public class CombatWindow : MonoBehaviour
     public Player Player;
     public Monster MonsterPrefab;
     public SpriteRenderer PlayerSpritePrefab;
+    public SpriteRenderer MonsterSpritePrefab;
     public SpriteRenderer BackgroundPrefab;
 
     public TextAsset MonsterPattern;
@@ -48,24 +49,22 @@ public class CombatWindow : MonoBehaviour
         ShowStatusEffects(Player, _playerBuffs);
         ShowStatusEffects(_monster, _monsterBuffs);
 
-        if (Time.time > Player.CwInfo.NextCombatTime)
+
+
+        if (Player.CwInfo.Animator.GetCurrentAnimatorStateInfo(0).IsName("Player_Idle"))
         {
-            // Player Attack
+            HandleIdle(Player);
+
             if (Input.GetKey("up"))
             {
-                Player.CwInfo.NextCombatTime = Time.time + Player.CwInfo.CombatPeriod + Player.CwInfo.PauseTime;
                 HandleAttack(Player, _monster);
-            }
-            // Player Defense
+            } 
             else if (Input.GetKey("down"))
             {
-                Player.CwInfo.NextCombatTime = Time.time + Player.CwInfo.CombatPeriod + Player.CwInfo.PauseTime;
                 HandleDefend(Player);
             }
         }
-            // Player Idle
-        else if (Time.time > Player.CwInfo.NextCombatTime - Player.CwInfo.PauseTime)
-            HandleIdle(Player);
+
 
         if (Time.time > _lastMonsterActionTime + _monsterMoves[_currentMove].Delay)
         {
@@ -88,19 +87,19 @@ public class CombatWindow : MonoBehaviour
 
     private void HandleIdle(Actor actor)
     {
-        //actor.CwInfo.Animator.SetTrigger("Attack");
-        //actor.CwInfo.Animator.SetBool("Defend", false);
+        actor.CwInfo.Animator.SetInteger("State", 0);
         actor.CwInfo.Defending = false;
     }
 
     private void HandleDefend(Actor actor)
     {
-        actor.CwInfo.Animator.SetTrigger("Defend");
+        actor.CwInfo.Animator.SetInteger("State",-1);
+        actor.CwInfo.Defending = true;
     }
 
     private void HandleAttack(Actor attacker, Actor defender)
     {
-        attacker.CwInfo.Animator.SetTrigger("Attack");
+        attacker.CwInfo.Animator.SetInteger("State",1);
         attacker.CwInfo.Defending = false;
 
         if (!defender.CwInfo.Defending)
@@ -142,7 +141,7 @@ public class CombatWindow : MonoBehaviour
             }
             //else Debug.Log(attacker.DisplayName + " misses.");
         }
-        //else Debug.Log(defender.DisplayName + " blocks " + attacker.DisplayName + "'s attack!");
+        else Debug.Log(defender.DisplayName + " blocks " + attacker.DisplayName + "'s attack!");
     }
 
     public void Enable()
@@ -187,22 +186,18 @@ public class CombatWindow : MonoBehaviour
         #endregion
 
         //PlayerSprite
-        Player.CwInfo.Sprite = (SpriteRenderer)Instantiate(PlayerSpritePrefab, transform.position, Quaternion.identity);
-        InitActor(Player, -(halfCamWidth * 0.6f), -(halfCamHeight * 0.75f), _playerBuffs);
+        InitActor(Player, -(halfCamWidth * 0.6f), -(halfCamHeight * 0.75f), PlayerSpritePrefab, _playerBuffs);
 
         //MonsterSprite
         _monster = (Monster)Instantiate(MonsterPrefab, transform.position, Quaternion.identity);
-        _monster.transform.parent = this.transform;
-        _monster.CwInfo.Sprite = _monster.GetComponent<SpriteRenderer>();
-
-        InitActor(_monster, +(halfCamWidth * 0.6f), -(halfCamHeight * 0.75f), _monsterBuffs);
+        InitActor(_monster, +(halfCamWidth * 0.6f), -(halfCamHeight * 0.75f), MonsterSpritePrefab, _monsterBuffs);
 
 
         string[] lines = MonsterPattern.text.Split('\n');
         _monsterMoves = new List<MoveContainer>(lines.Length);
         for(int i = 0; i < lines.Length; ++i)
         {
-            if (lines[i][0] == '#') continue;
+            if (lines[i] == "" || lines[i][0] == '#') continue;
             string[] tokens = lines[i].Split(';');
             float delay = float.Parse(tokens[0]);
             MoveType moveType = (MoveType)Enum.Parse(typeof(MoveType), tokens[1], true);
@@ -223,8 +218,9 @@ public class CombatWindow : MonoBehaviour
         //Player.CwInfo.Animator.speed = 2;
     }
 
-    private void InitActor(Actor actor, float x, float y, Dictionary<string, SpriteRenderer> buffs)
+    private void InitActor(Actor actor, float x, float y, SpriteRenderer prefab, Dictionary<string, SpriteRenderer> buffs)
     {
+        actor.CwInfo.Sprite = (SpriteRenderer)Instantiate(prefab, transform.position, Quaternion.identity);
         //_monsterInfo.Sprite = _monster.GetComponent<SpriteRenderer>();
         actor.CwInfo.Sprite.transform.parent = this.transform;
         actor.CwInfo.Sprite.enabled = false;
@@ -261,7 +257,7 @@ public class CombatWindow : MonoBehaviour
     {
         if (actor.StatusEffects.Count == 0 || buffs.Count == 0) return;
 
-        Vector3 buffLocations = new Vector3(actor.CwInfo.Location.x - 0.3f, actor.CwInfo.Location.y + 1.5f, 0);
+        Vector3 buffLocations = new Vector3(actor.CwInfo.Location.x - 0.3f, actor.CwInfo.Location.y + 3.5f, 0);
 
         foreach (var kvp in buffs)
             if (actor.StatusEffects.ContainsKey(kvp.Key))

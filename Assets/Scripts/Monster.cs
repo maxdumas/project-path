@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 public class Monster : Actor
 {
-    public int NumAttacks;
 
     public string MonsterDescription
     {

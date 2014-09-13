@@ -4,7 +4,8 @@ using System.Collections;
 
 public class Lair : PieceBehavior
 {
-    public Monster enemy; //MonsterPrefab;
+    public Monster MonsterPrefab; //MonsterPrefab;
+    public SpriteRenderer MonsterSpritePrefab;
     public SpriteRenderer PlayerSpritePrefab;
     public SpriteRenderer BackgroundPrefab;
     public CombatWindow combat;
@@ -14,7 +15,7 @@ public class Lair : PieceBehavior
 
     protected override string Description
     {
-        get { return enemy == null ? "" : "A lair with the following monster: " + enemy.MonsterDescription; }
+        get { return MonsterPrefab == null ? "" : "A lair with the following monster: " + MonsterPrefab.MonsterDescription; }
     }
 
     protected override IEnumerator OnInteractionBegin()
@@ -29,7 +30,8 @@ public class Lair : PieceBehavior
         yield return new WaitForSeconds(waitTime);
 
         combat = (CombatWindow)Instantiate(combat, transform.position, Quaternion.identity);
-        combat.MonsterPrefab = this.enemy;
+        combat.MonsterPrefab = this.MonsterPrefab;
+        combat.MonsterSpritePrefab = this.MonsterSpritePrefab;
         combat.Player = Player;
         combat.PlayerSpritePrefab = this.PlayerSpritePrefab;
         combat.BackgroundPrefab = this.BackgroundPrefab;
@@ -169,6 +171,6 @@ public class Lair : PieceBehavior
     {
         GUI.skin.box.wordWrap = true;
         if (ShowInfoState == 2)
-            GUI.Box(new Rect(ClickLocation.x - 50, ClickLocation.y - 120, 100, 100), enemy.MonsterDescription);
+            GUI.Box(new Rect(ClickLocation.x - 50, ClickLocation.y - 120, 100, 100), MonsterPrefab.MonsterDescription);
     }
 }

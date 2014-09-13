@@ -203,7 +203,7 @@ MonoBehaviour:
   CwInfo:
     Sprite: {fileID: 0}
     Animator: {fileID: 0}
-    CombatPeriod: .5
+    CombatPeriod: 1
     NextCombatTime: 0
     PauseTime: .100000001
     Defending: 0
