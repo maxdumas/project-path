@@ -135,25 +135,31 @@ public class CombatWindow : MonoBehaviour
     public void Enable()
     {
         Camera cam = Camera.main;
-        float camHeight = 2f * cam.orthographicSize;
-        float camWidth = camHeight * cam.aspect;
+        //float camHeight = 2f * cam.orthographicSize;
+        //float camWidth = camHeight * cam.aspect;
 
-        float halfCamWidth = camWidth / 2f;
-        float halfCamHeight = cam.orthographicSize;
+        
 
         //Background
-        _background = (SpriteRenderer)Instantiate(BackgroundPrefab, transform.position, Quaternion.identity);
-
-        _background.enabled = false;
+        _background = (SpriteRenderer)Instantiate(BackgroundPrefab);
 
         float bgWidth = _background.transform.renderer.bounds.max.x - _background.transform.renderer.bounds.min.x;
         float bgHeight = _background.transform.renderer.bounds.max.y - _background.transform.renderer.bounds.min.y;
+
+        Vector3 bl = Camera.main.ViewportToWorldPoint(Vector3.zero);
+        Vector3 ur = Camera.main.ViewportToWorldPoint(new Vector3(1f, 1f, 0f));
+
+        float camHeight = ur.y - bl.y;
+        float camWidth = ur.x - bl.x;
+
+        float halfCamWidth = camWidth / 2f;
+        float halfCamHeight = cam.orthographicSize;
 
         float bgWidthScale = (camWidth / bgWidth);
         float bgHeightScale = (camHeight / bgHeight);
 
         _background.transform.localScale = new Vector3(bgWidthScale, bgHeightScale, 0);
-        _background.transform.position = new Vector3(transform.position.x, Player.transform.position.y, Player.transform.position.z);
+        _background.transform.position = new Vector3((bl.x + ur.x) * 0.5f, (bl.y + ur.y) * 0.5f, 5f); //new Vector3(transform.position.x, Player.transform.position.y, Player.transform.position.z);
         _background.sortingLayerName = "Background";
         _background.enabled = true;
 
