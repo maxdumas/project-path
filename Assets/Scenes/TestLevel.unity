@@ -150,7 +150,7 @@ Prefab:
       objectReference: {fileID: 1634848037}
     - target: {fileID: 11400002, guid: d315dea1efdfb204f9cb19321d00c169, type: 2}
       propertyPath: IsPoisonous
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 11400002, guid: d315dea1efdfb204f9cb19321d00c169, type: 2}
       propertyPath: PoisonChance
@@ -174,7 +174,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11400002, guid: d315dea1efdfb204f9cb19321d00c169, type: 2}
       propertyPath: Evasion
-      value: 150
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 11400002, guid: d315dea1efdfb204f9cb19321d00c169, type: 2}
       propertyPath: IsBlinded
@@ -182,7 +182,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11400002, guid: d315dea1efdfb204f9cb19321d00c169, type: 2}
       propertyPath: IsBlinding
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 11400002, guid: d315dea1efdfb204f9cb19321d00c169, type: 2}
       propertyPath: BlindChance
@@ -484,6 +484,7 @@ MonoBehaviour:
     type: 2}
   PlayerSpritePrefab: {fileID: 21200000, guid: c8676f9a3f669a64b95754a58ee01aec, type: 2}
   BackgroundPrefab: {fileID: 21200000, guid: 4c6b1b48a1efc7943a8ae4cca55a860d, type: 2}
+  FramePrefab: {fileID: 21200000, guid: f247bda6dc4728c46ad2c3102b6c85b4, type: 2}
   combat: {fileID: 11400000, guid: 62f84332f7ee98b4f89de3c5a79d1ea0, type: 2}
   MonsterPattern: {fileID: 4900000, guid: 6e67948ab45466d4db21ae6ae0ba9072, type: 3}
 --- !u!58 &1261960614
@@ -760,13 +761,13 @@ MonoBehaviour:
   WeaponSlot: {fileID: 11400000, guid: 4a4ac3e213d784c1aa5fd897602577a1, type: 2}
   ShieldSlot: {fileID: 11400000, guid: d96ed380f29ce4645abfce0b9bebab78, type: 2}
   MiscSlot: {fileID: 11400000, guid: 6990d39fd9a6749e8ba1395cddaae0d8, type: 2}
-  IsPoisonous: 1
+  IsPoisonous: 0
   PoisonChance: .200000003
   PoisonDamageValue: 4
   PoisonTickSpeed: 3
   Accuracy: 100
-  Evasion: 150
-  IsBlinding: 1
+  Evasion: 100
+  IsBlinding: 0
   BlindChance: .5
   BlindAttackLength: 4
   CwInfo:
@@ -873,6 +874,11 @@ Prefab:
       propertyPath: MonsterSpritePrefab
       value: 
       objectReference: {fileID: 21200000, guid: e3ca8ce15d28b85469fa6fb84e2f726a,
+        type: 2}
+    - target: {fileID: 11400000, guid: d5edc62f03194ba46b4ed1661d6f2216, type: 2}
+      propertyPath: FramePrefab
+      value: 
+      objectReference: {fileID: 21200000, guid: f247bda6dc4728c46ad2c3102b6c85b4,
         type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: d5edc62f03194ba46b4ed1661d6f2216, type: 2}
