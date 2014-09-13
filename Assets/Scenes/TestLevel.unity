@@ -780,6 +780,7 @@ MonoBehaviour:
     AttackChance: 0
     Location: {x: 0, y: 0, z: 0}
     DamageLocation: {x: 0, y: 0, z: 0}
+    AttackLock: 0
   PathFollower: {fileID: 1634848037}
   AllItems: []
 --- !u!50 &1634848043

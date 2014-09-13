@@ -48,12 +48,24 @@ public class CombatWindow : MonoBehaviour
         ShowStatusEffects(Player, _playerBuffs);
         ShowStatusEffects(_monster, _monsterBuffs);
 
+        //Debug.Log("Player Attack Val: " + Player.CwInfo.Animator.GetFloat("Attack"));
+
+        if (_currentPlayerMove == MoveType.Attack)
+        {
+            HandleAttackAnim(Player,_monster);
+        }
+
+        if (_currentMonsterMove == MoveType.Attack)
+        {
+            HandleAttackAnim(_monster,Player);
+        }
+
         if (_currentPlayerMove == MoveType.Idle)
         { // We only want the player to be able to perform moves from the idle position
             if (Input.GetKey("up"))
             {
                 _currentPlayerMove = MoveType.Attack;
-                HandleAttack(Player, _monster);
+                HandleAttack(Player);
             }
             else if (Input.GetKey("down"))
             {
@@ -67,6 +79,8 @@ public class CombatWindow : MonoBehaviour
             HandleIdle(Player);
         }
 
+
+
         if (Time.time > _lastMonsterActionTime + _monsterMoves[_moveIndex].Delay)
         { // The monster performs the next action in its pattern whenever the delay for that move is exceeded
             _lastMonsterActionTime = Time.time;
@@ -74,7 +88,7 @@ public class CombatWindow : MonoBehaviour
             switch (_currentMonsterMove)
             {
                 case MoveType.Attack:
-                    HandleAttack(_monster, Player);
+                    HandleAttack(_monster);
                     break;
                 case MoveType.Defend:
                     HandleDefend(_monster);
@@ -93,20 +107,40 @@ public class CombatWindow : MonoBehaviour
     {
         actor.CwInfo.Animator.SetInteger("State", 0);
         actor.CwInfo.Defending = false;
+        actor.CwInfo.AttackLock = false;
     }
 
     private void HandleDefend(Actor actor)
     {
         actor.CwInfo.Animator.SetInteger("State", -1);
         actor.CwInfo.Defending = true;
+        actor.CwInfo.AttackLock = false;
     }
 
-    private void HandleAttack(Actor attacker, Actor defender)
+    private void HandleAttack(Actor actor)
     {
-        attacker.CwInfo.Animator.SetInteger("State", 1);
-        attacker.CwInfo.Defending = false;
+        actor.CwInfo.Animator.SetInteger("State", 1);
+        actor.CwInfo.Defending = false;
+        actor.CwInfo.AttackLock = false;
+    }
 
-        if (!defender.CwInfo.Defending)
+    private void HandleAttackAnim(Actor attacker, Actor defender)
+    {
+        if (attacker.CwInfo.Animator.GetFloat("Attack") > 10.0f && attacker.CwInfo.AttackLock == false)
+        {
+            HandleDamage(attacker, defender);
+            attacker.CwInfo.AttackLock = true;
+        }
+
+        if (attacker.CwInfo.AttackLock && attacker.CwInfo.Animator.GetFloat("Attack") < 10.0f && attacker.CwInfo.Animator.GetFloat("FreeAnim") > 1.0f)
+        {
+            attacker.CwInfo.AttackLock = false;
+        }
+    }
+
+    private void HandleDamage(Actor attacker, Actor defender) 
+    {
+        if (!(defender.CwInfo.Animator.GetFloat("Defend") > 1.0f))
         {
             float roll = Random.Range(0f, 1f);
 
