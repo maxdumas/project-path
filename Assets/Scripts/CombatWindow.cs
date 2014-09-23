@@ -243,6 +243,7 @@ public class CombatWindow : MonoBehaviour
 
         //MonsterSprite
         _monster = (Monster)Instantiate(MonsterPrefab, transform.position, Quaternion.identity);
+        _monster.transform.parent = this.transform;
         InitActor(_monster, +(halfCamWidth * 0.6f), -(halfCamHeight * 0.75f), MonsterSpritePrefab, _monsterBuffs);
 
 
