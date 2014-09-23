@@ -14,70 +14,7 @@ AnimationClip:
   m_CompressedRotationCurves: []
   m_PositionCurves: []
   m_ScaleCurves: []
-  m_FloatCurves:
-  - curve:
-      serializedVersion: 2
-      m_Curve:
-      - time: .100000001
-        value: -.0567045212
-        inSlope: .0282648597
-        outSlope: .0282648597
-        tangentMode: 1
-      - time: .200000003
-        value: 10.8378582
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-      - time: .300000012
-        value: -.0731500685
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-      - time: .5
-        value: -.0721670389
-        inSlope: .00912812538
-        outSlope: .00912812538
-        tangentMode: 0
-      - time: .600000024
-        value: 10.8864193
-        inSlope: .0115879811
-        outSlope: .0115879811
-        tangentMode: 0
-      - time: .699999988
-        value: -.0698825121
-        inSlope: .0131875277
-        outSlope: .0131875277
-        tangentMode: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-    attribute: Attack
-    path: 
-    classID: 95
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve:
-      - time: .100000001
-        value: 0
-        inSlope: 3.53358483
-        outSlope: 3.53358483
-        tangentMode: 10
-      - time: .400000006
-        value: 1.06007552
-        inSlope: -.883396268
-        outSlope: -.883396268
-        tangentMode: 10
-      - time: .600000024
-        value: 0
-        inSlope: -5.30037737
-        outSlope: -5.30037737
-        tangentMode: 10
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-    attribute: FreeAnim
-    path: 
-    classID: 95
-    script: {fileID: 0}
+  m_FloatCurves: []
   m_PPtrCurves:
   - curve:
     - time: 0
@@ -114,18 +51,6 @@ AnimationClip:
   m_ClipBindingConstant:
     genericBindings:
     - path: 0
-      attribute: 1080829965
-      script: {fileID: 0}
-      classID: 95
-      customType: 0
-      isPPtrCurve: 0
-    - path: 0
-      attribute: 504473516
-      script: {fileID: 0}
-      classID: 95
-      customType: 0
-      isPPtrCurve: 0
-    - path: 0
       attribute: 0
       script: {fileID: 0}
       classID: 212
@@ -160,69 +85,20 @@ AnimationClip:
     m_KeepOriginalPositionXZ: 0
     m_HeightFromFeet: 0
     m_Mirror: 0
-  m_EditorCurves:
-  - curve:
-      serializedVersion: 2
-      m_Curve:
-      - time: .100000001
-        value: -.0567045212
-        inSlope: .0282648597
-        outSlope: .0282648597
-        tangentMode: 1
-      - time: .200000003
-        value: 10.8378582
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-      - time: .300000012
-        value: -.0731500685
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-      - time: .5
-        value: -.0721670389
-        inSlope: .00912812538
-        outSlope: .00912812538
-        tangentMode: 0
-      - time: .600000024
-        value: 10.8864193
-        inSlope: .0115879811
-        outSlope: .0115879811
-        tangentMode: 0
-      - time: .699999988
-        value: -.0698825121
-        inSlope: .0131875277
-        outSlope: .0131875277
-        tangentMode: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-    attribute: Attack
-    path: 
-    classID: 95
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve:
-      - time: .100000001
-        value: 0
-        inSlope: 3.53358483
-        outSlope: 3.53358483
-        tangentMode: 10
-      - time: .400000006
-        value: 1.06007552
-        inSlope: -.883396268
-        outSlope: -.883396268
-        tangentMode: 10
-      - time: .600000024
-        value: 0
-        inSlope: -5.30037737
-        outSlope: -5.30037737
-        tangentMode: 10
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-    attribute: FreeAnim
-    path: 
-    classID: 95
-    script: {fileID: 0}
+  m_EditorCurves: []
   m_EulerEditorCurves: []
-  m_Events: []
+  m_Events:
+  - time: .200000003
+    functionName: AnimAttack
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: .600000024
+    functionName: AnimAttack
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
