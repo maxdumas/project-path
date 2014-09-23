@@ -48,18 +48,6 @@ public class CombatWindow : MonoBehaviour
         ShowStatusEffects(Player, _playerBuffs);
         ShowStatusEffects(_monster, _monsterBuffs);
 
-        //Debug.Log("Player Attack Val: " + Player.CwInfo.Animator.GetFloat("Attack"));
-
-        if (_currentPlayerMove == MoveType.Attack)
-        {
-            HandleAttackAnim(Player,_monster);
-        }
-
-        if (_currentMonsterMove == MoveType.Attack)
-        {
-            HandleAttackAnim(_monster,Player);
-        }
-
         if (_currentPlayerMove == MoveType.Idle)
         { // We only want the player to be able to perform moves from the idle position
             if (Input.GetKey("up"))
@@ -78,8 +66,6 @@ public class CombatWindow : MonoBehaviour
             _currentPlayerMove = MoveType.Idle;
             HandleIdle(Player);
         }
-
-
 
         if (Time.time > _lastMonsterActionTime + _monsterMoves[_moveIndex].Delay)
         { // The monster performs the next action in its pattern whenever the delay for that move is exceeded
@@ -107,40 +93,40 @@ public class CombatWindow : MonoBehaviour
     {
         actor.CwInfo.Animator.SetInteger("State", 0);
         actor.CwInfo.Defending = false;
-        actor.CwInfo.AttackLock = false;
     }
 
     private void HandleDefend(Actor actor)
     {
         actor.CwInfo.Animator.SetInteger("State", -1);
-        actor.CwInfo.Defending = true;
-        actor.CwInfo.AttackLock = false;
     }
 
     private void HandleAttack(Actor actor)
     {
         actor.CwInfo.Animator.SetInteger("State", 1);
         actor.CwInfo.Defending = false;
-        actor.CwInfo.AttackLock = false;
     }
 
-    private void HandleAttackAnim(Actor attacker, Actor defender)
+    public void OnAnimAttack(Actor attacker)
     {
-        if (attacker.CwInfo.Animator.GetFloat("Attack") > 10.0f && attacker.CwInfo.AttackLock == false)
-        {
-            HandleDamage(attacker, defender);
-            attacker.CwInfo.AttackLock = true;
-        }
+        if (attacker == Player)
+            HandleDamage(attacker, _monster);
+        else if (attacker == _monster)
+            HandleDamage(attacker, Player);
+    }
 
-        if (attacker.CwInfo.AttackLock && attacker.CwInfo.Animator.GetFloat("Attack") < 10.0f && attacker.CwInfo.Animator.GetFloat("FreeAnim") > 1.0f)
-        {
-            attacker.CwInfo.AttackLock = false;
-        }
+    public void OnAnimDefenseBegin(Actor defender)
+    {
+        defender.CwInfo.Defending = true;
+    }
+
+    public void OnAnimDefenseEnd(Actor defender)
+    {
+        defender.CwInfo.Defending = false;
     }
 
     private void HandleDamage(Actor attacker, Actor defender) 
     {
-        if (!(defender.CwInfo.Animator.GetFloat("Defend") > 1.0f))
+        if (!defender.CwInfo.Defending)
         {
             float roll = Random.Range(0f, 1f);
 
@@ -278,6 +264,9 @@ public class CombatWindow : MonoBehaviour
         //_monsterInfo.Sprite = _monster.GetComponent<SpriteRenderer>();
         actor.CwInfo.Sprite.transform.parent = this.transform;
         actor.CwInfo.Sprite.enabled = false;
+        var animController = actor.CwInfo.Sprite.GetComponent<ActorAnimationController>();
+        animController.TargetActor = actor;
+        animController.TargetCombatWindow = this;
 
         float xPos = Player.transform.position.x + x;
         float yPos = Player.transform.position.y + y;
@@ -302,15 +291,15 @@ public class CombatWindow : MonoBehaviour
         }
     }
 
-    public void DestroyWindow()
+    private void DestroyWindow()
     {
         Destroy(_monster);
         Destroy(_background);
         Destroy(Player.CwInfo.Sprite);
         Destroy(_monster.CwInfo.Sprite);
-        foreach(var b in _monsterBuffs.Values)
+        foreach (var b in _monsterBuffs.Values)
             Destroy(b);
-        foreach(var b in _playerBuffs.Values)
+        foreach (var b in _playerBuffs.Values)
             Destroy(b);
         Destroy(this);
     }

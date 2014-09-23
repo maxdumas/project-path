@@ -54,7 +54,6 @@ public class Actor : MonoBehaviour
         public float AttackChance;
         public Vector3 Location;
         public Vector3 DamageLocation;
-        public bool AttackLock;
     }
 
 
