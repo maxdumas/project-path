@@ -992,7 +992,25 @@ MonoBehaviour:
   WeaponSlot: {fileID: 11400000, guid: 1fc496fb3e12045c082282c051fa67e3, type: 2}
   ShieldSlot: {fileID: 0}
   MiscSlot: {fileID: 0}
-  NumAttacks: 0
+  IsPoisonous: 0
+  PoisonChance: 0
+  PoisonDamageValue: 0
+  PoisonTickSpeed: 0
+  Accuracy: 0
+  Evasion: 0
+  IsBlinding: 0
+  BlindChance: 0
+  BlindAttackLength: 0
+  CwInfo:
+    Sprite: {fileID: 0}
+    Animator: {fileID: 0}
+    CombatPeriod: 0
+    NextCombatTime: 0
+    PauseTime: 0
+    Defending: 0
+    AttackChance: 0
+    Location: {x: 0, y: 0, z: 0}
+    DamageLocation: {x: 0, y: 0, z: 0}
 --- !u!212 &484422157
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1082,8 +1100,7 @@ GameObject:
   - 4: {fileID: 493464435}
   - 58: {fileID: 493464434}
   - 114: {fileID: 493464433}
-  - 23: {fileID: 493464432}
-  - 102: {fileID: 493464431}
+  - 212: {fileID: 493464431}
   m_Layer: 0
   m_Name: Trap
   m_TagString: Untagged
@@ -1091,32 +1108,10 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!102 &493464431
-TextMesh:
-  serializedVersion: 3
+--- !u!212 &493464431
+SpriteRenderer:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 10200000, guid: 480c7d5f535c12842bf12c645bc802b4,
-    type: 2}
-  m_PrefabInternal: {fileID: 635066995}
-  m_GameObject: {fileID: 493464430}
-  m_Text: T
-  m_OffsetZ: -1
-  m_CharacterSize: .0500000007
-  m_LineSpacing: 1
-  m_Anchor: 4
-  m_Alignment: 1
-  m_TabSize: 4
-  m_FontSize: 64
-  m_FontStyle: 0
-  m_RichText: 1
-  m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-  m_Color:
-    serializedVersion: 2
-    rgba: 4278190080
---- !u!23 &493464432
-Renderer:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 2300000, guid: 480c7d5f535c12842bf12c645bc802b4,
+  m_PrefabParentObject: {fileID: 21200000, guid: 480c7d5f535c12842bf12c645bc802b4,
     type: 2}
   m_PrefabInternal: {fileID: 635066995}
   m_GameObject: {fileID: 493464430}
@@ -1126,7 +1121,7 @@ Renderer:
   m_LightmapIndex: 255
   m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
   m_Materials:
-  - {fileID: 10100, guid: 0000000000000000e000000000000000, type: 0}
+  - {fileID: 10754, guid: 0000000000000000e000000000000000, type: 0}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 0
@@ -1134,6 +1129,8 @@ Renderer:
   m_ScaleInLightmap: 1
   m_SortingLayerID: 0
   m_SortingOrder: 0
+  m_Sprite: {fileID: 21300000, guid: 5c7debfa6c9deb1459261be69116045a, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &493464433
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1171,7 +1168,7 @@ Transform:
   m_PrefabInternal: {fileID: 635066995}
   m_GameObject: {fileID: 493464430}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: .25, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 271510397}
@@ -1270,7 +1267,25 @@ MonoBehaviour:
   WeaponSlot: {fileID: 11400000, guid: 1fc496fb3e12045c082282c051fa67e3, type: 2}
   ShieldSlot: {fileID: 0}
   MiscSlot: {fileID: 0}
-  NumAttacks: 0
+  IsPoisonous: 0
+  PoisonChance: 0
+  PoisonDamageValue: 0
+  PoisonTickSpeed: 0
+  Accuracy: 0
+  Evasion: 0
+  IsBlinding: 0
+  BlindChance: 0
+  BlindAttackLength: 0
+  CwInfo:
+    Sprite: {fileID: 0}
+    Animator: {fileID: 0}
+    CombatPeriod: 0
+    NextCombatTime: 0
+    PauseTime: 0
+    Defending: 0
+    AttackChance: 0
+    Location: {x: 0, y: 0, z: 0}
+    DamageLocation: {x: 0, y: 0, z: 0}
 --- !u!212 &608773375
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1319,7 +1334,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 480c7d5f535c12842bf12c645bc802b4, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: .25
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 480c7d5f535c12842bf12c645bc802b4, type: 2}
       propertyPath: m_LocalPosition.z
@@ -1414,10 +1429,13 @@ MonoBehaviour:
   Player: {fileID: 1634848042}
   EventNotifier: {fileID: 10200000, guid: 777e7eaa7a54d0c48b4ce1aa5c971787, type: 2}
   WaitTime: .5
-  enemy: {fileID: 1543490133}
+  MonsterPrefab: {fileID: 0}
+  MonsterSpritePrefab: {fileID: 0}
   PlayerSpritePrefab: {fileID: 21200000, guid: b3ab5958e531b4ad4b61c8d01c8507f6, type: 2}
   BackgroundPrefab: {fileID: 21200000, guid: debfa8883a8e88446bea47734002ebb5, type: 2}
+  FramePrefab: {fileID: 0}
   combat: {fileID: 11400000, guid: 62f84332f7ee98b4f89de3c5a79d1ea0, type: 2}
+  MonsterPattern: {fileID: 0}
 --- !u!58 &654550731
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -2217,7 +2235,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 17
+  m_RootOrder: 19
 --- !u!114 &907540496
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2424,78 +2442,6 @@ Prefab:
   m_RootGameObject: {fileID: 657084630}
   m_IsPrefabParent: 0
   m_IsExploded: 1
---- !u!1 &1055453566
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 100000, guid: d315dea1efdfb204f9cb19321d00c169, type: 2}
-  m_PrefabInternal: {fileID: 34518665}
-  serializedVersion: 4
-  m_Component:
-  - 4: {fileID: 1055453570}
-  - 33: {fileID: 1055453569}
-  - 65: {fileID: 1055453568}
-  - 23: {fileID: 1055453567}
-  m_Layer: 0
-  m_Name: Cube
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!23 &1055453567
-Renderer:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 2300000, guid: d315dea1efdfb204f9cb19321d00c169,
-    type: 2}
-  m_PrefabInternal: {fileID: 34518665}
-  m_GameObject: {fileID: 1055453566}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_LightmapIndex: 255
-  m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
-  m_Materials:
-  - {fileID: 10302, guid: 0000000000000000f000000000000000, type: 0}
-  m_SubsetIndices: 
-  m_StaticBatchRoot: {fileID: 0}
-  m_UseLightProbes: 0
-  m_LightProbeAnchor: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_SortingLayerID: 0
-  m_SortingOrder: 0
---- !u!65 &1055453568
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 6500000, guid: d315dea1efdfb204f9cb19321d00c169,
-    type: 2}
-  m_PrefabInternal: {fileID: 34518665}
-  m_GameObject: {fileID: 1055453566}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!33 &1055453569
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 3300000, guid: d315dea1efdfb204f9cb19321d00c169,
-    type: 2}
-  m_PrefabInternal: {fileID: 34518665}
-  m_GameObject: {fileID: 1055453566}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!4 &1055453570
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 400000, guid: d315dea1efdfb204f9cb19321d00c169, type: 2}
-  m_PrefabInternal: {fileID: 34518665}
-  m_GameObject: {fileID: 1055453566}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: .344974518, z: 0}
-  m_LocalScale: {x: .400000006, y: 1, z: .400000006}
-  m_Children: []
-  m_Father: {fileID: 1634848041}
-  m_RootOrder: 0
 --- !u!1 &1078212713
 GameObject:
   m_ObjectHideFlags: 0
@@ -2689,7 +2635,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 18
+  m_RootOrder: 17
 --- !u!1001 &1321856173
 Prefab:
   m_ObjectHideFlags: 0
@@ -2836,7 +2782,7 @@ Transform:
   m_PrefabInternal: {fileID: 1747827719}
   m_GameObject: {fileID: 1358724357}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: .219999999, z: 0}
+  m_LocalPosition: {x: 0, y: .200000003, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1020667156}
@@ -2879,10 +2825,13 @@ MonoBehaviour:
   Player: {fileID: 1634848042}
   EventNotifier: {fileID: 10200000, guid: 777e7eaa7a54d0c48b4ce1aa5c971787, type: 2}
   WaitTime: .5
-  enemy: {fileID: 608773374}
+  MonsterPrefab: {fileID: 0}
+  MonsterSpritePrefab: {fileID: 0}
   PlayerSpritePrefab: {fileID: 0}
   BackgroundPrefab: {fileID: 0}
+  FramePrefab: {fileID: 0}
   combat: {fileID: 0}
+  MonsterPattern: {fileID: 0}
 --- !u!58 &1358724362
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -3120,7 +3069,25 @@ MonoBehaviour:
   WeaponSlot: {fileID: 11400000, guid: a79805a131233614baf2aed7f31b28a4, type: 2}
   ShieldSlot: {fileID: 0}
   MiscSlot: {fileID: 0}
-  NumAttacks: 0
+  IsPoisonous: 0
+  PoisonChance: 0
+  PoisonDamageValue: 0
+  PoisonTickSpeed: 0
+  Accuracy: 0
+  Evasion: 0
+  IsBlinding: 0
+  BlindChance: 0
+  BlindAttackLength: 0
+  CwInfo:
+    Sprite: {fileID: 0}
+    Animator: {fileID: 0}
+    CombatPeriod: 0
+    NextCombatTime: 0
+    PauseTime: 0
+    Defending: 0
+    AttackChance: 0
+    Location: {x: 0, y: 0, z: 0}
+    DamageLocation: {x: 0, y: 0, z: 0}
 --- !u!212 &1543490134
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -3169,7 +3136,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: d5edc62f03194ba46b4ed1661d6f2216, type: 2}
       propertyPath: m_LocalPosition.y
-      value: .219999999
+      value: .200000003
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: d5edc62f03194ba46b4ed1661d6f2216, type: 2}
       propertyPath: m_LocalPosition.z
@@ -3304,12 +3271,11 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 1634848041}
-  - 33: {fileID: 1634848040}
-  - 23: {fileID: 1634848039}
   - 50: {fileID: 1634848043}
   - 58: {fileID: 1634848038}
   - 114: {fileID: 1634848037}
   - 114: {fileID: 1634848042}
+  - 212: {fileID: 1634848039}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -3346,10 +3312,10 @@ CircleCollider2D:
   m_IsTrigger: 1
   m_Radius: .589999974
   m_Center: {x: 0, y: 0}
---- !u!23 &1634848039
-Renderer:
+--- !u!212 &1634848039
+SpriteRenderer:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 2300002, guid: d315dea1efdfb204f9cb19321d00c169,
+  m_PrefabParentObject: {fileID: 21200000, guid: d315dea1efdfb204f9cb19321d00c169,
     type: 2}
   m_PrefabInternal: {fileID: 34518665}
   m_GameObject: {fileID: 1634848036}
@@ -3359,7 +3325,7 @@ Renderer:
   m_LightmapIndex: 255
   m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
   m_Materials:
-  - {fileID: 10302, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 10754, guid: 0000000000000000e000000000000000, type: 0}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 0
@@ -3367,14 +3333,8 @@ Renderer:
   m_ScaleInLightmap: 1
   m_SortingLayerID: 0
   m_SortingOrder: 0
---- !u!33 &1634848040
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 3300002, guid: d315dea1efdfb204f9cb19321d00c169,
-    type: 2}
-  m_PrefabInternal: {fileID: 34518665}
-  m_GameObject: {fileID: 1634848036}
-  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+  m_Sprite: {fileID: 21300000, guid: c8b54ea2a7594dc46a8eed3e531329d2, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!4 &1634848041
 Transform:
   m_ObjectHideFlags: 0
@@ -3384,10 +3344,9 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: .25, y: .25, z: .25}
-  m_Children:
-  - {fileID: 1055453570}
+  m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 19
+  m_RootOrder: 18
 --- !u!114 &1634848042
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3401,14 +3360,33 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DisplayName: 
-  MaxHealth: 0
+  MaxHealth: 100
   Health: 10
   BaseAttack: 1
   BaseDefense: 1
   WeaponSlot: {fileID: 11400000, guid: a79805a131233614baf2aed7f31b28a4, type: 2}
-  ShieldSlot: {fileID: 0}
-  MiscSlot: {fileID: 0}
-  PathFollower: {fileID: 0}
+  ShieldSlot: {fileID: 11400000, guid: d96ed380f29ce4645abfce0b9bebab78, type: 2}
+  MiscSlot: {fileID: 11400000, guid: 6990d39fd9a6749e8ba1395cddaae0d8, type: 2}
+  IsPoisonous: 0
+  PoisonChance: .200000003
+  PoisonDamageValue: 4
+  PoisonTickSpeed: 3
+  Accuracy: 100
+  Evasion: 100
+  IsBlinding: 0
+  BlindChance: .5
+  BlindAttackLength: 4
+  CwInfo:
+    Sprite: {fileID: 0}
+    Animator: {fileID: 0}
+    CombatPeriod: 1
+    NextCombatTime: 0
+    PauseTime: .100000001
+    Defending: 0
+    AttackChance: 0
+    Location: {x: 0, y: 0, z: 0}
+    DamageLocation: {x: 0, y: 0, z: 0}
+  PathFollower: {fileID: 1634848037}
   AllItems: []
 --- !u!50 &1634848043
 Rigidbody2D:
@@ -3691,7 +3669,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: d5edc62f03194ba46b4ed1661d6f2216, type: 2}
       propertyPath: m_LocalPosition.y
-      value: .219999999
+      value: .200000003
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: d5edc62f03194ba46b4ed1661d6f2216, type: 2}
       propertyPath: m_LocalPosition.z
@@ -4316,10 +4294,13 @@ MonoBehaviour:
   Player: {fileID: 1634848042}
   EventNotifier: {fileID: 10200000, guid: 777e7eaa7a54d0c48b4ce1aa5c971787, type: 2}
   WaitTime: .5
-  enemy: {fileID: 484422156}
+  MonsterPrefab: {fileID: 0}
+  MonsterSpritePrefab: {fileID: 0}
   PlayerSpritePrefab: {fileID: 0}
   BackgroundPrefab: {fileID: 0}
+  FramePrefab: {fileID: 0}
   combat: {fileID: 0}
+  MonsterPattern: {fileID: 0}
 --- !u!58 &2011253654
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -4339,7 +4320,7 @@ Transform:
   m_PrefabInternal: {fileID: 1601324379}
   m_GameObject: {fileID: 2011253650}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: .219999999, z: 0}
+  m_LocalPosition: {x: 0, y: .200000003, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1322151724}
