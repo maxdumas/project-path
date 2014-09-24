@@ -50,12 +50,22 @@ public class CombatWindow : MonoBehaviour
 
         if (_currentPlayerMove == MoveType.Idle)
         { // We only want the player to be able to perform moves from the idle position
+#if UNITY_STANDALONE
             if (Input.GetKey("up"))
+#endif
+#if UNITY_ANDROID || UNITY_IPHONE
+            if(Input.GetTouch(0).deltaPosition.y > 0)
+#endif
             {
                 _currentPlayerMove = MoveType.Attack;
                 HandleAttack(Player);
             }
+#if UNITY_STANDALONE
             else if (Input.GetKey("down"))
+#endif
+#if UNITY_ANDROID || UNITY_IPHONE
+            else if(Input.GetTouch(0).deltaPosition.y < 0)
+#endif
             {
                 _currentPlayerMove = MoveType.Defend;
                 HandleDefend(Player);
