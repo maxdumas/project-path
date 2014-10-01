@@ -23,14 +23,22 @@ public class CombatWindow : MonoBehaviour
     private SpriteRenderer _frame;
     private Monster _monster;
 
-    private List<MoveContainer> _monsterMoves;
-    private int _moveIndex = 0;
-    private MoveType _currentMonsterMove = MoveType.Idle;
-    private MoveType _currentPlayerMove = MoveType.Idle;
+    private MoveContainer[] _monsterMoves;
+    private int _monsterMoveIndex;
     private float _lastMonsterActionTime;
 
-    private readonly Dictionary<string, SpriteRenderer> _playerBuffs = new Dictionary<string, SpriteRenderer>();
-    private readonly Dictionary<string, SpriteRenderer> _monsterBuffs = new Dictionary<string, SpriteRenderer>();
+    private readonly Dictionary<Actor, CwActorInfo> _cwInfo = new Dictionary<Actor, CwActorInfo>(2);
+
+    [Serializable]
+    private class CwActorInfo
+    {
+        public SpriteRenderer Sprite;
+        public Animator Animator;
+        public MoveType CurrentMove = MoveType.Idle;
+        public Vector3 Location;
+        public Vector3 DamageLocation;
+        public readonly Dictionary<string, SpriteRenderer> Buffs = new Dictionary<string, SpriteRenderer>();
+    }
 
     private void Update()
     {
@@ -45,10 +53,10 @@ public class CombatWindow : MonoBehaviour
             DestroyWindow();
         }
 
-        ShowStatusEffects(Player, _playerBuffs);
-        ShowStatusEffects(_monster, _monsterBuffs);
+        ShowStatusEffects(Player);
+        ShowStatusEffects(_monster);
 
-        if (_currentPlayerMove == MoveType.Idle)
+        if (_cwInfo[Player].CurrentMove == MoveType.Idle)
 
         { // We only want the player to be able to perform moves from the idle position
 
@@ -59,8 +67,7 @@ public class CombatWindow : MonoBehaviour
             if(Input.touchCount > 0 && Input.GetTouch(0).deltaPosition.y > 0 )
 #endif
             {
-                _currentPlayerMove = MoveType.Attack;
-                HandleAttack(Player);
+                Attack(Player);
             }
 #if UNITY_STANDALONE
             else if (Input.GetKey("down"))
@@ -69,53 +76,49 @@ public class CombatWindow : MonoBehaviour
             else if(Input.touchCount > 0 && Input.GetTouch(0).deltaPosition.y < 0 )
 #endif
             {
-                _currentPlayerMove = MoveType.Defend;
-                HandleDefend(Player);
+                Defend(Player);
             }
         }
-        else if (Player.CwInfo.Animator.GetCurrentAnimatorStateInfo(0).IsName("Player_Idle") && _currentPlayerMove != MoveType.Idle)
+        else if (_cwInfo[Player].Animator.GetCurrentAnimatorStateInfo(0).IsTag("Idle") && _cwInfo[Player].CurrentMove != MoveType.Idle)
         {
-            _currentPlayerMove = MoveType.Idle;
-            HandleIdle(Player);
+            Idle(Player);
         }
 
-        if (Time.time > _lastMonsterActionTime + _monsterMoves[_moveIndex].Delay)
+        if (Time.time > _lastMonsterActionTime + _monsterMoves[_monsterMoveIndex].Delay)
         { // The monster performs the next action in its pattern whenever the delay for that move is exceeded
             _lastMonsterActionTime = Time.time;
-            _currentMonsterMove = _monsterMoves[_moveIndex].MoveType;
-            switch (_currentMonsterMove)
+            switch (_monsterMoves[_monsterMoveIndex].MoveType)
             {
                 case MoveType.Attack:
-                    HandleAttack(_monster);
+                    Attack(_monster);
                     break;
                 case MoveType.Defend:
-                    HandleDefend(_monster);
+                    Defend(_monster);
                     break;
             }
-            _moveIndex = (_moveIndex + 1)%_monsterMoves.Count;
+            _monsterMoveIndex = (_monsterMoveIndex + 1)%_monsterMoves.Length;
         }
-        else if (_monster.CwInfo.Animator.GetCurrentAnimatorStateInfo(0).IsTag("Idle") && _currentMonsterMove != MoveType.Idle)
+        else if (_cwInfo[_monster].Animator.GetCurrentAnimatorStateInfo(0).IsTag("Idle") && _cwInfo[_monster].CurrentMove != MoveType.Idle)
         { // We check for _monsterState != MoveType.Idle because this should only happen exactly when the monster becomes idle
-            _currentMonsterMove = MoveType.Idle;
-            HandleIdle(_monster);
+            Idle(_monster);
         }
     }
 
-    private void HandleIdle(Actor actor)
+    private void Idle(Actor actor)
     {
-        actor.CwInfo.Animator.SetInteger("State", 0);
-        actor.CwInfo.Defending = false;
+        _cwInfo[actor].CurrentMove = MoveType.Idle;
+        _cwInfo[actor].Animator.SetInteger("State", 0);
     }
 
-    private void HandleDefend(Actor actor)
+    private void Defend(Actor actor)
     {
-        actor.CwInfo.Animator.SetInteger("State", -1);
+        _cwInfo[actor].Animator.SetInteger("State", -1);
     }
 
-    private void HandleAttack(Actor actor)
+    private void Attack(Actor actor)
     {
-        actor.CwInfo.Animator.SetInteger("State", 1);
-        actor.CwInfo.Defending = false;
+        _cwInfo[actor].CurrentMove = MoveType.Attack;
+        _cwInfo[actor].Animator.SetInteger("State", 1);
     }
 
     public void OnAnimAttack(Actor attacker)
@@ -128,28 +131,32 @@ public class CombatWindow : MonoBehaviour
 
     public void OnAnimDefenseBegin(Actor defender)
     {
-        defender.CwInfo.Defending = true;
+        _cwInfo[defender].CurrentMove = MoveType.Defend;
     }
 
     public void OnAnimDefenseEnd(Actor defender)
     {
-        defender.CwInfo.Defending = false;
+        _cwInfo[defender].CurrentMove = MoveType.Defend;
+    }
+
+    public void OnAnimEndHit(Actor actor)
+    {
     }
 
     private void HandleDamage(Actor attacker, Actor defender) 
     {
-        if (!defender.CwInfo.Defending)
+        if (_cwInfo[defender].CurrentMove != MoveType.Defend)
         {
             float roll = Random.Range(0f, 1f);
 
-            if (attacker.CwInfo.AttackChance > roll)
+            if (attacker.Accuracy / defender.Evasion > roll)
             {
                 int damage = attacker.GetAttackValue();
                 defender.Health -= damage;
-                defender.CwInfo.Animator.SetInteger("State", -2);
+                _cwInfo[defender].Animator.SetInteger("State", -2);
 
                 Debug.Log(string.Format("{1} is hit for {0}! {1} Health: {2}", damage, defender.DisplayName, _monster.Health));
-                DisplayMessage(damage.ToString(), Color.red, defender.CwInfo.DamageLocation);
+                DisplayMessage(damage.ToString(), Color.red, _cwInfo[defender].DamageLocation);
 
                 // Poison Chance
                 //
@@ -238,61 +245,55 @@ public class CombatWindow : MonoBehaviour
         #endregion
 
         //PlayerSprite
-        InitActor(Player, -(halfCamWidth * 0.6f), -(halfCamHeight * 0.75f), PlayerSpritePrefab, _playerBuffs);
+        InitActor(Player, -(halfCamWidth * 0.6f), -(halfCamHeight * 0.75f), PlayerSpritePrefab);
        // Player.CwInfo.Animator.speed = 2;
         //MonsterSprite
+        Debug.LogWarning("EHLOO");
         _monster = (Monster)Instantiate(MonsterPrefab, transform.position, Quaternion.identity);
         _monster.transform.parent = this.transform;
-        InitActor(_monster, +(halfCamWidth * 0.6f), -(halfCamHeight * 0.75f), MonsterSpritePrefab, _monsterBuffs);
+        InitActor(_monster, +(halfCamWidth * 0.6f), -(halfCamHeight * 0.75f), MonsterSpritePrefab);
         //_monster.CwInfo.Animator.speed = 2;
 
         string[] lines = MonsterPattern.text.Split('\n');
-        _monsterMoves = new List<MoveContainer>(lines.Length);
-        for(int i = 0; i < lines.Length; ++i)
+        var parsedMoves = new List<MoveContainer>(lines.Length);
+        foreach (string line in lines)
         {
-            if (lines[i] == "" || lines[i][0] == '#') continue;
-            string[] tokens = lines[i].Split(';');
+            if (line == "" || line[0] == '#') continue;
+            string[] tokens = line.Split(';');
             float delay = float.Parse(tokens[0]);
             MoveType moveType = (MoveType)Enum.Parse(typeof(MoveType), tokens[1], true);
-            _monsterMoves.Add(new MoveContainer {Delay = delay, MoveType = moveType});
+            parsedMoves.Add(new MoveContainer {Delay = delay, MoveType = moveType});
             Debug.Log(moveType + " " + delay);
         }
+
+        _monsterMoves = parsedMoves.ToArray();
 
         // Player / Monster Buffs
         Debug.Log("Player Accuracy / Evasion: " + Player.Accuracy + " " + Player.Evasion);
         Debug.Log("Monster Accuracy / Evasion: " + _monster.Accuracy + " " + _monster.Evasion);
 
-        //Initial Attack Chances
-        Player.CwInfo.AttackChance = Player.Accuracy / _monster.Evasion;
-        Debug.Log("Player Attack Chance = " + Player.CwInfo.AttackChance);
-        _monster.CwInfo.AttackChance = _monster.Accuracy / Player.Evasion;
-        Debug.Log("Monster Attack Chance = " + _monster.CwInfo.AttackChance);
-
         //Player.CwInfo.Animator.speed = 2;
     }
 
-    private void InitActor(Actor actor, float x, float y, SpriteRenderer prefab, Dictionary<string, SpriteRenderer> buffs)
+    private void InitActor(Actor actor, float x, float y, SpriteRenderer prefab)
     {
-        actor.CwInfo.Sprite = (SpriteRenderer)Instantiate(prefab, transform.position, Quaternion.identity);
-        //_monsterInfo.Sprite = _monster.GetComponent<SpriteRenderer>();
-        actor.CwInfo.Sprite.transform.parent = this.transform;
-        actor.CwInfo.Sprite.enabled = false;
-        var animController = actor.CwInfo.Sprite.GetComponent<ActorAnimationController>();
+        float xPos = actor.transform.position.x + x;
+        float yPos = actor.transform.position.y + y;
+        
+        _cwInfo.Add(actor, new CwActorInfo());
+        _cwInfo[actor].Sprite = (SpriteRenderer)Instantiate(prefab, transform.position, Quaternion.identity);
+        _cwInfo[actor].Sprite.transform.parent = this.transform;
+        _cwInfo[actor].Sprite.transform.position = new Vector3(xPos, yPos, 0);
+        _cwInfo[actor].Sprite.sortingLayerName = "Midground";
+        _cwInfo[actor].Sprite.enabled = false;
+        _cwInfo[actor].Location = _cwInfo[actor].Sprite.transform.position;
+        _cwInfo[actor].DamageLocation = new Vector3(xPos, yPos + 0.5f, 0);
+        _cwInfo[actor].Animator = _cwInfo[actor].Sprite.GetComponent<Animator>();
+
+        var animController = _cwInfo[actor].Sprite.GetComponent<ActorAnimationController>();
         animController.TargetActor = actor;
         animController.TargetCombatWindow = this;
         
-
-        float xPos = Player.transform.position.x + x;
-        float yPos = Player.transform.position.y + y;
-
-        actor.CwInfo.Sprite.transform.position = new Vector3(xPos, yPos, 0);
-        actor.CwInfo.Location = actor.CwInfo.Sprite.transform.position;
-        actor.CwInfo.DamageLocation = new Vector3(xPos, yPos + 0.5f, 0);
-        actor.CwInfo.Sprite.sortingLayerName = "Midground";
-        actor.CwInfo.Sprite.enabled = true;
-        actor.CwInfo.Animator = actor.CwInfo.Sprite.GetComponent<Animator>();
-
-        buffs.Clear();
         Sprite[] seTextures = Resources.LoadAll<Sprite>("StatusEffects");
         foreach (var sprite in seTextures)
         {
@@ -301,7 +302,7 @@ public class CombatWindow : MonoBehaviour
             g.transform.parent = transform;
             var s = g.AddComponent<SpriteRenderer>();
             s.sprite = sprite;
-            buffs.Add(sprite.name, s);
+            _cwInfo[actor].Buffs.Add(sprite.name, s);
         }
     }
 
@@ -310,22 +311,24 @@ public class CombatWindow : MonoBehaviour
         Destroy(_monster);
         Destroy(_background);
         Destroy(_frame);
-        Destroy(Player.CwInfo.Sprite);
-        Destroy(_monster.CwInfo.Sprite);
-        foreach (var b in _monsterBuffs.Values)
-            Destroy(b);
-        foreach (var b in _playerBuffs.Values)
-            Destroy(b);
-        Destroy(this);
+
+        foreach (var info in _cwInfo.Values)
+        {
+            Destroy(info.Sprite);
+            foreach (var b in info.Buffs.Values)
+                Destroy(b);
+        }
+
+        Destroy(gameObject);
     }
 
-    private void ShowStatusEffects(Actor actor, Dictionary<string, SpriteRenderer> buffs)
+    private void ShowStatusEffects(Actor actor)
     {
-        if (actor.StatusEffects.Count == 0 || buffs.Count == 0) return;
+        if (actor.StatusEffects.Count == 0 || _cwInfo[actor].Buffs.Count == 0) return;
 
-        Vector3 buffLocations = new Vector3(actor.CwInfo.Location.x - 0.3f, actor.CwInfo.Location.y + 3.5f, 0);
+        Vector3 buffLocations = new Vector3(_cwInfo[actor].Location.x - 0.3f, _cwInfo[actor].Location.y + 3.5f, 0);
 
-        foreach (var kvp in buffs)
+        foreach (var kvp in _cwInfo[actor].Buffs)
             if (actor.StatusEffects.ContainsKey(kvp.Key))
             {
                 kvp.Value.enabled = true;

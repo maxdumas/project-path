@@ -40,21 +40,7 @@ public class Actor : MonoBehaviour
 	public float BlindAttackLength;
 
     public readonly IDictionary<string, IActorStatusEffect> StatusEffects = new Dictionary<string, IActorStatusEffect>();
-    public CwActorInfo CwInfo;
-
-    [Serializable]
-    public class CwActorInfo
-    {
-        public SpriteRenderer Sprite;
-        public Animator Animator;
-        public float CombatPeriod;
-        public float NextCombatTime;
-        public float PauseTime;
-        public bool Defending;
-        public float AttackChance;
-        public Vector3 Location;
-        public Vector3 DamageLocation;
-    }
+    
 
 
     public virtual void Start()

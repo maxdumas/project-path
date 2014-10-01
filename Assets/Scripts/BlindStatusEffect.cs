@@ -3,7 +3,7 @@ using UnityEngine;
 public class BlindStatusEffect : IActorStatusEffect
 {
     public float BlindLength;
-    public float OriginalAttackChance = -1f;
+    public float OriginalAccuracy = -1f;
 
     private float _t;
 
@@ -16,8 +16,8 @@ public class BlindStatusEffect : IActorStatusEffect
 
     public void OnAdd(Actor actor)
     {
-        OriginalAttackChance = actor.CwInfo.AttackChance;
-        actor.CwInfo.AttackChance = OriginalAttackChance / 2f;
+        OriginalAccuracy = actor.Accuracy;
+        actor.Accuracy = OriginalAccuracy / 2f;
     }
 
     public void ApplyEffect(Actor actor)
@@ -30,7 +30,7 @@ public class BlindStatusEffect : IActorStatusEffect
 
     public void OnExpire(Actor actor)
     {
-        actor.CwInfo.AttackChance = OriginalAttackChance;
+        actor.Accuracy = OriginalAccuracy;
         Debug.Log(actor.DisplayName + " is no longer blinded.");
         Expired = true;
     }

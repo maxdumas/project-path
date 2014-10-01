@@ -38,6 +38,7 @@ public class ActorAnimationController : MonoBehaviour
 
     public void AnimEndHit()
     {
-        TargetActor.CwInfo.Animator.SetInteger("State", 0);
+        //TargetActor.CwInfo.Animator.SetInteger("State", 0);
+        TargetCombatWindow.OnAnimEndHit(TargetActor);
     }
 }

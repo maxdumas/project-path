@@ -17,7 +17,7 @@ public class PoisonStatusEffect : IActorStatusEffect
 
     public void OnAdd(Actor actor)
     {
-        actor.CwInfo.Sprite.color = new Color(230f / 255f, 0, 250f / 255f, 1);
+        //actor.CwInfo.Sprite.color = new Color(230f / 255f, 0, 250f / 255f, 1);
     }
 
     public void ApplyEffect(Actor actor)
@@ -40,7 +40,7 @@ public class PoisonStatusEffect : IActorStatusEffect
 
     public void OnExpire(Actor actor)
     {
-        actor.CwInfo.Sprite.color = Color.white;
+        //actor.CwInfo.Sprite.color = Color.white;
         Debug.Log(actor.DisplayName + " is no longer poisoned.");
         Expired = true;
     }
