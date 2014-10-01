@@ -296,7 +296,6 @@ GameObject:
   - 58: {fileID: 1261960614}
   - 114: {fileID: 1261960613}
   - 212: {fileID: 1261960612}
-  - 95: {fileID: 1261960616}
   m_Layer: 0
   m_Name: Lair
   m_TagString: Untagged
@@ -345,7 +344,7 @@ MonoBehaviour:
   MonsterPrefab: {fileID: 11400000, guid: 722e3404ad101c54ba91dc90d3fcb54c, type: 2}
   MonsterSpritePrefab: {fileID: 21200000, guid: e3ca8ce15d28b85469fa6fb84e2f726a,
     type: 2}
-  PlayerSpritePrefab: {fileID: 21200000, guid: c8676f9a3f669a64b95754a58ee01aec, type: 2}
+  PlayerSpritePrefab: {fileID: 21200000, guid: c44a070d4b440ba46a6f4df692bb5e5d, type: 2}
   BackgroundPrefab: {fileID: 21200000, guid: 4c6b1b48a1efc7943a8ae4cca55a860d, type: 2}
   FramePrefab: {fileID: 21200000, guid: f247bda6dc4728c46ad2c3102b6c85b4, type: 2}
   combat: {fileID: 11400000, guid: 62f84332f7ee98b4f89de3c5a79d1ea0, type: 2}
@@ -374,20 +373,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1630712743}
   m_RootOrder: 0
---- !u!95 &1261960616
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1261960611}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 1328030d8a9dd584bb8b2a6e8a89f5de, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 1
-  m_HasTransformHierarchy: 1
 --- !u!1001 &1321856173
 Prefab:
   m_ObjectHideFlags: 0
@@ -700,7 +685,7 @@ Prefab:
     - target: {fileID: 11400000, guid: d5edc62f03194ba46b4ed1661d6f2216, type: 2}
       propertyPath: PlayerSpritePrefab
       value: 
-      objectReference: {fileID: 21200000, guid: c8676f9a3f669a64b95754a58ee01aec,
+      objectReference: {fileID: 21200000, guid: c44a070d4b440ba46a6f4df692bb5e5d,
         type: 2}
     - target: {fileID: 11400000, guid: d5edc62f03194ba46b4ed1661d6f2216, type: 2}
       propertyPath: BackgroundPrefab

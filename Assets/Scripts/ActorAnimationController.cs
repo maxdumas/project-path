@@ -33,7 +33,7 @@ public class ActorAnimationController : MonoBehaviour
 
     public void AnimBeginHit()
     {
-
+        
     }
 
     public void AnimEndHit()
