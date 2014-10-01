@@ -14,4 +14,5 @@ public enum MoveType
     Idle = 0,
     Attack = 1,
     Defend = -1,
+    Hit = -2,
 }

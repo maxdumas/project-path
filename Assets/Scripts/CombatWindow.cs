@@ -49,12 +49,14 @@ public class CombatWindow : MonoBehaviour
         ShowStatusEffects(_monster, _monsterBuffs);
 
         if (_currentPlayerMove == MoveType.Idle)
+
         { // We only want the player to be able to perform moves from the idle position
+
 #if UNITY_STANDALONE
             if (Input.GetKey("up"))
 #endif
 #if UNITY_ANDROID || UNITY_IPHONE
-            if(Input.GetTouch(0).deltaPosition.y > 0)
+            if(Input.touchCount > 0 && Input.GetTouch(0).deltaPosition.y > 0 )
 #endif
             {
                 _currentPlayerMove = MoveType.Attack;
@@ -64,7 +66,7 @@ public class CombatWindow : MonoBehaviour
             else if (Input.GetKey("down"))
 #endif
 #if UNITY_ANDROID || UNITY_IPHONE
-            else if(Input.GetTouch(0).deltaPosition.y < 0)
+            else if(Input.touchCount > 0 && Input.GetTouch(0).deltaPosition.y < 0 )
 #endif
             {
                 _currentPlayerMove = MoveType.Defend;
@@ -144,6 +146,7 @@ public class CombatWindow : MonoBehaviour
             {
                 int damage = attacker.GetAttackValue();
                 defender.Health -= damage;
+                defender.CwInfo.Animator.SetInteger("State", -2);
 
                 Debug.Log(string.Format("{1} is hit for {0}! {1} Health: {2}", damage, defender.DisplayName, _monster.Health));
                 DisplayMessage(damage.ToString(), Color.red, defender.CwInfo.DamageLocation);
@@ -236,12 +239,12 @@ public class CombatWindow : MonoBehaviour
 
         //PlayerSprite
         InitActor(Player, -(halfCamWidth * 0.6f), -(halfCamHeight * 0.75f), PlayerSpritePrefab, _playerBuffs);
-
+       // Player.CwInfo.Animator.speed = 2;
         //MonsterSprite
         _monster = (Monster)Instantiate(MonsterPrefab, transform.position, Quaternion.identity);
         _monster.transform.parent = this.transform;
         InitActor(_monster, +(halfCamWidth * 0.6f), -(halfCamHeight * 0.75f), MonsterSpritePrefab, _monsterBuffs);
-
+        //_monster.CwInfo.Animator.speed = 2;
 
         string[] lines = MonsterPattern.text.Split('\n');
         _monsterMoves = new List<MoveContainer>(lines.Length);
@@ -277,6 +280,7 @@ public class CombatWindow : MonoBehaviour
         var animController = actor.CwInfo.Sprite.GetComponent<ActorAnimationController>();
         animController.TargetActor = actor;
         animController.TargetCombatWindow = this;
+        
 
         float xPos = Player.transform.position.x + x;
         float yPos = Player.transform.position.y + y;
@@ -305,6 +309,7 @@ public class CombatWindow : MonoBehaviour
     {
         Destroy(_monster);
         Destroy(_background);
+        Destroy(_frame);
         Destroy(Player.CwInfo.Sprite);
         Destroy(_monster.CwInfo.Sprite);
         foreach (var b in _monsterBuffs.Values)
