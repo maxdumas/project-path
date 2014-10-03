@@ -341,14 +341,14 @@ MonoBehaviour:
   Player: {fileID: 1634848042}
   EventNotifier: {fileID: 10200000, guid: 777e7eaa7a54d0c48b4ce1aa5c971787, type: 2}
   WaitTime: .5
-  MonsterPrefab: {fileID: 11400000, guid: 722e3404ad101c54ba91dc90d3fcb54c, type: 2}
-  MonsterSpritePrefab: {fileID: 21200000, guid: e3ca8ce15d28b85469fa6fb84e2f726a,
+  MonsterPrefab: {fileID: 11400000, guid: 40609fb256baa734ba9e29efb028a07c, type: 2}
+  MonsterSpritePrefab: {fileID: 21200000, guid: a95adda0fb0bb114182af4d3f49a2018,
     type: 2}
   PlayerSpritePrefab: {fileID: 21200000, guid: c44a070d4b440ba46a6f4df692bb5e5d, type: 2}
   BackgroundPrefab: {fileID: 21200000, guid: 4c6b1b48a1efc7943a8ae4cca55a860d, type: 2}
   FramePrefab: {fileID: 21200000, guid: f247bda6dc4728c46ad2c3102b6c85b4, type: 2}
   combat: {fileID: 11400000, guid: 62f84332f7ee98b4f89de3c5a79d1ea0, type: 2}
-  MonsterPattern: {fileID: 4900000, guid: 6e67948ab45466d4db21ae6ae0ba9072, type: 3}
+  MonsterPattern: {fileID: 4900000, guid: b57bece10e5cd2c4882ae4378abdeb90, type: 3}
 --- !u!58 &1261960614
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -618,6 +618,7 @@ MonoBehaviour:
     PauseTime: .100000001
     Defending: 0
     AttackChance: 0
+    MoveType: 0
     Location: {x: 0, y: 0, z: 0}
     DamageLocation: {x: 0, y: 0, z: 0}
   PathFollower: {fileID: 1634848037}
@@ -704,16 +705,16 @@ Prefab:
     - target: {fileID: 11400000, guid: d5edc62f03194ba46b4ed1661d6f2216, type: 2}
       propertyPath: MonsterPattern
       value: 
-      objectReference: {fileID: 4900000, guid: 6e67948ab45466d4db21ae6ae0ba9072, type: 3}
+      objectReference: {fileID: 4900000, guid: b57bece10e5cd2c4882ae4378abdeb90, type: 3}
     - target: {fileID: 11400000, guid: d5edc62f03194ba46b4ed1661d6f2216, type: 2}
       propertyPath: MonsterPrefab
       value: 
-      objectReference: {fileID: 11400000, guid: 722e3404ad101c54ba91dc90d3fcb54c,
+      objectReference: {fileID: 11400000, guid: 40609fb256baa734ba9e29efb028a07c,
         type: 2}
     - target: {fileID: 11400000, guid: d5edc62f03194ba46b4ed1661d6f2216, type: 2}
       propertyPath: MonsterSpritePrefab
       value: 
-      objectReference: {fileID: 21200000, guid: e3ca8ce15d28b85469fa6fb84e2f726a,
+      objectReference: {fileID: 21200000, guid: a95adda0fb0bb114182af4d3f49a2018,
         type: 2}
     - target: {fileID: 11400000, guid: d5edc62f03194ba46b4ed1661d6f2216, type: 2}
       propertyPath: FramePrefab

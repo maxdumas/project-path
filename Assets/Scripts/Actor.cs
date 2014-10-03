@@ -52,6 +52,7 @@ public class Actor : MonoBehaviour
         public float PauseTime;
         public bool Defending;
         public float AttackChance;
+        public MoveType MoveType;
         public Vector3 Location;
         public Vector3 DamageLocation;
     }
@@ -94,6 +95,30 @@ public class Actor : MonoBehaviour
     public int GetDefenseValue()
     {
         return BaseDefense + AllSlots.Sum(item => item.DefenseModifier());
+    }
+
+    public int GetArmorValue()
+    {
+        if (!(MiscSlot == null))
+        {
+            return BaseDefense + MiscSlot.DefenseModifier();
+        }
+        else
+        {
+            return BaseDefense;
+        }
+    }
+
+    public int GetShieldValue()
+    {
+        if (!(ShieldSlot == null))
+        {
+            return BaseDefense + ShieldSlot.DefenseModifier();
+        } 
+        else
+        {
+            return 0;
+        }
     }
 
     public void AddStatusEffect(string effectName, IActorStatusEffect effect)

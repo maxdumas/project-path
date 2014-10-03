@@ -40,4 +40,9 @@ public class ActorAnimationController : MonoBehaviour
     {
         TargetActor.CwInfo.Animator.SetInteger("State", 0);
     }
+
+    public void AnimEndDeath()
+    {
+        TargetCombatWindow.DestroyWindow();
+    }
 }

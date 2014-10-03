@@ -15,4 +15,5 @@ public enum MoveType
     Attack = 1,
     Defend = -1,
     Hit = -2,
+    Death = -3,
 }

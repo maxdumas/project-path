@@ -39,7 +39,7 @@ public class CombatWindow : MonoBehaviour
             Debug.Log("You die!");
             DestroyWindow();
         }
-        else if (_monster.Health <= 0)
+        if (_monster.Health <= 0)
         {
             Debug.Log("Monster dies!");
             DestroyWindow();
@@ -47,9 +47,16 @@ public class CombatWindow : MonoBehaviour
 
         ShowStatusEffects(Player, _playerBuffs);
         ShowStatusEffects(_monster, _monsterBuffs);
+        PlayerInput();
+        MonsterInput();
+    }
+
+
+    private void PlayerInput()
+    {
+
 
         if (_currentPlayerMove == MoveType.Idle)
-
         { // We only want the player to be able to perform moves from the idle position
 
 #if UNITY_STANDALONE
@@ -78,7 +85,10 @@ public class CombatWindow : MonoBehaviour
             _currentPlayerMove = MoveType.Idle;
             HandleIdle(Player);
         }
+    }
 
+    public void MonsterInput()
+    {
         if (Time.time > _lastMonsterActionTime + _monsterMoves[_moveIndex].Delay)
         { // The monster performs the next action in its pattern whenever the delay for that move is exceeded
             _lastMonsterActionTime = Time.time;
@@ -92,7 +102,7 @@ public class CombatWindow : MonoBehaviour
                     HandleDefend(_monster);
                     break;
             }
-            _moveIndex = (_moveIndex + 1)%_monsterMoves.Count;
+            _moveIndex = (_moveIndex + 1) % _monsterMoves.Count;
         }
         else if (_monster.CwInfo.Animator.GetCurrentAnimatorStateInfo(0).IsTag("Idle") && _currentMonsterMove != MoveType.Idle)
         { // We check for _monsterState != MoveType.Idle because this should only happen exactly when the monster becomes idle
@@ -138,48 +148,71 @@ public class CombatWindow : MonoBehaviour
 
     private void HandleDamage(Actor attacker, Actor defender) 
     {
-        if (!defender.CwInfo.Defending)
+        if (defender.GetArmorValue() < attacker.GetAttackValue())
         {
             float roll = Random.Range(0f, 1f);
 
             if (attacker.CwInfo.AttackChance > roll)
             {
-                int damage = attacker.GetAttackValue();
+                int damage = 0;
+                if (!defender.CwInfo.Defending)
+                {
+                    Debug.Log("Stump Armor Value = " + defender.GetArmorValue());
+                    Debug.Log("Player ATtack Value = " + attacker.GetAttackValue());
+                    damage = attacker.GetAttackValue() - defender.GetArmorValue();
+                    defender.CwInfo.Animator.SetInteger("State", -2);
+                }
+                else
+                {
+                    damage = attacker.GetAttackValue() - defender.GetDefenseValue();
+                }
+
                 defender.Health -= damage;
-                defender.CwInfo.Animator.SetInteger("State", -2);
+                
 
                 Debug.Log(string.Format("{1} is hit for {0}! {1} Health: {2}", damage, defender.DisplayName, _monster.Health));
                 DisplayMessage(damage.ToString(), Color.red, defender.CwInfo.DamageLocation);
-
-                // Poison Chance
-                //
-                // Each attack, the actor has a chance to poison IF the actor IsPoisonous. 
-                // If the other actor is already poisoned and it procs, the fade damage value is refreshed.
-                roll = Random.Range(0f, 1f);
-                if (attacker.IsPoisonous && attacker.PoisonChance > roll)
-                {
-                    Debug.Log(string.Format("{0} is poisoned for {1} damage.", defender.DisplayName,
-                        attacker.PoisonDamageValue));
-                    defender.AddStatusEffect("PoisonStatusEffect",
-                        new PoisonStatusEffect(attacker.PoisonDamageValue, attacker.PoisonTickSpeed));
-                }
-
-                // Blind Chance
-                //
-                // Each attack, the actor has a chance to poison IF the actor IsBlinding.
-                // If the other actor is already blinded and it procs, the blind length is refreshed.
-                roll = Random.Range(0f, 1f);
-                if (attacker.IsBlinding && attacker.BlindChance > roll)
-                {
-                    Debug.Log(string.Format("{0} is blinded! Accuracy cut in half for {1} seconds.",
-                        defender.DisplayName, attacker.BlindAttackLength));
-                    defender.AddStatusEffect("BlindStatusEffect", new BlindStatusEffect(attacker.BlindAttackLength));
-                }
             }
-            //else Debug.Log(attacker.DisplayName + " misses.");
         }
         else Debug.Log(defender.DisplayName + " blocks " + attacker.DisplayName + "'s attack!");
     }
+
+
+    // Poison Chance
+    //
+    // Each attack, the actor has a chance to poison IF the actor IsPoisonous. 
+    // If the other actor is already poisoned and it procs, the fade damage value is refreshed.
+    private void PoisonChance(Actor attacker, Actor defender)
+    {
+        
+        float roll = Random.Range(0f, 1f);
+        if (attacker.IsPoisonous && attacker.PoisonChance > roll)
+        {
+            Debug.Log(string.Format("{0} is poisoned for {1} damage.", defender.DisplayName,
+                attacker.PoisonDamageValue));
+            defender.AddStatusEffect("PoisonStatusEffect",
+                new PoisonStatusEffect(attacker.PoisonDamageValue, attacker.PoisonTickSpeed));
+        }
+
+    }
+
+
+    // Blind Chance
+    //
+    // Each attack, the actor has a chance to poison IF the actor IsBlinding.
+    // If the other actor is already blinded and it procs, the blind length is refreshed.
+    private void BlindChance(Actor attacker, Actor defender)
+    {
+        
+        float roll = Random.Range(0f, 1f);
+        if (attacker.IsBlinding && attacker.BlindChance > roll)
+        {
+            Debug.Log(string.Format("{0} is blinded! Accuracy cut in half for {1} seconds.",
+                defender.DisplayName, attacker.BlindAttackLength));
+            defender.AddStatusEffect("BlindStatusEffect", new BlindStatusEffect(attacker.BlindAttackLength));
+        }
+    }
+
 
     public void Enable()
     {
@@ -305,18 +338,18 @@ public class CombatWindow : MonoBehaviour
         }
     }
 
-    private void DestroyWindow()
+    public void DestroyWindow()
     {
-        Destroy(_monster);
-        Destroy(_background);
-        Destroy(_frame);
-        Destroy(Player.CwInfo.Sprite);
-        Destroy(_monster.CwInfo.Sprite);
+        Destroy(_monster.gameObject);
+        Destroy(_background.gameObject);
+        Destroy(_frame.gameObject);
+        Destroy(Player.CwInfo.Sprite.gameObject);
+        Destroy(_monster.CwInfo.Sprite.gameObject);
         foreach (var b in _monsterBuffs.Values)
-            Destroy(b);
+            Destroy(b.gameObject);
         foreach (var b in _playerBuffs.Values)
-            Destroy(b);
-        Destroy(this);
+            Destroy(b.gameObject);
+        Destroy(this.gameObject);
     }
 
     private void ShowStatusEffects(Actor actor, Dictionary<string, SpriteRenderer> buffs)
@@ -342,7 +375,7 @@ public class CombatWindow : MonoBehaviour
 
     protected void DisplayMessage(string text, Color color, float xOffset = 0f, float yOffset = 0f, float zOffset = 0f)
     {
-        Vector3 offset = new Vector3(xOffset, yOffset, zOffset);
+        Vector3 offset = new Vector3(xOffset, yOffset, 2);
 
         DisplayMessage(text, color, offset);
     }
