@@ -50,9 +50,6 @@ public class CombatWindow : MonoBehaviour
 
         ShowStatusEffects(Player);
         ShowStatusEffects(_monster);
-        PlayerInput();
-        MonsterInput();
-    }
 
         if (_cwInfo[Player].CurrentMove == MoveType.Idle)
         { // We only want the player to be able to perform moves from the idle position
@@ -80,7 +77,6 @@ public class CombatWindow : MonoBehaviour
         {
             Idle(Player);
         }
-    }
 
         if (Time.time > _lastMonsterActionTime + _monsterMoves[_monsterMoveIndex].Delay)
         { // The monster performs the next action in its pattern whenever the delay for that move is exceeded
@@ -143,19 +139,19 @@ public class CombatWindow : MonoBehaviour
 
     private void HandleDamage(Actor attacker, Actor defender) 
     {
-        if (_cwInfo[defender].CurrentMove != MoveType.Defend)
+        if (defender.GetDefenseValue() < attacker.GetAttackValue())
         {
             float roll = Random.Range(0f, 1f);
 
             if (attacker.Accuracy / defender.Evasion > roll)
             {
                 int damage = 0;
-                if (!defender.CwInfo.Defending)
+                if (_cwInfo[defender].CurrentMove != MoveType.Defend)
                 {
                     Debug.Log("Stump Armor Value = " + defender.GetArmorValue());
                     Debug.Log("Player ATtack Value = " + attacker.GetAttackValue());
                     damage = attacker.GetAttackValue() - defender.GetArmorValue();
-                    defender.CwInfo.Animator.SetInteger("State", -2);
+                    defender.CombatAnimator.SetInteger("State", -2);
                 }
                 else
                 {
@@ -163,7 +159,6 @@ public class CombatWindow : MonoBehaviour
                 }
 
                 defender.Health -= damage;
-                defender.CombatAnimator.SetInteger("State", -2);
 
                 Debug.Log(string.Format("{1} is hit for {0}! {1} Health: {2}", damage, defender.DisplayName, _monster.Health));
                 DisplayMessage(damage.ToString(), Color.red, _cwInfo[defender].DamageLocation);

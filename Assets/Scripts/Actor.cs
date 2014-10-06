@@ -100,7 +100,6 @@ public class Actor : MonoBehaviour
         }
     }
 
-    public void AddStatusEffect(string effectName, IActorStatusEffect effect)
     public void AddStatusEffect(IActorStatusEffect effect)
     {
         if (!StatusEffects.Add(effect))
