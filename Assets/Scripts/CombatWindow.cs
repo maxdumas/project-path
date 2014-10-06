@@ -42,7 +42,7 @@ public class CombatWindow : MonoBehaviour
             Debug.Log("You die!");
             DestroyWindow();
         }
-        else if (_monster.Health <= 0)
+        if (_monster.Health <= 0)
         {
             Debug.Log("Monster dies!");
             DestroyWindow();
@@ -50,9 +50,11 @@ public class CombatWindow : MonoBehaviour
 
         ShowStatusEffects(Player);
         ShowStatusEffects(_monster);
+        PlayerInput();
+        MonsterInput();
+    }
 
         if (_cwInfo[Player].CurrentMove == MoveType.Idle)
-
         { // We only want the player to be able to perform moves from the idle position
 
 #if UNITY_STANDALONE
@@ -78,6 +80,7 @@ public class CombatWindow : MonoBehaviour
         {
             Idle(Player);
         }
+    }
 
         if (Time.time > _lastMonsterActionTime + _monsterMoves[_monsterMoveIndex].Delay)
         { // The monster performs the next action in its pattern whenever the delay for that move is exceeded
@@ -146,7 +149,19 @@ public class CombatWindow : MonoBehaviour
 
             if (attacker.Accuracy / defender.Evasion > roll)
             {
-                int damage = attacker.GetAttackValue();
+                int damage = 0;
+                if (!defender.CwInfo.Defending)
+                {
+                    Debug.Log("Stump Armor Value = " + defender.GetArmorValue());
+                    Debug.Log("Player ATtack Value = " + attacker.GetAttackValue());
+                    damage = attacker.GetAttackValue() - defender.GetArmorValue();
+                    defender.CwInfo.Animator.SetInteger("State", -2);
+                }
+                else
+                {
+                    damage = attacker.GetAttackValue() - defender.GetDefenseValue();
+                }
+
                 defender.Health -= damage;
                 defender.CombatAnimator.SetInteger("State", -2);
 
@@ -177,7 +192,6 @@ public class CombatWindow : MonoBehaviour
                     defender.AddStatusEffect(new BlindStatusEffect(attacker.BlindAttackLength));
                 }
             }
-            //else Debug.Log(attacker.DisplayName + " misses.");
         }
         else Debug.Log(defender.DisplayName + " blocks " + attacker.DisplayName + "'s attack!");
     }
@@ -299,7 +313,7 @@ public class CombatWindow : MonoBehaviour
         }
     }
 
-    private void DestroyWindow()
+    public void DestroyWindow()
     {
         Player.CombatSprite.gameObject.SetActive(false);
         Destroy(_monster);
@@ -337,7 +351,7 @@ public class CombatWindow : MonoBehaviour
 
     protected void DisplayMessage(string text, Color color, float xOffset = 0f, float yOffset = 0f, float zOffset = 0f)
     {
-        Vector3 offset = new Vector3(xOffset, yOffset, zOffset);
+        Vector3 offset = new Vector3(xOffset, yOffset, 2);
 
         DisplayMessage(text, color, offset);
     }

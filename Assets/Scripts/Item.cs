@@ -87,49 +87,38 @@ public class Item : MonoBehaviour
     // If a negative number is returned it is assumed that all damage is negated.
     public static readonly Dictionary<string, Func<int>> AttackBehaviors = new Dictionary<string, Func<int>>
     {
-        {"Fists", () => Dice.Roll(4)},
-		{"Fists+1",() => 
-		{
-			int d = Dice.Roll(4);
-			return d+1;
-		}},
         {"Dagger", () =>
         {
-            int d = Dice.Roll(4);
-            return d == 4 ? 5 : d; // Roll increases to a 5 on a critical hit.
+            return 1; 
         }},
-		{"Short Sword", () => Dice.Roll(6)},
-		{"Short Sword +1", () => 
-		{
-			int d = Dice.Roll(6);
-			return d+1;
-		}},
-		{"Spear", () => Dice.Roll(8)},
-		{"Spear +1", () =>
-		{
-			int d = Dice.Roll(8);
-			return d+1;
-		}}
+
+        {"ShortSword", () => 
+        {
+            return 2;
+        }},
+
+        {"Spear", () =>
+        {
+            return 3;
+        }}
     };
 
     public static readonly Dictionary<string, Func<int>> DefenseBehaviors = new Dictionary<string, Func<int>>
     {
-        {"Buckler", () => Dice.Roll(4)},
-		{"Leather Armor", () => 1},
-		{"Heater", () => Dice.Roll(6)},
-		{"Bronze Armor", () => 2},
-		{"Iron Armor", () => 3},
-		{"Steel Armor", () => 4},
-		{"Greatshield", () => Dice.Roll(8)},
+        {"Buckler", () => 1},
+        {"Leather Armor", () => 1},
+        {"Heater", () => 2},
+        {"Bronze Armor", () => 2},
+        {"Iron Armor", () => 3},
+        {"Steel Armor", () => 4},
+        {"Greatshield", () => 3},
     };
 
 	public static readonly Dictionary<string,string> ItemDescriptors = new Dictionary<string, string>
 	{
 		{"Dagger", "A small but sharp dagger. Fits neatly between the ribs. Roll: d4 Effect: All 4 become 5."},
 		{"Short Sword", "A short but sturdy sword. Perfect for an adventurer. Roll: d6 Effect: None."},
-		{"Short Sword +1", "A short sword that's been sharpened well. Roll: d6+1 Effect: None."},
 		{"Spear", "A long soldier's spear. The shaft shows wear but holds true. Roll: d8 Effect: None."},
-		{"Spear +1", "A soldier's spear fitted with a diamond-shaped head. Strong and sturdy. Roll: d8+1 Effect: None."},
 		{"Buckler", "A round, small parrying shield. Not designed to take full frontal blows. Roll: d4 Effect: None."},
 		{"Heater", "A plain knight's shield. The crest has worn off over time. Roll: d6 Effect: None."},
 		{"Greatshield", "A heavy square greatshield. A solid core can deflect the heaviest of blows. Roll: d8 Effect: None."},

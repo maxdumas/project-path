@@ -76,6 +76,31 @@ public class Actor : MonoBehaviour
         return BaseDefense + AllSlots.Sum(item => item.DefenseModifier());
     }
 
+    public int GetArmorValue()
+    {
+        if (!(MiscSlot == null))
+        {
+            return BaseDefense + MiscSlot.DefenseModifier();
+        }
+        else
+        {
+            return BaseDefense;
+        }
+    }
+
+    public int GetShieldValue()
+    {
+        if (!(ShieldSlot == null))
+        {
+            return BaseDefense + ShieldSlot.DefenseModifier();
+        } 
+        else
+        {
+            return 0;
+        }
+    }
+
+    public void AddStatusEffect(string effectName, IActorStatusEffect effect)
     public void AddStatusEffect(IActorStatusEffect effect)
     {
         if (!StatusEffects.Add(effect))

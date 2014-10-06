@@ -33,12 +33,17 @@ public class ActorAnimationController : MonoBehaviour
 
     public void AnimBeginHit()
     {
-
+        
     }
 
     public void AnimEndHit()
     {
         //TargetActor.CwInfo.Animator.SetInteger("State", 0);
         TargetCombatWindow.OnAnimEndHit(TargetActor);
+    }
+
+    public void AnimEndDeath()
+    {
+        TargetCombatWindow.DestroyWindow();
     }
 }

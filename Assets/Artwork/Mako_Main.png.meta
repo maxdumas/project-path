@@ -3,6 +3,39 @@ guid: b794909d75f98704a8d5638e89e4f124
 TextureImporter:
   fileIDToRecycleName:
     21300000: Mako_Main
+    21300002: Mako_Main_0
+    21300004: Mako_Main_2
+    21300006: Mako_Main_3
+    21300008: Mako_Main_4
+    21300010: Mako_Main_5
+    21300012: Mako_Main_6
+    21300014: Mako_Main_7
+    21300016: Mako_Main_8
+    21300018: Mako_Main_9
+    21300020: Mako_Main_10
+    21300022: Mako_Main_11
+    21300024: Mako_Main_12
+    21300026: Mako_Main_13
+    21300028: Mako_Main_14
+    21300030: Mako_Main_15
+    21300032: Mako_Main_16
+    21300034: Mako_Main_17
+    21300036: Mako_Main_18
+    21300038: Mako_Main_19
+    21300040: Mako_Main_20
+    21300042: Mako_Main_21
+    21300044: Mako_Main_22
+    21300046: Mako_Main_23
+    21300048: Mako_Main_24
+    21300050: Mako_Main_25
+    21300052: Mako_Main_26
+    21300054: Mako_Main_27
+    21300056: Mako_Main_28
+    21300058: Mako_Main_29
+    21300060: Mako_Main_30
+    21300062: Mako_Main_31
+    21300064: Mako_Main_39
+    21300066: Mako_Main_48
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -23,16 +56,16 @@ TextureImporter:
   generateCubemap: 0
   seamlessCubemap: 0
   textureFormat: -1
-  maxTextureSize: 1024
+  maxTextureSize: 4096
   textureSettings:
     filterMode: -1
-    aniso: -1
+    aniso: 1
     mipBias: -1
-    wrapMode: -1
+    wrapMode: 1
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -43,6 +76,336 @@ TextureImporter:
   textureType: 8
   buildTargetSettings: []
   spriteSheet:
-    sprites: []
+    sprites:
+    - name: Mako_Main_0
+      rect:
+        serializedVersion: 2
+        x: 61
+        y: 464
+        width: 97
+        height: 80
+      alignment: 7
+      pivot: {x: .5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mako_Main_2
+      rect:
+        serializedVersion: 2
+        x: 161
+        y: 465
+        width: 93
+        height: 81
+      alignment: 7
+      pivot: {x: .5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mako_Main_3
+      rect:
+        serializedVersion: 2
+        x: 260
+        y: 465
+        width: 95
+        height: 80
+      alignment: 7
+      pivot: {x: .5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mako_Main_4
+      rect:
+        serializedVersion: 2
+        x: 361
+        y: 465
+        width: 98
+        height: 80
+      alignment: 7
+      pivot: {x: .5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mako_Main_5
+      rect:
+        serializedVersion: 2
+        x: 466
+        y: 465
+        width: 102
+        height: 79
+      alignment: 9
+      pivot: {x: .469999999, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mako_Main_6
+      rect:
+        serializedVersion: 2
+        x: 575
+        y: 465
+        width: 108
+        height: 78
+      alignment: 9
+      pivot: {x: .449999988, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mako_Main_7
+      rect:
+        serializedVersion: 2
+        x: 692
+        y: 465
+        width: 104
+        height: 80
+      alignment: 9
+      pivot: {x: .479999989, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mako_Main_8
+      rect:
+        serializedVersion: 2
+        x: 804
+        y: 465
+        width: 98
+        height: 81
+      alignment: 7
+      pivot: {x: .5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mako_Main_9
+      rect:
+        serializedVersion: 2
+        x: 87
+        y: 346
+        width: 72
+        height: 101
+      alignment: 7
+      pivot: {x: .5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mako_Main_10
+      rect:
+        serializedVersion: 2
+        x: 172
+        y: 346
+        width: 103
+        height: 79
+      alignment: 9
+      pivot: {x: .150000006, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mako_Main_11
+      rect:
+        serializedVersion: 2
+        x: 281
+        y: 346
+        width: 102
+        height: 81
+      alignment: 9
+      pivot: {x: .140000001, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mako_Main_12
+      rect:
+        serializedVersion: 2
+        x: 389
+        y: 346
+        width: 135
+        height: 82
+      alignment: 9
+      pivot: {x: .119999997, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mako_Main_13
+      rect:
+        serializedVersion: 2
+        x: 531
+        y: 346
+        width: 160
+        height: 68
+      alignment: 9
+      pivot: {x: .0399999991, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mako_Main_14
+      rect:
+        serializedVersion: 2
+        x: 698
+        y: 346
+        width: 148
+        height: 70
+      alignment: 9
+      pivot: {x: .0399999991, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mako_Main_15
+      rect:
+        serializedVersion: 2
+        x: 853
+        y: 346
+        width: 143
+        height: 72
+      alignment: 9
+      pivot: {x: .0399999991, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mako_Main_16
+      rect:
+        serializedVersion: 2
+        x: 1002
+        y: 346
+        width: 123
+        height: 74
+      alignment: 9
+      pivot: {x: .0500000007, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mako_Main_17
+      rect:
+        serializedVersion: 2
+        x: 1131
+        y: 346
+        width: 107
+        height: 70
+      alignment: 9
+      pivot: {x: .0900000036, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mako_Main_18
+      rect:
+        serializedVersion: 2
+        x: 1244
+        y: 346
+        width: 105
+        height: 71
+      alignment: 9
+      pivot: {x: .129999995, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mako_Main_19
+      rect:
+        serializedVersion: 2
+        x: 1355
+        y: 346
+        width: 71
+        height: 73
+      alignment: 9
+      pivot: {x: .219999999, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mako_Main_20
+      rect:
+        serializedVersion: 2
+        x: 1432
+        y: 346
+        width: 68
+        height: 77
+      alignment: 9
+      pivot: {x: .270000011, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mako_Main_21
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 136
+        width: 88
+        height: 82
+      alignment: 9
+      pivot: {x: .449999988, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mako_Main_22
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 136
+        width: 76
+        height: 84
+      alignment: 9
+      pivot: {x: .370000005, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mako_Main_23
+      rect:
+        serializedVersion: 2
+        x: 196
+        y: 136
+        width: 67
+        height: 100
+      alignment: 9
+      pivot: {x: .300000012, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mako_Main_24
+      rect:
+        serializedVersion: 2
+        x: 269
+        y: 136
+        width: 68
+        height: 103
+      alignment: 9
+      pivot: {x: .300000012, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mako_Main_25
+      rect:
+        serializedVersion: 2
+        x: 342
+        y: 136
+        width: 65
+        height: 96
+      alignment: 9
+      pivot: {x: .230000004, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mako_Main_26
+      rect:
+        serializedVersion: 2
+        x: 412
+        y: 136
+        width: 62
+        height: 94
+      alignment: 9
+      pivot: {x: .209999993, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mako_Main_27
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 136
+        width: 64
+        height: 91
+      alignment: 9
+      pivot: {x: .239999995, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mako_Main_28
+      rect:
+        serializedVersion: 2
+        x: 550
+        y: 136
+        width: 66
+        height: 89
+      alignment: 9
+      pivot: {x: .25999999, y: .0299999993}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mako_Main_29
+      rect:
+        serializedVersion: 2
+        x: 622
+        y: 136
+        width: 78
+        height: 83
+      alignment: 9
+      pivot: {x: .389999986, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mako_Main_30
+      rect:
+        serializedVersion: 2
+        x: 706
+        y: 136
+        width: 85
+        height: 82
+      alignment: 9
+      pivot: {x: .449999988, y: .00999999978}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mako_Main_31
+      rect:
+        serializedVersion: 2
+        x: 797
+        y: 136
+        width: 86
+        height: 82
+      alignment: 9
+      pivot: {x: .449999988, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mako_Main_39
+      rect:
+        serializedVersion: 2
+        x: 686
+        y: 8
+        width: 108
+        height: 86
+      alignment: 7
+      pivot: {x: .5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mako_Main_48
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 346
+        width: 67
+        height: 125
+      alignment: 9
+      pivot: {x: .289999992, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
   spritePackingTag: 
   userData: 

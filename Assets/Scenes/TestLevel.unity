@@ -272,7 +272,6 @@ Animator:
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
   m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
 --- !u!114 &907540500
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -297,7 +296,6 @@ GameObject:
   - 58: {fileID: 1261960614}
   - 114: {fileID: 1261960613}
   - 212: {fileID: 1261960612}
-  - 95: {fileID: 1261960616}
   m_Layer: 0
   m_Name: Lair
   m_TagString: Untagged
@@ -343,14 +341,14 @@ MonoBehaviour:
   Player: {fileID: 1634848042}
   EventNotifier: {fileID: 10200000, guid: 777e7eaa7a54d0c48b4ce1aa5c971787, type: 2}
   WaitTime: .5
-  MonsterPrefab: {fileID: 11400000, guid: 722e3404ad101c54ba91dc90d3fcb54c, type: 2}
-  MonsterSpritePrefab: {fileID: 21200000, guid: e3ca8ce15d28b85469fa6fb84e2f726a,
+  MonsterPrefab: {fileID: 11400000, guid: 40609fb256baa734ba9e29efb028a07c, type: 2}
+  MonsterSpritePrefab: {fileID: 21200000, guid: a95adda0fb0bb114182af4d3f49a2018,
     type: 2}
-  PlayerSpritePrefab: {fileID: 21200000, guid: c8676f9a3f669a64b95754a58ee01aec, type: 2}
+  PlayerSpritePrefab: {fileID: 21200000, guid: c44a070d4b440ba46a6f4df692bb5e5d, type: 2}
   BackgroundPrefab: {fileID: 21200000, guid: 4c6b1b48a1efc7943a8ae4cca55a860d, type: 2}
   FramePrefab: {fileID: 21200000, guid: f247bda6dc4728c46ad2c3102b6c85b4, type: 2}
   combat: {fileID: 11400000, guid: 62f84332f7ee98b4f89de3c5a79d1ea0, type: 2}
-  MonsterPattern: {fileID: 4900000, guid: 6e67948ab45466d4db21ae6ae0ba9072, type: 3}
+  MonsterPattern: {fileID: 4900000, guid: b57bece10e5cd2c4882ae4378abdeb90, type: 3}
 --- !u!58 &1261960614
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -375,21 +373,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1630712743}
   m_RootOrder: 0
---- !u!95 &1261960616
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1261960611}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 1328030d8a9dd584bb8b2a6e8a89f5de, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 1
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
 --- !u!1001 &1321856173
 Prefab:
   m_ObjectHideFlags: 0
@@ -618,9 +601,6 @@ MonoBehaviour:
   WeaponSlot: {fileID: 11400000, guid: 4a4ac3e213d784c1aa5fd897602577a1, type: 2}
   ShieldSlot: {fileID: 11400000, guid: d96ed380f29ce4645abfce0b9bebab78, type: 2}
   MiscSlot: {fileID: 11400000, guid: 6990d39fd9a6749e8ba1395cddaae0d8, type: 2}
-  PrefabCombatSprite: {fileID: 21200000, guid: c8676f9a3f669a64b95754a58ee01aec, type: 2}
-  CombatSprite: {fileID: 0}
-  CombatAnimator: {fileID: 0}
   IsPoisonous: 0
   PoisonChance: .200000003
   PoisonDamageValue: 4
@@ -630,6 +610,17 @@ MonoBehaviour:
   IsBlinding: 0
   BlindChance: .5
   BlindAttackLength: 4
+  CwInfo:
+    Sprite: {fileID: 0}
+    Animator: {fileID: 0}
+    CombatPeriod: 1
+    NextCombatTime: 0
+    PauseTime: .100000001
+    Defending: 0
+    AttackChance: 0
+    MoveType: 0
+    Location: {x: 0, y: 0, z: 0}
+    DamageLocation: {x: 0, y: 0, z: 0}
   PathFollower: {fileID: 1634848037}
   AllItems: []
 --- !u!50 &1634848043
@@ -695,7 +686,7 @@ Prefab:
     - target: {fileID: 11400000, guid: d5edc62f03194ba46b4ed1661d6f2216, type: 2}
       propertyPath: PlayerSpritePrefab
       value: 
-      objectReference: {fileID: 21200000, guid: c8676f9a3f669a64b95754a58ee01aec,
+      objectReference: {fileID: 21200000, guid: c44a070d4b440ba46a6f4df692bb5e5d,
         type: 2}
     - target: {fileID: 11400000, guid: d5edc62f03194ba46b4ed1661d6f2216, type: 2}
       propertyPath: BackgroundPrefab
@@ -714,16 +705,16 @@ Prefab:
     - target: {fileID: 11400000, guid: d5edc62f03194ba46b4ed1661d6f2216, type: 2}
       propertyPath: MonsterPattern
       value: 
-      objectReference: {fileID: 4900000, guid: 6e67948ab45466d4db21ae6ae0ba9072, type: 3}
+      objectReference: {fileID: 4900000, guid: b57bece10e5cd2c4882ae4378abdeb90, type: 3}
     - target: {fileID: 11400000, guid: d5edc62f03194ba46b4ed1661d6f2216, type: 2}
       propertyPath: MonsterPrefab
       value: 
-      objectReference: {fileID: 11400000, guid: 722e3404ad101c54ba91dc90d3fcb54c,
+      objectReference: {fileID: 11400000, guid: 40609fb256baa734ba9e29efb028a07c,
         type: 2}
     - target: {fileID: 11400000, guid: d5edc62f03194ba46b4ed1661d6f2216, type: 2}
       propertyPath: MonsterSpritePrefab
       value: 
-      objectReference: {fileID: 21200000, guid: e3ca8ce15d28b85469fa6fb84e2f726a,
+      objectReference: {fileID: 21200000, guid: a95adda0fb0bb114182af4d3f49a2018,
         type: 2}
     - target: {fileID: 11400000, guid: d5edc62f03194ba46b4ed1661d6f2216, type: 2}
       propertyPath: FramePrefab
