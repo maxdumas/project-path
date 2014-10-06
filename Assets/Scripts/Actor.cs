@@ -14,6 +14,10 @@ public class Actor : MonoBehaviour
     public Item ShieldSlot;
     public Item MiscSlot;
 
+    public SpriteRenderer PrefabCombatSprite;
+    public SpriteRenderer CombatSprite;
+    public Animator CombatAnimator;
+
     public IEnumerable<Item> AllSlots
     {
         get
@@ -39,27 +43,17 @@ public class Actor : MonoBehaviour
 	public float BlindChance;
 	public float BlindAttackLength;
 
-    public readonly IDictionary<string, IActorStatusEffect> StatusEffects = new Dictionary<string, IActorStatusEffect>();
+    public readonly HashSet<IActorStatusEffect> StatusEffects = new HashSet<IActorStatusEffect>();
     
-
-
-    public virtual void Start()
+    public virtual void OnEnable()
     {
+        CombatSprite = (SpriteRenderer) Instantiate(PrefabCombatSprite);
+        CombatSprite.enabled = false;
+        CombatAnimator = CombatSprite.GetComponent<Animator>();
+
         if (MaxHealth < Health) MaxHealth = Health;
 
         if (String.IsNullOrEmpty(DisplayName)) DisplayName = name;
-    }
-
-    public virtual void Update()
-    {
-        var expiredEffects = new List<string>();
-        foreach(var kvp in StatusEffects)
-            if (!kvp.Value.Expired)
-                kvp.Value.ApplyEffect(this);
-            else expiredEffects.Add(kvp.Key);
-
-        foreach (string s in expiredEffects)
-            StatusEffects.Remove(s);
     }
 
     /// <summary>
@@ -82,12 +76,19 @@ public class Actor : MonoBehaviour
         return BaseDefense + AllSlots.Sum(item => item.DefenseModifier());
     }
 
-    public void AddStatusEffect(string effectName, IActorStatusEffect effect)
+    public void AddStatusEffect(IActorStatusEffect effect)
     {
-        if (StatusEffects.ContainsKey(effectName))
-            StatusEffects[effectName] = effect; // Replace the existing effect (thus refreshing it)
-        else StatusEffects.Add(effectName, effect);
-
+        if (!StatusEffects.Add(effect))
+        {
+            StatusEffects.Remove(effect);
+            StatusEffects.Add(effect);
+        }
         effect.OnAdd(this);
+        effect.Expired += RemoveExpiredStatusEffect;
+    }
+
+    private void RemoveExpiredStatusEffect(IActorStatusEffect sender, EventArgs e)
+    {
+        StatusEffects.Remove(sender);
     }
 }

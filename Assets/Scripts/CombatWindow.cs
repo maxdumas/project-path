@@ -12,16 +12,13 @@ public class CombatWindow : MonoBehaviour
 
     public Player Player;
     public Monster MonsterPrefab;
-    public SpriteRenderer PlayerSpritePrefab;
-    public SpriteRenderer MonsterSpritePrefab;
     public SpriteRenderer BackgroundPrefab;
     public SpriteRenderer FramePrefab;
-
     public TextAsset MonsterPattern;
 
+    private Monster _monster;
     private SpriteRenderer _background;
     private SpriteRenderer _frame;
-    private Monster _monster;
 
     private MoveContainer[] _monsterMoves;
     private int _monsterMoveIndex;
@@ -32,12 +29,10 @@ public class CombatWindow : MonoBehaviour
     [Serializable]
     private class CwActorInfo
     {
-        public SpriteRenderer Sprite;
-        public Animator Animator;
         public MoveType CurrentMove = MoveType.Idle;
         public Vector3 Location;
         public Vector3 DamageLocation;
-        public readonly Dictionary<string, SpriteRenderer> Buffs = new Dictionary<string, SpriteRenderer>();
+        public readonly Dictionary<string, SpriteRenderer> StatusEffectIcons = new Dictionary<string, SpriteRenderer>();
     }
 
     private void Update()
@@ -79,7 +74,7 @@ public class CombatWindow : MonoBehaviour
                 Defend(Player);
             }
         }
-        else if (_cwInfo[Player].Animator.GetCurrentAnimatorStateInfo(0).IsTag("Idle") && _cwInfo[Player].CurrentMove != MoveType.Idle)
+        else if (Player.CombatAnimator.GetCurrentAnimatorStateInfo(0).IsTag("Idle") && _cwInfo[Player].CurrentMove != MoveType.Idle)
         {
             Idle(Player);
         }
@@ -98,7 +93,7 @@ public class CombatWindow : MonoBehaviour
             }
             _monsterMoveIndex = (_monsterMoveIndex + 1)%_monsterMoves.Length;
         }
-        else if (_cwInfo[_monster].Animator.GetCurrentAnimatorStateInfo(0).IsTag("Idle") && _cwInfo[_monster].CurrentMove != MoveType.Idle)
+        else if (_monster.CombatAnimator.GetCurrentAnimatorStateInfo(0).IsTag("Idle") && _cwInfo[_monster].CurrentMove != MoveType.Idle)
         { // We check for _monsterState != MoveType.Idle because this should only happen exactly when the monster becomes idle
             Idle(_monster);
         }
@@ -107,18 +102,18 @@ public class CombatWindow : MonoBehaviour
     private void Idle(Actor actor)
     {
         _cwInfo[actor].CurrentMove = MoveType.Idle;
-        _cwInfo[actor].Animator.SetInteger("State", 0);
+        actor.CombatAnimator.SetInteger("State", 0);
     }
 
     private void Defend(Actor actor)
     {
-        _cwInfo[actor].Animator.SetInteger("State", -1);
+        actor.CombatAnimator.SetInteger("State", -1);
     }
 
     private void Attack(Actor actor)
     {
         _cwInfo[actor].CurrentMove = MoveType.Attack;
-        _cwInfo[actor].Animator.SetInteger("State", 1);
+        actor.CombatAnimator.SetInteger("State", 1);
     }
 
     public void OnAnimAttack(Actor attacker)
@@ -153,7 +148,7 @@ public class CombatWindow : MonoBehaviour
             {
                 int damage = attacker.GetAttackValue();
                 defender.Health -= damage;
-                _cwInfo[defender].Animator.SetInteger("State", -2);
+                defender.CombatAnimator.SetInteger("State", -2);
 
                 Debug.Log(string.Format("{1} is hit for {0}! {1} Health: {2}", damage, defender.DisplayName, _monster.Health));
                 DisplayMessage(damage.ToString(), Color.red, _cwInfo[defender].DamageLocation);
@@ -167,8 +162,7 @@ public class CombatWindow : MonoBehaviour
                 {
                     Debug.Log(string.Format("{0} is poisoned for {1} damage.", defender.DisplayName,
                         attacker.PoisonDamageValue));
-                    defender.AddStatusEffect("PoisonStatusEffect",
-                        new PoisonStatusEffect(attacker.PoisonDamageValue, attacker.PoisonTickSpeed));
+                    defender.AddStatusEffect(new PoisonStatusEffect(attacker.PoisonDamageValue, attacker.PoisonTickSpeed));
                 }
 
                 // Blind Chance
@@ -180,13 +174,15 @@ public class CombatWindow : MonoBehaviour
                 {
                     Debug.Log(string.Format("{0} is blinded! Accuracy cut in half for {1} seconds.",
                         defender.DisplayName, attacker.BlindAttackLength));
-                    defender.AddStatusEffect("BlindStatusEffect", new BlindStatusEffect(attacker.BlindAttackLength));
+                    defender.AddStatusEffect(new BlindStatusEffect(attacker.BlindAttackLength));
                 }
             }
             //else Debug.Log(attacker.DisplayName + " misses.");
         }
         else Debug.Log(defender.DisplayName + " blocks " + attacker.DisplayName + "'s attack!");
     }
+
+
 
     public void Enable()
     {
@@ -245,13 +241,12 @@ public class CombatWindow : MonoBehaviour
         #endregion
 
         //PlayerSprite
-        InitActor(Player, -(halfCamWidth * 0.6f), -(halfCamHeight * 0.75f), PlayerSpritePrefab);
+        InitActor(Player, -(halfCamWidth * 0.6f), -(halfCamHeight * 0.75f));
        // Player.CwInfo.Animator.speed = 2;
         //MonsterSprite
-        Debug.LogWarning("EHLOO");
         _monster = (Monster)Instantiate(MonsterPrefab, transform.position, Quaternion.identity);
         _monster.transform.parent = this.transform;
-        InitActor(_monster, +(halfCamWidth * 0.6f), -(halfCamHeight * 0.75f), MonsterSpritePrefab);
+        InitActor(_monster, +(halfCamWidth * 0.6f), -(halfCamHeight * 0.75f));
         //_monster.CwInfo.Animator.speed = 2;
 
         string[] lines = MonsterPattern.text.Split('\n');
@@ -275,47 +270,46 @@ public class CombatWindow : MonoBehaviour
         //Player.CwInfo.Animator.speed = 2;
     }
 
-    private void InitActor(Actor actor, float x, float y, SpriteRenderer prefab)
+    private void InitActor(Actor actor, float x, float y)
     {
         float xPos = actor.transform.position.x + x;
         float yPos = actor.transform.position.y + y;
         
         _cwInfo.Add(actor, new CwActorInfo());
-        _cwInfo[actor].Sprite = (SpriteRenderer)Instantiate(prefab, transform.position, Quaternion.identity);
-        _cwInfo[actor].Sprite.transform.parent = this.transform;
-        _cwInfo[actor].Sprite.transform.position = new Vector3(xPos, yPos, 0);
-        _cwInfo[actor].Sprite.sortingLayerName = "Midground";
-        _cwInfo[actor].Sprite.enabled = false;
-        _cwInfo[actor].Location = _cwInfo[actor].Sprite.transform.position;
+        actor.CombatSprite.transform.parent = this.transform;
+        actor.CombatSprite.transform.position = new Vector3(xPos, yPos, 0);
+        actor.CombatSprite.sortingLayerName = "Midground";
+        actor.CombatSprite.enabled = true;
+        _cwInfo[actor].Location = actor.CombatSprite.transform.position;
         _cwInfo[actor].DamageLocation = new Vector3(xPos, yPos + 0.5f, 0);
-        _cwInfo[actor].Animator = _cwInfo[actor].Sprite.GetComponent<Animator>();
+        actor.CombatAnimator = actor.CombatSprite.GetComponent<Animator>();
 
-        var animController = _cwInfo[actor].Sprite.GetComponent<ActorAnimationController>();
+        var animController = actor.CombatSprite.GetComponent<ActorAnimationController>();
         animController.TargetActor = actor;
         animController.TargetCombatWindow = this;
         
         Sprite[] seTextures = Resources.LoadAll<Sprite>("StatusEffects");
         foreach (var sprite in seTextures)
         {
-            Debug.Log(sprite.name);
             var g = new GameObject(sprite.name);
             g.transform.parent = transform;
             var s = g.AddComponent<SpriteRenderer>();
             s.sprite = sprite;
-            _cwInfo[actor].Buffs.Add(sprite.name, s);
+            _cwInfo[actor].StatusEffectIcons.Add(sprite.name, s);
         }
     }
 
     private void DestroyWindow()
     {
+        Player.CombatSprite.gameObject.SetActive(false);
         Destroy(_monster);
+        _monster.CombatSprite.gameObject.SetActive(false);
         Destroy(_background);
         Destroy(_frame);
 
         foreach (var info in _cwInfo.Values)
         {
-            Destroy(info.Sprite);
-            foreach (var b in info.Buffs.Values)
+            foreach (var b in info.StatusEffectIcons.Values)
                 Destroy(b);
         }
 
@@ -324,23 +318,21 @@ public class CombatWindow : MonoBehaviour
 
     private void ShowStatusEffects(Actor actor)
     {
-        if (actor.StatusEffects.Count == 0 || _cwInfo[actor].Buffs.Count == 0) return;
+        if (actor.StatusEffects.Count == 0 || _cwInfo[actor].StatusEffectIcons.Count == 0) return;
 
         Vector3 buffLocations = new Vector3(_cwInfo[actor].Location.x - 0.3f, _cwInfo[actor].Location.y + 3.5f, 0);
 
-        foreach (var kvp in _cwInfo[actor].Buffs)
-            if (actor.StatusEffects.ContainsKey(kvp.Key))
-            {
-                kvp.Value.enabled = true;
-                kvp.Value.transform.position = buffLocations;
-                kvp.Value.sortingLayerName = "Foreground";
-                buffLocations.x += 0.5f;
-            }
-            else
-            {
-                kvp.Value.enabled = false;
-                kvp.Value.sortingLayerName = "Idle";
-            }
+        foreach (var icon in _cwInfo[actor].StatusEffectIcons.Values)
+            icon.enabled = false;
+
+        foreach (IActorStatusEffect effect in actor.StatusEffects)
+        {
+            var icon = _cwInfo[actor].StatusEffectIcons[effect.Name];
+            icon.enabled = true;
+            icon.transform.position = buffLocations;
+            icon.sortingLayerName = "Foreground";
+            buffLocations.x += 0.5f;
+        }
     }
 
     protected void DisplayMessage(string text, Color color, float xOffset = 0f, float yOffset = 0f, float zOffset = 0f)

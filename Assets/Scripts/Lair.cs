@@ -5,8 +5,6 @@ using System.Collections;
 public class Lair : PieceBehavior
 {
     public Monster MonsterPrefab; //MonsterPrefab;
-    public SpriteRenderer MonsterSpritePrefab;
-    public SpriteRenderer PlayerSpritePrefab;
     public SpriteRenderer BackgroundPrefab;
     public SpriteRenderer FramePrefab;
     public CombatWindow combat;
@@ -32,9 +30,7 @@ public class Lair : PieceBehavior
 
         combat = (CombatWindow)Instantiate(combat, transform.position, Quaternion.identity);
         combat.MonsterPrefab = this.MonsterPrefab;
-        combat.MonsterSpritePrefab = this.MonsterSpritePrefab;
         combat.Player = Player;
-        combat.PlayerSpritePrefab = this.PlayerSpritePrefab;
         combat.BackgroundPrefab = this.BackgroundPrefab;
         combat.FramePrefab = this.FramePrefab;
         combat.EventNotifier = EventNotifier;

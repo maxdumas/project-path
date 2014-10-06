@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class PoisonStatusEffect : IActorStatusEffect
 {
@@ -7,7 +8,10 @@ public class PoisonStatusEffect : IActorStatusEffect
 
     private float _t;
 
-    public bool Expired { get; private set; }
+    public string Name { get { return "Poison"; } }
+    public bool IsExpired { get; private set; }
+
+    public event ExpiredEventHandler Expired;
 
     public PoisonStatusEffect(int initialDamage, float damagePeriod)
     {
@@ -17,7 +21,7 @@ public class PoisonStatusEffect : IActorStatusEffect
 
     public void OnAdd(Actor actor)
     {
-        //actor.CwInfo.Sprite.color = new Color(230f / 255f, 0, 250f / 255f, 1);
+        actor.CombatSprite.color = new Color(230f / 255f, 0, 250f / 255f, 1);
     }
 
     public void ApplyEffect(Actor actor)
@@ -40,8 +44,9 @@ public class PoisonStatusEffect : IActorStatusEffect
 
     public void OnExpire(Actor actor)
     {
-        //actor.CwInfo.Sprite.color = Color.white;
+        actor.CombatSprite.color = Color.white;
         Debug.Log(actor.DisplayName + " is no longer poisoned.");
-        Expired = true;
+        IsExpired = true;
+        Expired(this, EventArgs.Empty);
     }
 }

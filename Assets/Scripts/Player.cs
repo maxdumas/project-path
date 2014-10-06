@@ -9,11 +9,11 @@ public class Player : Actor
     public PathFollower PathFollower;
     public List<Item> AllItems = new List<Item>();
 
-    public override void Start()
+    public override void OnEnable()
     {
         if (PathFollower == null) PathFollower = GetComponent<PathFollower>();
 
-        base.Start();
+        base.OnEnable();
     }
 
     /// <summary>

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class BlindStatusEffect : IActorStatusEffect
@@ -7,7 +8,10 @@ public class BlindStatusEffect : IActorStatusEffect
 
     private float _t;
 
-    public bool Expired { get; private set; }
+    public string Name { get { return "Blind"; } }
+    public bool IsExpired { get; private set; }
+
+    public event ExpiredEventHandler Expired;
 
     public BlindStatusEffect(float blindLength)
     {
@@ -32,6 +36,7 @@ public class BlindStatusEffect : IActorStatusEffect
     {
         actor.Accuracy = OriginalAccuracy;
         Debug.Log(actor.DisplayName + " is no longer blinded.");
-        Expired = true;
+        IsExpired = true;
+        Expired(this, EventArgs.Empty);
     }
 }

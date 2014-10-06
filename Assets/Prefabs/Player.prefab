@@ -93,6 +93,9 @@ MonoBehaviour:
   WeaponSlot: {fileID: 11400000, guid: 4a4ac3e213d784c1aa5fd897602577a1, type: 2}
   ShieldSlot: {fileID: 11400000, guid: d96ed380f29ce4645abfce0b9bebab78, type: 2}
   MiscSlot: {fileID: 11400000, guid: 6990d39fd9a6749e8ba1395cddaae0d8, type: 2}
+  PrefabCombatSprite: {fileID: 21200000, guid: c8676f9a3f669a64b95754a58ee01aec, type: 2}
+  CombatSprite: {fileID: 0}
+  CombatAnimator: {fileID: 0}
   IsPoisonous: 0
   PoisonChance: .200000003
   PoisonDamageValue: 4
@@ -102,16 +105,6 @@ MonoBehaviour:
   IsBlinding: 0
   BlindChance: .5
   BlindAttackLength: 4
-  CwInfo:
-    Sprite: {fileID: 0}
-    Animator: {fileID: 0}
-    CombatPeriod: 1
-    NextCombatTime: 0
-    PauseTime: .100000001
-    Defending: 0
-    AttackChance: 0
-    Location: {x: 0, y: 0, z: 0}
-    DamageLocation: {x: 0, y: 0, z: 0}
   PathFollower: {fileID: 11400000}
   AllItems: []
 --- !u!212 &21200000
