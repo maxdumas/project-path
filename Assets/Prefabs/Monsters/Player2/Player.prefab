@@ -86,14 +86,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DisplayName: 
-  MaxHealth: 100
-  Health: 100
+  MaxHealth: 10
+  Health: 10
   BaseAttack: 1
   BaseDefense: 1
   WeaponSlot: {fileID: 11400000, guid: 4a4ac3e213d784c1aa5fd897602577a1, type: 2}
   ShieldSlot: {fileID: 11400000, guid: d96ed380f29ce4645abfce0b9bebab78, type: 2}
   MiscSlot: {fileID: 11400000, guid: 6990d39fd9a6749e8ba1395cddaae0d8, type: 2}
-  PrefabCombatSprite: {fileID: 21200000, guid: c8676f9a3f669a64b95754a58ee01aec, type: 2}
+  PrefabCombatSprite: {fileID: 21200000, guid: c44a070d4b440ba46a6f4df692bb5e5d, type: 2}
   CombatSprite: {fileID: 0}
   CombatAnimator: {fileID: 0}
   IsPoisonous: 0

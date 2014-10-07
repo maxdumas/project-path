@@ -39,18 +39,31 @@ public class CombatWindow : MonoBehaviour
     {
         if (Player.Health <= 0)
         {
-            Debug.Log("You die!");
-            DestroyWindow();
+            Idle(_monster);
+            Death(Player);
+
         }
+
         if (_monster.Health <= 0)
         {
-            Debug.Log("Monster dies!");
-            DestroyWindow();
+            Idle(Player);
+            Death(_monster);
         }
 
-        ShowStatusEffects(Player);
-        ShowStatusEffects(_monster);
 
+        if (_cwInfo[Player].CurrentMove != MoveType.Death && _cwInfo[_monster].CurrentMove != MoveType.Death)
+        {
+            ShowStatusEffects(Player);
+            ShowStatusEffects(_monster);
+
+            HandlePlayer();
+            HandleMonster();
+
+        }
+    }
+
+    public void HandlePlayer()
+    {
         if (_cwInfo[Player].CurrentMove == MoveType.Idle)
         { // We only want the player to be able to perform moves from the idle position
 
@@ -77,7 +90,10 @@ public class CombatWindow : MonoBehaviour
         {
             Idle(Player);
         }
+    }
 
+    public void HandleMonster()
+    {
         if (Time.time > _lastMonsterActionTime + _monsterMoves[_monsterMoveIndex].Delay)
         { // The monster performs the next action in its pattern whenever the delay for that move is exceeded
             _lastMonsterActionTime = Time.time;
@@ -90,13 +106,14 @@ public class CombatWindow : MonoBehaviour
                     Defend(_monster);
                     break;
             }
-            _monsterMoveIndex = (_monsterMoveIndex + 1)%_monsterMoves.Length;
+            _monsterMoveIndex = (_monsterMoveIndex + 1) % _monsterMoves.Length;
         }
         else if (_monster.CombatAnimator.GetCurrentAnimatorStateInfo(0).IsTag("Idle") && _cwInfo[_monster].CurrentMove != MoveType.Idle)
         { // We check for _monsterState != MoveType.Idle because this should only happen exactly when the monster becomes idle
             Idle(_monster);
         }
     }
+
 
     private void Idle(Actor actor)
     {
@@ -115,29 +132,62 @@ public class CombatWindow : MonoBehaviour
         actor.CombatAnimator.SetInteger("State", 1);
     }
 
+
+    private void Hit(Actor actor)
+    {
+        _cwInfo[actor].CurrentMove = MoveType.Hit;
+        actor.CombatAnimator.SetInteger("State", -2);
+    }
+
+    private void Death(Actor actor)
+    {
+        _cwInfo[actor].CurrentMove = MoveType.Death;
+        actor.CombatAnimator.SetInteger("State", -3);
+    }
+
+
+
     public void OnAnimAttack(Actor attacker)
     {
         if (attacker == Player)
-            HandleDamage(attacker, _monster);
+            Damage(attacker, _monster);
         else if (attacker == _monster)
-            HandleDamage(attacker, Player);
+            Damage(attacker, Player);
     }
 
-    public void OnAnimDefenseBegin(Actor defender)
+    public void OnAnimAttackEnd(Actor actor)
     {
-        _cwInfo[defender].CurrentMove = MoveType.Defend;
+        _cwInfo[actor].CurrentMove = MoveType.Idle;
+        actor.CombatAnimator.SetInteger("State", 0);
     }
 
-    public void OnAnimDefenseEnd(Actor defender)
+    public void OnAnimDefenseBegin(Actor actor)
     {
-        _cwInfo[defender].CurrentMove = MoveType.Defend;
+        _cwInfo[actor].CurrentMove = MoveType.Defend;
+    }
+
+    public void OnAnimDefenseEnd(Actor actor)
+    {
+        _cwInfo[actor].CurrentMove = MoveType.Idle;
+        actor.CombatAnimator.SetInteger("State", 0);
+
     }
 
     public void OnAnimEndHit(Actor actor)
     {
+        _cwInfo[actor].CurrentMove = MoveType.Idle;
+        actor.CombatAnimator.SetInteger("State", 0);
     }
 
-    private void HandleDamage(Actor attacker, Actor defender) 
+
+
+    public void OnAnimEndDeath(Actor actor)
+    {
+        DestroyWindow();
+    }
+
+
+    private void Damage(Actor attacker, Actor defender) 
     {
         if (defender.GetDefenseValue() < attacker.GetAttackValue())
         {
@@ -151,7 +201,7 @@ public class CombatWindow : MonoBehaviour
                     Debug.Log("Stump Armor Value = " + defender.GetArmorValue());
                     Debug.Log("Player ATtack Value = " + attacker.GetAttackValue());
                     damage = attacker.GetAttackValue() - defender.GetArmorValue();
-                    defender.CombatAnimator.SetInteger("State", -2);
+                    Hit(defender);
                 }
                 else
                 {
@@ -163,34 +213,43 @@ public class CombatWindow : MonoBehaviour
                 Debug.Log(string.Format("{1} is hit for {0}! {1} Health: {2}", damage, defender.DisplayName, _monster.Health));
                 DisplayMessage(damage.ToString(), Color.red, _cwInfo[defender].DamageLocation);
 
-                // Poison Chance
-                //
-                // Each attack, the actor has a chance to poison IF the actor IsPoisonous. 
-                // If the other actor is already poisoned and it procs, the fade damage value is refreshed.
-                roll = Random.Range(0f, 1f);
-                if (attacker.IsPoisonous && attacker.PoisonChance > roll)
-                {
-                    Debug.Log(string.Format("{0} is poisoned for {1} damage.", defender.DisplayName,
-                        attacker.PoisonDamageValue));
-                    defender.AddStatusEffect(new PoisonStatusEffect(attacker.PoisonDamageValue, attacker.PoisonTickSpeed));
-                }
-
-                // Blind Chance
-                //
-                // Each attack, the actor has a chance to poison IF the actor IsBlinding.
-                // If the other actor is already blinded and it procs, the blind length is refreshed.
-                roll = Random.Range(0f, 1f);
-                if (attacker.IsBlinding && attacker.BlindChance > roll)
-                {
-                    Debug.Log(string.Format("{0} is blinded! Accuracy cut in half for {1} seconds.",
-                        defender.DisplayName, attacker.BlindAttackLength));
-                    defender.AddStatusEffect(new BlindStatusEffect(attacker.BlindAttackLength));
-                }
+                Poison(attacker, defender);
+                Blind(attacker, defender);
             }
         }
         else Debug.Log(defender.DisplayName + " blocks " + attacker.DisplayName + "'s attack!");
     }
 
+
+    private void Poison(Actor attacker, Actor defender)
+    {
+        // Poison Chance
+        //
+        // Each attack, the actor has a chance to poison IF the actor IsPoisonous. 
+        // If the other actor is already poisoned and it procs, the fade damage value is refreshed.
+        float roll = Random.Range(0f, 1f);
+        if (attacker.IsPoisonous && attacker.PoisonChance > roll)
+        {
+            Debug.Log(string.Format("{0} is poisoned for {1} damage.", defender.DisplayName,
+                attacker.PoisonDamageValue));
+            defender.AddStatusEffect(new PoisonStatusEffect(attacker.PoisonDamageValue, attacker.PoisonTickSpeed));
+        }
+    }
+
+    private void Blind(Actor attacker, Actor defender)
+    {
+        // Blind Chance
+        //
+        // Each attack, the actor has a chance to poison IF the actor IsBlinding.
+        // If the other actor is already blinded and it procs, the blind length is refreshed.
+        float roll = Random.Range(0f, 1f);
+        if (attacker.IsBlinding && attacker.BlindChance > roll)
+        {
+            Debug.Log(string.Format("{0} is blinded! Accuracy cut in half for {1} seconds.",
+                defender.DisplayName, attacker.BlindAttackLength));
+            defender.AddStatusEffect(new BlindStatusEffect(attacker.BlindAttackLength));
+        }
+    }
 
 
     public void Enable()

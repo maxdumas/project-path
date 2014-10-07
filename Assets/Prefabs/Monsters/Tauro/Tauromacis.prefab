@@ -40,13 +40,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DisplayName: 
-  MaxHealth: 100
-  Health: 100
-  BaseAttack: 2
+  MaxHealth: 2
+  Health: 2
+  BaseAttack: 4
   BaseDefense: 1
   WeaponSlot: {fileID: 0}
   ShieldSlot: {fileID: 0}
   MiscSlot: {fileID: 0}
+  PrefabCombatSprite: {fileID: 21200000, guid: e3ca8ce15d28b85469fa6fb84e2f726a, type: 2}
+  CombatSprite: {fileID: 0}
+  CombatAnimator: {fileID: 0}
   IsPoisonous: 0
   PoisonChance: 0
   PoisonDamageValue: 0
@@ -56,17 +59,6 @@ MonoBehaviour:
   IsBlinding: 0
   BlindChance: 0
   BlindAttackLength: 0
-  CwInfo:
-    Sprite: {fileID: 0}
-    Animator: {fileID: 0}
-    CombatPeriod: 0
-    NextCombatTime: 0
-    PauseTime: 0
-    Defending: 0
-    AttackChance: 0
-    MoveType: 0
-    Location: {x: 0, y: 0, z: 0}
-    DamageLocation: {x: 0, y: 0, z: 0}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
