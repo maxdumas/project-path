@@ -4,13 +4,7 @@ using UnityEngine;
 public class Trap : PieceBehavior
 {
 	public float ChanceToDamage;
-	public float ChanceToBreak;
     public int Damage;
-
-    protected override string Description
-    {
-        get { return "A trap! Muy peligroso!"; }
-    }
 
     protected override IEnumerator OnInteraction(float waitTime)
     {
@@ -28,22 +22,6 @@ public class Trap : PieceBehavior
 		Debug.Log(text);
 		yield return new WaitForSeconds(waitTime);
 
-		if (ChanceToBreak > 0 && Player.MiscSlot != null)
-		{
-			float brk = Random.Range(0f,1f);
-			if (brk < ChanceToBreak)
-			{
-
-				text = "Trap breaks your " + Player.MiscSlot.DisplayName;
-				Player.MiscSlot = null;
-			}
-			else text = "Trap misses break!";
-
-			DisplayMessage(text);
-			Debug.Log(text);
-		}
-        
-        yield return new WaitForSeconds(waitTime);
 		Destroy(this.gameObject);
     }
 }
