@@ -10,8 +10,6 @@ public abstract class PieceBehavior : MonoBehaviour
     protected int ShowInfoState = 0;
     protected Vector2 ClickLocation;
 
-    protected abstract string Description { get; }
-
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.tag.Equals("Player")) // Check if the other piece is the player
@@ -65,12 +63,5 @@ public abstract class PieceBehavior : MonoBehaviour
             }
             else ShowInfoState = 0;
         }
-    }
-
-    protected virtual void OnGUI()
-    {
-        GUI.skin.box.wordWrap = true;
-        if (ShowInfoState == 2)
-            GUI.Box(new Rect(ClickLocation.x - 75, ClickLocation.y - 170, 150, 150), Description);
     }
 }

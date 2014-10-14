@@ -12,11 +12,6 @@ public class Lair : PieceBehavior
 
     private StringBuilder _log;
 
-    protected override string Description
-    {
-        get { return MonsterPrefab == null ? "" : "A lair with the following monster: " + MonsterPrefab.MonsterDescription; }
-    }
-
     protected override IEnumerator OnInteractionBegin()
     {
         _log = new StringBuilder("COMBAT LOG:\n");
@@ -71,12 +66,5 @@ public class Lair : PieceBehavior
             else
                 ShowInfoState = 0;
         }
-    }
-
-    protected override void OnGUI()
-    {
-        GUI.skin.box.wordWrap = true;
-        if (ShowInfoState == 2)
-            GUI.Box(new Rect(ClickLocation.x - 50, ClickLocation.y - 120, 100, 100), MonsterPrefab.MonsterDescription);
     }
 }

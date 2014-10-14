@@ -4,11 +4,6 @@ using UnityEngine;
 
 public class Potion : PieceBehavior
 {
-    protected override string Description
-    {
-        get { return "A potion! Heals 3 health."; }
-    }
-
     protected override IEnumerator OnInteraction(float waitTime)
     {
         LogMessage("Player healed for 3!");

@@ -30,9 +30,7 @@ public class CombatWindow : MonoBehaviour
     private class CwActorInfo
     {
         public MoveType CurrentMove = MoveType.Idle;
-        public Vector3 Location;
         public Vector3 DamageLocation;
-        public readonly Dictionary<string, SpriteRenderer> StatusEffectIcons = new Dictionary<string, SpriteRenderer>();
     }
 
     private void Update()
@@ -41,7 +39,6 @@ public class CombatWindow : MonoBehaviour
         {
             Idle(_monster);
             Death(Player);
-
         }
 
         if (_monster.Health <= 0)
@@ -53,12 +50,8 @@ public class CombatWindow : MonoBehaviour
 
         if (_cwInfo[Player].CurrentMove != MoveType.Death && _cwInfo[_monster].CurrentMove != MoveType.Death)
         {
-            ShowStatusEffects(Player);
-            ShowStatusEffects(_monster);
-
             HandlePlayer();
             HandleMonster();
-
         }
     }
 
@@ -179,13 +172,10 @@ public class CombatWindow : MonoBehaviour
         actor.CombatAnimator.SetInteger("State", 0);
     }
 
-
-
     public void OnAnimEndDeath(Actor actor)
     {
         DestroyWindow();
     }
-
 
     private void Damage(Actor attacker, Actor defender) 
     {
@@ -199,7 +189,7 @@ public class CombatWindow : MonoBehaviour
                 if (_cwInfo[defender].CurrentMove != MoveType.Defend)
                 {
                     Debug.Log("Stump Armor Value = " + defender.GetArmorValue());
-                    Debug.Log("Player ATtack Value = " + attacker.GetAttackValue());
+                    Debug.Log("Player Attack Value = " + attacker.GetAttackValue());
                     damage = attacker.GetAttackValue() - defender.GetArmorValue();
                     Hit(defender);
                 }
@@ -212,51 +202,14 @@ public class CombatWindow : MonoBehaviour
 
                 Debug.Log(string.Format("{1} is hit for {0}! {1} Health: {2}", damage, defender.DisplayName, _monster.Health));
                 DisplayMessage(damage.ToString(), Color.red, _cwInfo[defender].DamageLocation);
-
-                Poison(attacker, defender);
-                Blind(attacker, defender);
             }
         }
         else Debug.Log(defender.DisplayName + " blocks " + attacker.DisplayName + "'s attack!");
     }
 
-
-    private void Poison(Actor attacker, Actor defender)
-    {
-        // Poison Chance
-        //
-        // Each attack, the actor has a chance to poison IF the actor IsPoisonous. 
-        // If the other actor is already poisoned and it procs, the fade damage value is refreshed.
-        float roll = Random.Range(0f, 1f);
-        if (attacker.IsPoisonous && attacker.PoisonChance > roll)
-        {
-            Debug.Log(string.Format("{0} is poisoned for {1} damage.", defender.DisplayName,
-                attacker.PoisonDamageValue));
-            defender.AddStatusEffect(new PoisonStatusEffect(attacker.PoisonDamageValue, attacker.PoisonTickSpeed));
-        }
-    }
-
-    private void Blind(Actor attacker, Actor defender)
-    {
-        // Blind Chance
-        //
-        // Each attack, the actor has a chance to poison IF the actor IsBlinding.
-        // If the other actor is already blinded and it procs, the blind length is refreshed.
-        float roll = Random.Range(0f, 1f);
-        if (attacker.IsBlinding && attacker.BlindChance > roll)
-        {
-            Debug.Log(string.Format("{0} is blinded! Accuracy cut in half for {1} seconds.",
-                defender.DisplayName, attacker.BlindAttackLength));
-            defender.AddStatusEffect(new BlindStatusEffect(attacker.BlindAttackLength));
-        }
-    }
-
-
     public void Enable()
     {
         Camera cam = Camera.main;
-        //float camHeight = 2f * cam.orthographicSize;
-        //float camWidth = camHeight * cam.aspect
 
         //Background
         _background = (SpriteRenderer)Instantiate(BackgroundPrefab);
@@ -313,7 +266,7 @@ public class CombatWindow : MonoBehaviour
        // Player.CwInfo.Animator.speed = 2;
         //MonsterSprite
         _monster = (Monster)Instantiate(MonsterPrefab, transform.position, Quaternion.identity);
-        _monster.transform.parent = this.transform;
+        _monster.transform.parent = transform;
         InitActor(_monster, +(halfCamWidth * 0.6f), -(halfCamHeight * 0.75f));
         //_monster.CwInfo.Animator.speed = 2;
 
@@ -334,8 +287,6 @@ public class CombatWindow : MonoBehaviour
         // Player / Monster Buffs
         Debug.Log("Player Accuracy / Evasion: " + Player.Accuracy + " " + Player.Evasion);
         Debug.Log("Monster Accuracy / Evasion: " + _monster.Accuracy + " " + _monster.Evasion);
-
-        //Player.CwInfo.Animator.speed = 2;
     }
 
     private void InitActor(Actor actor, float x, float y)
@@ -348,23 +299,12 @@ public class CombatWindow : MonoBehaviour
         actor.CombatSprite.transform.position = new Vector3(xPos, yPos, 0);
         actor.CombatSprite.sortingLayerName = "Midground";
         actor.CombatSprite.enabled = true;
-        _cwInfo[actor].Location = actor.CombatSprite.transform.position;
         _cwInfo[actor].DamageLocation = new Vector3(xPos, yPos + 0.5f, 0);
         actor.CombatAnimator = actor.CombatSprite.GetComponent<Animator>();
 
         var animController = actor.CombatSprite.GetComponent<ActorAnimationController>();
         animController.TargetActor = actor;
         animController.TargetCombatWindow = this;
-        
-        Sprite[] seTextures = Resources.LoadAll<Sprite>("StatusEffects");
-        foreach (var sprite in seTextures)
-        {
-            var g = new GameObject(sprite.name);
-            g.transform.parent = transform;
-            var s = g.AddComponent<SpriteRenderer>();
-            s.sprite = sprite;
-            _cwInfo[actor].StatusEffectIcons.Add(sprite.name, s);
-        }
     }
 
     public void DestroyWindow()
@@ -375,32 +315,7 @@ public class CombatWindow : MonoBehaviour
         Destroy(_background);
         Destroy(_frame);
 
-        foreach (var info in _cwInfo.Values)
-        {
-            foreach (var b in info.StatusEffectIcons.Values)
-                Destroy(b);
-        }
-
         Destroy(gameObject);
-    }
-
-    private void ShowStatusEffects(Actor actor)
-    {
-        if (actor.StatusEffects.Count == 0 || _cwInfo[actor].StatusEffectIcons.Count == 0) return;
-
-        Vector3 buffLocations = new Vector3(_cwInfo[actor].Location.x - 0.3f, _cwInfo[actor].Location.y + 3.5f, 0);
-
-        foreach (var icon in _cwInfo[actor].StatusEffectIcons.Values)
-            icon.enabled = false;
-
-        foreach (IActorStatusEffect effect in actor.StatusEffects)
-        {
-            var icon = _cwInfo[actor].StatusEffectIcons[effect.Name];
-            icon.enabled = true;
-            icon.transform.position = buffLocations;
-            icon.sortingLayerName = "Foreground";
-            buffLocations.x += 0.5f;
-        }
     }
 
     protected void DisplayMessage(string text, Color color, float xOffset = 0f, float yOffset = 0f, float zOffset = 0f)

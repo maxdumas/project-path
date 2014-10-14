@@ -10,41 +10,15 @@ public class Actor : MonoBehaviour
     public int Health;
     public int BaseAttack;
     public int BaseDefense;
-    public Item WeaponSlot;
-    public Item ShieldSlot;
-    public Item MiscSlot;
 
     public SpriteRenderer PrefabCombatSprite;
     public SpriteRenderer CombatSprite;
     public Animator CombatAnimator;
 
-    public IEnumerable<Item> AllSlots
-    {
-        get
-        {
-            if(WeaponSlot != null) yield return WeaponSlot;
-            if(ShieldSlot != null) yield return ShieldSlot;
-            if(MiscSlot != null) yield return MiscSlot;
-        }
-    }
-
-	//Poison Attack Values
-	public bool IsPoisonous;
-	public float PoisonChance;
-	public int PoisonDamageValue;
-	public float PoisonTickSpeed;
-
 	//Accuracy and Evasion Values
 	public float Accuracy;
 	public float Evasion;
 
-	//Blind Values
-	public bool IsBlinding;
-	public float BlindChance;
-	public float BlindAttackLength;
-
-    public readonly HashSet<IActorStatusEffect> StatusEffects = new HashSet<IActorStatusEffect>();
-    
     public virtual void OnEnable()
     {
         CombatSprite = (SpriteRenderer) Instantiate(PrefabCombatSprite);
@@ -63,7 +37,7 @@ public class Actor : MonoBehaviour
     /// <returns></returns>
     public int GetAttackValue()
     {
-        return BaseAttack + AllSlots.Sum(item => item.AttackModifier());
+        return BaseAttack;
     }
 
     /// <summary>
@@ -73,46 +47,16 @@ public class Actor : MonoBehaviour
     /// <returns></returns>
     public int GetDefenseValue()
     {
-        return BaseDefense + AllSlots.Sum(item => item.DefenseModifier());
+        return BaseDefense;
     }
 
     public int GetArmorValue()
     {
-        if (!(MiscSlot == null))
-        {
-            return BaseDefense + MiscSlot.DefenseModifier();
-        }
-        else
-        {
-            return BaseDefense;
-        }
+        return BaseDefense;
     }
 
     public int GetShieldValue()
     {
-        if (!(ShieldSlot == null))
-        {
-            return BaseDefense + ShieldSlot.DefenseModifier();
-        } 
-        else
-        {
-            return 0;
-        }
-    }
-
-    public void AddStatusEffect(IActorStatusEffect effect)
-    {
-        if (!StatusEffects.Add(effect))
-        {
-            StatusEffects.Remove(effect);
-            StatusEffects.Add(effect);
-        }
-        effect.OnAdd(this);
-        effect.Expired += RemoveExpiredStatusEffect;
-    }
-
-    private void RemoveExpiredStatusEffect(IActorStatusEffect sender, EventArgs e)
-    {
-        StatusEffects.Remove(sender);
+        return 0;
     }
 }
