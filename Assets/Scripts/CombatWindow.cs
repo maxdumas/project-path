@@ -20,6 +20,8 @@ public class CombatWindow : MonoBehaviour
     private SpriteRenderer _background;
     private SpriteRenderer _frame;
 
+    public GameObject cube;
+
     private MoveContainer[] _monsterMoves;
     private int _monsterMoveIndex;
     private float _lastMonsterActionTime;
@@ -35,24 +37,33 @@ public class CombatWindow : MonoBehaviour
 
     private void Update()
     {
-        if (Player.Health <= 0)
-        {
-            Idle(_monster);
-            Death(Player);
-        }
+        Vector3 newPosition = new Vector3(this.cube.transform.position.x,
+                                                   5f*(float)Math.Sin(Time.deltaTime), 
+                                                   this.cube.transform.position.z);
 
-        if (_monster.Health <= 0)
-        {
-            Idle(Player);
-            Death(_monster);
-        }
+        cube.transform.position = newPosition;
+        Debug.Log((float)Math.Sin(Time.time));
+
+        //this.cube.transform.Rotate(this.cube.transform.localPosition);
+
+        //if (Player.Health <= 0)
+        //{
+        //    Idle(_monster);
+        //    Death(Player);
+        //}
+
+        //if (_monster.Health <= 0)
+        //{
+        //    Idle(Player);
+        //    Death(_monster);
+        //}
 
 
-        if (_cwInfo[Player].CurrentMove != MoveType.Death && _cwInfo[_monster].CurrentMove != MoveType.Death)
-        {
-            HandlePlayer();
-            HandleMonster();
-        }
+        //if (_cwInfo[Player].CurrentMove != MoveType.Death && _cwInfo[_monster].CurrentMove != MoveType.Death)
+        //{
+        //    HandlePlayer();
+        //    HandleMonster();
+        //}
     }
 
     public void HandlePlayer()
@@ -179,30 +190,15 @@ public class CombatWindow : MonoBehaviour
 
     private void Damage(Actor attacker, Actor defender) 
     {
-        if (defender.GetDefenseValue() < attacker.GetAttackValue())
-        {
-            float roll = Random.Range(0f, 1f);
+        if (_cwInfo[defender].CurrentMove != MoveType.Defend)
+        {    
+            int damage = attacker.GetAttackValue() - defender.GetDefenseValue();
+            Hit(defender);  
+            defender.Health -= damage;
 
-            if (attacker.Accuracy / defender.Evasion > roll)
-            {
-                int damage = 0;
-                if (_cwInfo[defender].CurrentMove != MoveType.Defend)
-                {
-                    Debug.Log("Stump Armor Value = " + defender.GetArmorValue());
-                    Debug.Log("Player Attack Value = " + attacker.GetAttackValue());
-                    damage = attacker.GetAttackValue() - defender.GetArmorValue();
-                    Hit(defender);
-                }
-                else
-                {
-                    damage = attacker.GetAttackValue() - defender.GetDefenseValue();
-                }
-
-                defender.Health -= damage;
-
-                Debug.Log(string.Format("{1} is hit for {0}! {1} Health: {2}", damage, defender.DisplayName, _monster.Health));
-                DisplayMessage(damage.ToString(), Color.red, _cwInfo[defender].DamageLocation);
-            }
+            Debug.Log(string.Format("{1} is hit for {0}! {1} Health: {2}", damage, defender.DisplayName, _monster.Health));
+            DisplayMessage(damage.ToString(), Color.red, _cwInfo[defender].DamageLocation);
+            
         }
         else Debug.Log(defender.DisplayName + " blocks " + attacker.DisplayName + "'s attack!");
     }
@@ -284,9 +280,6 @@ public class CombatWindow : MonoBehaviour
 
         _monsterMoves = parsedMoves.ToArray();
 
-        // Player / Monster Buffs
-        Debug.Log("Player Accuracy / Evasion: " + Player.Accuracy + " " + Player.Evasion);
-        Debug.Log("Monster Accuracy / Evasion: " + _monster.Accuracy + " " + _monster.Evasion);
     }
 
     private void InitActor(Actor actor, float x, float y)

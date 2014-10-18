@@ -9,6 +9,7 @@ public class Lair : PieceBehavior
     public SpriteRenderer FramePrefab;
     public CombatWindow combat;
     public TextAsset MonsterPattern;
+    public GameObject cube;
 
     private StringBuilder _log;
 
@@ -30,6 +31,7 @@ public class Lair : PieceBehavior
         combat.FramePrefab = this.FramePrefab;
         combat.EventNotifier = EventNotifier;
         combat.MonsterPattern = MonsterPattern;
+        combat.cube = this.cube;
         combat.Enable();
     }
 

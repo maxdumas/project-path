@@ -15,10 +15,6 @@ public class Actor : MonoBehaviour
     public SpriteRenderer CombatSprite;
     public Animator CombatAnimator;
 
-	//Accuracy and Evasion Values
-	public float Accuracy;
-	public float Evasion;
-
     public virtual void OnEnable()
     {
         CombatSprite = (SpriteRenderer) Instantiate(PrefabCombatSprite);
